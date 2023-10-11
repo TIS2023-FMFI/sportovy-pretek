@@ -3,7 +3,7 @@
 Tento dokument slúži ako katalóg požiadaviek projektu "Športový pretek". Je určený pre riešiteľov projektu, zadávateľa a vyučujúceho predmetu Tvorba Informačných Systémov.
 
 ## 1.2 Rozsah produktu
-Produkt má za úlohu predovšetkým zabezpečiť komunikáciu existujúcej webovej aplikácie "Športový klub" s oficiálnym aplikačným rozhraním [SZOS](https://is.orienteering.sk/). Ďalej je potrebné umožniť zobrazenie štatistík pre zúčastnených športovcov.
+Produkt má za úlohu predovšetkým zabezpečiť komunikáciu existujúcej webovej aplikácie ["Športový klub"][KA] s oficiálnym [aplikačným rozhraním SZOS][API SZOS]. Ďalej je potrebné umožniť zobrazenie štatistík pre zúčastnených športovcov.
 
 ## 1.3 Definície s skratky
 - API - Application programming interface

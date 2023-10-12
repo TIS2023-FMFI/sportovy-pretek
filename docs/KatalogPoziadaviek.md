@@ -1,4 +1,4 @@
-# 1. Úvod
+# 1 Úvod
 ## 1.1 Účel katalógu požiadaviek
 Tento dokument slúži ako katalóg požiadaviek projektu "Športový pretek". Je určený pre riešiteľov projektu, zadávateľa a vyučujúceho predmetu Tvorba Informačných Systémov.
 
@@ -21,7 +21,7 @@ Produkt má za úlohu predovšetkým zabezpečiť komunikáciu existujúcej webo
 ## 1.5 Prehľad zvyšnej časti dokumentu
 [Kapitola 2](#2) slovne popisuje plánovaný produkt a jeho perspektívu. [Kapitola 3](#3) detailne opisuje požiadavky, ktoré musí spĺňať produkt.
 
-# 2. Všeobecný popis {#2}
+# 2 Všeobecný popis {#2}
 ## 2.1 Perspektíva produktu
 Športový klub Sandberg používa na prihlasovanie svojich členov na preteky svoju vlastnú webovú aplikáciu (ďalej len klubová aplikácia). Táto aplikácia však nie je nijakým spôsobom prepojená s oficiálnym API SZOS. Tým pádom sa vyžaduje ručné prihlasovanie účastníkov, ktorí sa prihlásili do klubovej aplikácie do oficiálneho systému SZOS, taktiež preteky v klubovej aplikácii je potrebné vytvárať ručne. Klubová aplikácia naposkytuje žiadne bližšie informácie o pretekároch a ich dlhodobej výkonnosti.
 

@@ -12,6 +12,7 @@ Produkt má za úlohu predovšetkým zabezpečiť komunikáciu existujúcej webo
 - klubová aplikácia - webová aplikácia, ktorú používajú členovia Športového klubu Sandberg ako aj správca
 - SZOS - Slovenský zväz orientačných bežcov
 - preteky - kompetitívna udalosť organizovaná SZOS
+- disciplína pretekov - druh pretekov, napríklad šprint, štafeta
 - API - Application programming interface
 - REST - Representational state transfer
 - JSON - JavaScript Object Notation
@@ -32,19 +33,19 @@ Produkt má za úlohu predovšetkým zabezpečiť komunikáciu existujúcej webo
 
 # 2 Všeobecný popis {#2}
 ## 2.1 Perspektíva produktu
-Športový klub Sandberg používa na prihlasovanie svojich členov na preteky svoju vlastnú webovú aplikáciu (ďalej len klubová aplikácia). Táto aplikácia však nie je nijakým spôsobom prepojená s oficiálnym API SZOS. Tým pádom sa vyžaduje ručné prihlasovanie účastníkov, ktorí sa prihlásili do klubovej aplikácie do oficiálneho systému SZOS, taktiež preteky v klubovej aplikácii je potrebné vytvárať ručne. Klubová aplikácia naposkytuje žiadne bližšie informácie o pretekároch a ich dlhodobej výkonnosti.
+Športový klub Sandberg používa na prihlasovanie svojich členov na preteky svoju vlastnú webovú aplikáciu (ďalej len klubová aplikácia). Táto aplikácia však nie je nijakým spôsobom prepojená s oficiálnym API SZOS. Tým pádom sa vyžaduje ručné prihlasovanie účastníkov, ktorí sa prihlásili do klubovej aplikácie do oficiálneho systému SZOS, taktiež preteky v klubovej aplikácii je potrebné vytvárať ručne. Klubová aplikácia neposkytuje žiadne bližšie informácie o pretekároch a ich dlhodobej výkonnosti.
 
 ## 2.2 Funkcie produktu {#funkcie}
-Produkt musí zabezpečiť obojstrannú komunikáciu klubovej aplikácie s API SZOS, najmä stiahnutie aktuálnych pretekov z API do databázy klubovej aplikácie ako aj prihlásenie pretekárov, ktorí sa prihlásili na preteky v klubovej aplikácii do systému SZOS, čím produkt umožní správcovi plynulo pridať želané preteky do databázy klubovej aplikácie, ako aj jednoducho prihlásiť želaných pretekárov do systému SZOS. 
+Produkt musí zabezpečiť obojstrannú komunikáciu klubovej aplikácie so systémom SZOS prostredníctvom API SZOS, najmä stiahnutie aktuálnych pretekov zo systému SZOS do databázy klubovej aplikácie ako aj prihlásenie pretekárov, ktorí sa prihlásili na preteky v klubovej aplikácii do systému SZOS, čím produkt umožní správcovi plynulo pridať želané preteky do databázy klubovej aplikácie, ako aj jednoducho prihlásiť želaných pretekárov do systému SZOS.
 
 Želanými pretekmi sa rozumejú preteky, ktoré si správca zvolí spomedzi vyfiltrovaných pretekov na základe preddefinovaných filtrov, akými budú predovšetkým kalendárny mesiac začiatku konania, prípadne disciplína pretekov. Želanými pretekármi sa rozumejú takí pretekári, ktorých si správca zvolí spomedzi pretekárov, ktorí sa prihlásili na preteky v klubovej aplikácii.
 
-Taktiež treba zabezpečiť vygenerovanie štatistík pre želaných pretekárov na základe dát z API SZOS. To budú grafy poradia na posledných pretekoch, kĺzavého mediánu poradia na posledných pretekoch, počet účastí na pretekoch za uplynulý čas, počet víťazstiev na pretekoch za uplynulý čas. Dalej zobrazí poradie pretekára v klube, celkový počet účastí na pretekoch a víťazstiev na pretekoch.
+Taktiež treba zabezpečiť vygenerovanie štatistík pre želaných pretekárov na základe dát zo systému SZOS. To budú grafy poradia na posledných pretekoch, kĺzavého mediánu poradia na posledných pretekoch, počet účastí na pretekoch za uplynulý čas, počet víťazstiev na pretekoch za uplynulý čas. Dalej zobrazí poradie pretekára v klube, celkový počet účastí na pretekoch a víťazstiev na pretekoch.
 
 Produkt bude mať charakter konzolovej aplikácie, ktorú bude používateľ ovládať cez konzolu. V každej fáze používania produktu budú používateľovi vypísané jeho aktuálne možnosti a bude od neho očakávaná odpoveď, ktorá buď zvolí ďalšiu akciu alebo poskytne produktu dáta na ďalšie spracovanie. Napríklad po spustení produktu sa používateľovi vypíše hlavné menu, v ktorom si zvolí činnosť, ktorú si želá spraviť. Po vykonaní voľby budú od používateľa vyžiadané dáta, ktorými vykoná dopyt.
 
 ## 2.3 Charakteristiky používateľov
-S produktom bude interagovať a pracovať vylučne administrátor klubovej aplikácie. Keďže pôjde o konzolovú aplikáciu, správca bude interagovať s produktom cez konzolu. Overenie identity správcu sa nevyžaduje, nakoľko sa očakáva ostrá prevádzka na serveri zabezpečenom prihlásením.
+S produktom bude interagovať a pracovať výlučne administrátor klubovej aplikácie. Keďže pôjde o konzolovú aplikáciu, správca bude interagovať s produktom cez konzolu. Overenie identity správcu sa nevyžaduje, nakoľko sa očakáva ostrá prevádzka na serveri zabezpečenom prihlásením.
 
 ## 2.4 Všeobecné obmedzenia
 Existujúci klubový systém je webová aplikácia v jazyku PHP využívajúca databázu SQLite, bežiaca na Ubuntu Linux serveri.
@@ -55,22 +56,26 @@ Rozhraním klubového systému je predovšetkým databáza SQLite. Rozhraním sy
 # 3 Špecifické požiadavky {#3}
 Požiadavky sú zoradené od najvyššej priority zostupne.
 
-## 3.1 Komunikácia smerom z API SZOS do klubovej aplikácie
-### 3.1.1 Práca s databázou klubovej aplikácie {#db}
-Schopnosť produktu pridať do databázy klubovej aplikácie nové vekové kategórie, nový pretek a jeho atribúty, ktorými sú názov, dátum a čas konania a deadline prihlasovania.
+## 3.1 Práca s databázou {#db}
+### 3.1.1 Pridanie kategórie
+Produkt je schopný pridať do databázy klubovej aplikácie novú vekovú kategóriu a jej atribút, ktorým je názov (reťazec).
 
-### 3.1.2 Stiahnutie požadovaných pretekov z API
+### 3.1.2 Pridanie preteku
+Produkt je schopný pridať do databázy klubovej aplikácie nový pretek a jeho atribúty, ktorými sú názov (reťazec), dátum a čas konania a deadline prihlasovania.
+
+
+## 3.2 Stiahnutie požadovaných pretekov z API
 Závisí na [práci s databázou](#db).
 
-Správca si v produkte zvolí budúce preteky, ako bolo popísané v kapitole [2.2](#funkcie). Údaje o týchto pretekoch sa stiahnu z API SZOS a uložia do databázy klubovej aplikácie. V prípade, že obsahuje pretek nejaku vekovú kategóriu, ktorá ešte nie je v databáze, pridá ju do nej. V prípade, ak už je nejaký zvolený pretek v databáze, nevloží ho druhý krát.
+Správca si v produkte zvolí budúce preteky, ako bolo popísané v kapitole [2.2](#funkcie). Údaje o týchto pretekoch sa stiahnu z API SZOS a uložia do databázy klubovej aplikácie. V prípade, že obsahuje pretek nejakú vekovú kategóriu, ktorá ešte nie je v databáze, pridá ju do nej. V prípade, ak už je nejaký zvolený pretek v databáze, nevloží ho druhý krát.
 
-## 3.2 Komunikácia z klubovej aplikácie do API SZOS
+## 3.3 Komunikácia z klubovej aplikácie do API SZOS
 ### 3.2.1 Prihlásenie pretekárov
 Závisí na [práci s databázou](#db).
 
 Produkt prečíta z databázy pretekárov, ktorí sa prihlásili na zvolené preteky a prihlási ich na príslušné preteky v systéme SZOS. V prípade, ak už je nejaký z pretekárov prihlásený na tieto preteky, neprihlási ho druhý krát.
 
-## 3.3 Štatistiky
+## 3.4 Štatistiky
 ### 3.3.1 Jednoduché štatistiky
 Pre vybraného pretekára spomedzi členov klubu vypočíta a zobrazí na základe údajov z databázy a API SZOS jeho celkový počet účastí na pretekoch, celkový počet víťazstiev na pretekoch, poradie pretekára spomedzi pretekárov v klube.
 
@@ -81,7 +86,7 @@ Produkt vygeneruje zo štatistík súbor HTML, v ktorom budú prehľadne zobraze
 Závisí na [exporte štatistík do súboru](#html).
 Pre vybraného pretekára spomedzi členov klubu vypočíta a zobrazí grafy jeho poradia na posledných pretekoch, kĺzavého mediánu poradia na posledných pretekoch, počet účastí na pretekoch za uplynulý čas, počet víťazstiev na pretekoch za uplynulý čas.
 
-## 3.4 Voliteľné
+## 3.5 Voliteľné
 Požiadavky v tejto stati nie sú potrebné pre úspešnosť projektu a majú najnižšiu prioritu.
 
 ### 3.4.1 Predvolená kategória

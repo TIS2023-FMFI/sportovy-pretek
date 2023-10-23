@@ -69,7 +69,6 @@ Produkt je schopný pridať do databázy klubovej aplikácie nový pretek a jeho
 Správca si v produkte zvolí budúce preteky, a to tak, že mu aplikácia prostredníctvom konzoly zdelí všetky parametre, zadaním ktorých do príkazu špecifikuje výber pretekov k vylistovaniu. Z pretekov obdržaných od API SZOS vyhovujúcich nastaveným parametrom si správca vyberie jeden alebo viacero z nich, údaje o ktorých sa potom stiahnu z API SZOS a uložia do databázy klubovej aplikácie. V prípade, že obsahuje pretek nejakú vekovú kategóriu, ktorá ešte nie je v databáze, pridá ju do nej. V prípade, ak už je nejaký zvolený pretek v databáze, nevloží ho druhý krát.
 
 ## 3.3 Komunikácia z klubovej aplikácie do API SZOS
-### 3.2.1 Prihlásenie pretekárov
 Produkt správcovi umožní prečítať z databázy pretekárov, ktorí sa prihlásili na zvolené preteky a prihlási ich na príslušné preteky v systéme SZOS. V prípade, ak už je nejaký z pretekárov prihlásený na tieto preteky, neprihlási ho druhý krát.
 
 ## 3.4 Štatistiky

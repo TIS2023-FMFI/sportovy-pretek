@@ -5,7 +5,7 @@ Tento dokument opisuje všetku požadovanú funkcionalitu vyvíjaného projektu 
 ## 1.2 Rozsah produktu
 Vyvinutý informačný systém bude slúžiť správcovi klubovej aplikácie Športového klubu Sandberg.
 
-Produkt má za úlohu predovšetkým zabezpečiť komunikáciu existujúcej webovej aplikácie ["Športový klub"][KA] s oficiálnym [aplikačným rozhraním SZOS][API SZOS]. Ďalej je potrebné umožniť správcovi zobrazenie a export štatistík pre zúčastnených športovcov. 
+Produkt má za úlohu predovšetkým zabezpečiť komunikáciu existujúcej webovej aplikácie ["Športový klub"][KA] s oficiálnym [aplikačným rozhraním SZOS][API SZOS]. Ďalej je potrebné umožniť správcovi zobrazenie a export štatistík pre zúčastnených športovcov buď priamo z príkazového riadku alebo cez modikovaný webový interfejs existujúcej aplikácie Športový klub. 
 
 ## 1.3 Definície s skratky
 - produkt - výsledný informačný systém, ktorý bude riešením týchto požiadaviek
@@ -41,7 +41,9 @@ Produkt musí zabezpečiť obojstrannú komunikáciu klubovej aplikácie so syst
 
 Želanými pretekmi sa rozumejú preteky, ktoré si správca zvolí spomedzi vyfiltrovaných pretekov na základe preddefinovaných filtrov, akými budú predovšetkým kalendárny mesiac začiatku konania, prípadne disciplína pretekov. Želanými pretekármi sa rozumejú takí pretekári, ktorých si správca zvolí spomedzi pretekárov, ktorí sa prihlásili na preteky v klubovej aplikácii.
 
-Taktiež treba zabezpečiť vygenerovanie štatistík pre želaných pretekárov na základe dát zo systému SZOS. To budú grafy poradia na posledných pretekoch, kĺzavého mediánu poradia na posledných pretekoch, počet účastí na pretekoch za uplynulý čas, počet víťazstiev na pretekoch za uplynulý čas. Ďalej zobrazí poradie pretekára v klube, celkový počet účastí na pretekoch a víťazstiev na pretekoch. Okrem toho systém získa automatickým procesom ďalšie údaje priamo z webu SZOS, pomocou ktorých zobrazí rozšírené štatistiky.
+Taktiež treba zabezpečiť vygenerovanie štatistík pre želaných pretekárov na základe dát zo systému SZOS. To budú grafy poradia na zvolených pretekoch z aktuálneho roka, kĺzavého mediánu poradia na zvolených pretekoch z aktuálneho roka, počet účastí na pretekoch za uplynulý čas, počet víťazstiev na pretekoch za uplynulý čas. Ďalej zobrazí poradie pretekára v klube, celkový počet účastí na pretekoch a víťazstiev na pretekoch. Okrem toho systém získa automatickým procesom ďalšie údaje priamo z webu SZOS, pomocou ktorých zobrazí rozšírené štatistiky, teda 1) vývoj percentuálneho odklonu dĺžky trate jedného alebo viacerých zvolených pretekárov oproti ideálnej trase v jednotlivých pretekoch, 2) odchýlka??, 3) penalizácia jedného alebo viacerých pretekárov klubu prirážkou - stĺpcový graf cez jednotlivé preteky, 4) graf priemernej rýchlosti jedného alebo viacerých pretekárov klubu cez jednotlivé preteky, 5) graf vývoja percentilu jedného alebo viacerých pretekárov klubu v pretekoch, 6) relatívne porovnanie časov pretekárov klubu v zvolenom preteku. 
+
+Štatistiky sa generujú v grafickej podobe vo forme HTML súborov (a vložených obrázkov), ich generovanie sa bude štartovať z webovej aplikácie pre športový klub, ktorá ich aj zobrazí vo webovom prehliadači, takže na generovanie/prezeranie štatistík sa používateľ nemusí prihlasovať na Linuxový server.
 
 Produkt bude mať charakter konzolovej aplikácie, ktorú bude používateľ ovládať cez konzolu. V každej fáze používania produktu budú používateľovi vypísané jeho aktuálne možnosti a bude od neho očakávaná odpoveď, ktorá buď zvolí ďalšiu akciu alebo poskytne produktu dáta na ďalšie spracovanie. Napríklad po spustení produktu sa používateľovi vypíše hlavné menu, v ktorom si zvolí činnosť, ktorú si želá spraviť. Po vykonaní voľby budú od používateľa vyžiadané dáta, ktorými vykoná dopyt.
 
@@ -55,7 +57,6 @@ Existujúci klubový systém je webová aplikácia v jazyku PHP využívajúca d
 Rozhraním klubového systému je predovšetkým databáza SQLite. Rozhraním systému SZOS je REST API rozhranie využívajúce API kľúče na overenie identity používateľa. Formát výmeny dát je JSON.
 
 # 3 Špecifické požiadavky {#3}
-Požiadavky sú zoradené od najvyššej priority zostupne.
 
 ## 3.1 Práca s databázou {#db}
 ### 3.1.1 Pridanie kategórie
@@ -63,6 +64,16 @@ Produkt je schopný pridať do databázy klubovej aplikácie novú vekovú kateg
 
 ### 3.1.2 Pridanie preteku
 Produkt je schopný pridať do databázy klubovej aplikácie nový pretek a jeho atribúty, ktorými sú názov (reťazec), dátum a čas konania a deadline prihlasovania.
+
+Používateľ si môže zobraziť zoznam všetkých pretekov.
+
+Používateľ si môže zobraziť zoznam parametrov, ktorými vie zúžiť zoznam pretekov vo formáte poradie parametra - názov parametra.
+
+Používateľ môže nastavovať filter zobrazenia zoznamu pretekov takto:
+  - pridávať parameter: zadá poradie parametra a potom hodnotu parametra
+  - odstaňovať už zadaný parameter
+  - zrušiť všetky parametre
+Po zmene parametrov sa používateľovi vždy zobrazí zúžený zoznam.
 
 
 ## 3.2 Stiahnutie požadovaných pretekov z API

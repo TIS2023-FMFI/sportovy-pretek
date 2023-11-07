@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
+[project]
+name = "orienter"
+version = "0.0.1"
+authors = [
+  { name="David Krchňavý", email="david.krchnavy@dakrc.mailer.me" },
+]
+description = "A project for my university subject Information Systems Development"
+readme = "README.md"
+requires-python = ">=3.11"
+dynamic = ["dependencies"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: The Unlicense (Unlicense)",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/DavidK276/orienter"
+"Bug Tracker" = "https://github.com/DavidK276/orienter/issues"
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
+
+[tool.hatch.build]
+exclude = [
+    ".idea/",
+    "docs/"
+]

@@ -27,12 +27,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install build
-        echo version=$(python -c 'import tomllib; f = open("pyproject.toml", "rb"); print(tomllib.load(f)["project"]["version"]); f.close()') >> $GITHUB_ENV
     - name: Build package
       run: |
         python -m build
     - name: Upload wheel
       uses: actions/upload-artifact@v3
       with:
-        name: "orienter-${{ env.version }}-py3-none-any.whl"
-        path: "dist/orienter-${{ env.version }}-py3-none-any.whl"
+        name: "packages"
+        path: "dist/"

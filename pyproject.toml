@@ -8,7 +8,8 @@ version = "0.0.1"
 authors = [
   { name="David Krchňavý", email="david.krchnavy@dakrc.mailer.me" },
   { name="Ondrej Bublavý", email="bublavy3@uniba.sk" },
-  { name="Ákos Czére", email="czere7@uniba.sk"}
+  { name="Ákos Czére", email="czere7@uniba.sk"},
+  { name="Filip Barančík", email="barancik5@uniba.sk" }
 ]
 description = "A project for my university subject Information Systems Development"
 readme = "README.md"

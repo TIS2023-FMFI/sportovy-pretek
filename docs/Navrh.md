@@ -97,4 +97,4 @@ pretekári >>>
 
 # Diagramy
 ![Sekvenčný diagram](images/sekvencny_diagram.jpg)
-![Use case diagram](images/Use case diagram.png)
+![Use case diagram](images/use_case_diagram.png)

@@ -7,6 +7,7 @@ name = "orienter"
 version = "0.0.1"
 authors = [
   { name="David Krchňavý", email="david.krchnavy@dakrc.mailer.me" },
+  { name="Ondrej Bublavý", email="bublavy3@uniba.sk" },
 ]
 description = "A project for my university subject Information Systems Development"
 readme = "README.md"

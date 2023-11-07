@@ -23,8 +23,8 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/DavidK276/orienter"
-"Bug Tracker" = "https://github.com/DavidK276/orienter/issues"
+"Homepage" = "https://github.com/TIS2023-FMFI/sportovy-pretek"
+"Bug Tracker" = "https://github.com/TIS2023-FMFI/sportovy-pretek/issues"
 
 [tool.hatch.metadata.hooks.requirements_txt]
 files = ["requirements.txt"]

@@ -33,5 +33,6 @@ files = ["requirements.txt"]
 [tool.hatch.build]
 exclude = [
     ".idea/",
-    "docs/"
+    "docs/",
+    ".github/"
 ]

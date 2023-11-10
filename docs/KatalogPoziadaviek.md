@@ -22,6 +22,7 @@ Produkt má za úlohu predovšetkým zabezpečiť komunikáciu existujúcej webo
 - správca - človek, ktorý má zodpovednosť za administráciu klubovej aplikácie 
 - kategória, veková kategória - rozdelenie pretekárov do spádových skupín podľa ich veku, príp. pohlavia
 - disciplína - druh pretekov
+- aktívne preteky - preteky, na ktoré je otvorené prihlasovanie
  
 ## 1.4 Referencie
 [KA]: https://github.com/TIS2017/SportovyKlub "Klubová aplikácia"
@@ -57,34 +58,27 @@ Existujúci klubový systém je webová aplikácia v jazyku PHP využívajúca d
 Rozhraním klubového systému je predovšetkým databáza SQLite. Rozhraním systému SZOS je REST API rozhranie využívajúce API kľúče na overenie identity používateľa. Formát výmeny dát je JSON.
 
 # 3 Špecifické požiadavky {#3}
-- **1. Pridanie kategórie**
-	+ Produkt dokáže pridať do databázy klubovej aplikácie novú vekovú kategóriu a jej atribút, ktorým je názov (reťazec).
+- **3.1 Stiahnutie požadovaných pretekov z API**
+	+ 3.1.1 Správca si v produkte zvolí mesiac konania pretekov, údaje o týchto sa získajú z API SZOS
+	+ 3.1.2 Z pretekov obdržaných od API SZOS vyhovujúcich nastaveným parametrom si správca vyberie jeden alebo viacero z nich. 
+	+ 3.1.3 Údaje vybraných pretekoch sa stiahnu z API SZOS a uložia do databázy klubovej aplikácie.
+      + 3.1.3.1 Pridané preteky nebudú označené ako aktívne
+	+ 3.1.4 V prípade, že obsahuje pretek nejakú vekovú kategóriu, ktorá ešte nie je v databáze, pridá ju do nej.
+	+ 3.1.5 V prípade, ak už je nejaký zvolený pretek v databáze, nevloží ho druhý krát.
 
-- **2. Pridanie pretekov**
-	+ Produkt dokáže pridať do databázy klubovej aplikácie nové preteky a ich atribúty, ktorými sú názov (reťazec), dátum a čas konania a deadline prihlasovania.
-	+ Používateľ si môže zobraziť zoznam všetkých budúcich pretekov.
-	+ Používateľ môže zúžiť zoznam pretekov výberom mesiaca, v ktorom sa majú konať.
+- **3.2 Prihlásenie pretekárov na preteky**
+	+ 3.2.1 Produkt správcovi umožní prečítať z databázy pretekárov, ktorí sa prihlásili na zvolené preteky a prihlási ich na príslušné preteky v systéme SZOS.
+	+ 3.2.2 V prípade, ak už je nejaký z pretekárov prihlásený na tieto preteky, neprihlási ho druhý krát.
 
-- **3. Stiahnutie požadovaných pretekov z API**
-	+ Správca si v produkte zvolí budúce preteky, a to tak, že mu aplikácia prostredníctvom konzoly zdelí všetky parametre, zadaním ktorých do príkazu špecifikuje výber pretekov k vylistovaniu. 
-	+ Z pretekov obdržaných od API SZOS vyhovujúcich nastaveným parametrom si správca vyberie jeden alebo viacero z nich. 
-	+ Údaje vybraných pretekoch sa stiahnu z API SZOS a uložia do databázy klubovej aplikácie.
-	+ V prípade, že obsahuje pretek nejakú vekovú kategóriu, ktorá ešte nie je v databáze, pridá ju do nej.
-	+ V prípade, ak už je nejaký zvolený pretek v databáze, nevloží ho druhý krát.
+- **3.3 Jednoduché štatistiky** - Pre vybraného pretekára spomedzi členov klubu vypočíta a zobrazí na základe údajov z databázy a API SZOS jeho celkový počet účastí na pretekoch, celkový počet víťazstiev na pretekoch, poradie pretekára spomedzi pretekárov v klube.
 
-- **4. Prihlásenie pretekárov na preteky**
-	+ Produkt správcovi umožní prečítať z databázy pretekárov, ktorí sa prihlásili na zvolené preteky a prihlási ich na príslušné preteky v systéme SZOS.
-	+ V prípade, ak už je nejaký z pretekárov prihlásený na tieto preteky, neprihlási ho druhý krát.
+- **3.4 Export do súboru** - Produkt vygeneruje zo štatistík súbor HTML, v ktorom budú prehľadne zobrazené.
 
-- **5. Jednoduché štatistiky** - Pre vybraného pretekára spomedzi členov klubu vypočíta a zobrazí na základe údajov z databázy a API SZOS jeho celkový počet účastí na pretekoch, celkový počet víťazstiev na pretekoch, poradie pretekára spomedzi pretekárov v klube.
+- **3.5 Grafy** - Pre vybraného pretekára spomedzi členov klubu vypočíta a zobrazí grafy jeho poradia na posledných pretekoch, kĺzavého mediánu poradia na posledných pretekoch, počet účastí na pretekoch za uplynulý čas a počet víťazstiev na pretekoch za uplynulý čas.
 
-- **6. Export do súboru** - Produkt vygeneruje zo štatistík súbor HTML, v ktorom budú prehľadne zobrazené.
+- **3.6 Predvolená kategória** - Pri prihlasovaní používateľa na pretek v klubovej aplikácii bude v zozname vekových kategórii predvolene vybraná jeho posledná kategória, na základe dát z API alebo z databázy.
 
-- **7. Grafy** - Pre vybraného pretekára spomedzi členov klubu vypočíta a zobrazí grafy jeho poradia na posledných pretekoch, kĺzavého mediánu poradia na posledných pretekoch, počet účastí na pretekoch za uplynulý čas a počet víťazstiev na pretekoch za uplynulý čas.
+- **3.7 Obmedzenie kategórii** - Pri prihlasovaní používateľa na pretek v klubovej aplikácii nebudú v zozname vekových kategórii také kategórie, na ktoré by sa používateľ na základe pravidiel pretekov nemal mať možnosť prihlásiť.
 
-- **8. Predvolená kategória** - Pri prihlasovaní používateľa na pretek v klubovej aplikácii bude v zozname vekových kategórii predvolene vybraná jeho posledná kategória, na základe dát z API alebo z databázy.
-
-- **9. Obmedzenie kategórii** - Pri prihlasovaní používateľa na pretek v klubovej aplikácii nebudú v zozname vekových kategórii také kategórie, na ktoré by sa používateľ na základe pravidiel pretekov nemal mať možnosť prihlásiť.
-
-- **10. Integrovanie s klubovou aplikáciou** - Všetky funkcie produktu budú dostupné aj prostredníctvom klubovej aplikácie.
+- **3.8 Integrovanie s klubovou aplikáciou** - Všetky funkcie produktu budú dostupné aj prostredníctvom klubovej aplikácie.
 

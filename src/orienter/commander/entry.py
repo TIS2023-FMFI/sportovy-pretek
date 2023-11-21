@@ -43,12 +43,14 @@ menu.append_item(add_race_item)
 
 def signup_racer():
     global prompt_utils
-    prompt_utils.println("Tieto preteky sú aktívne. Vyberte tie, na ktoré chcete prihlásiť používateľov.")
-    # TODO: handle if no races are active
     races = [
         ["1", "25.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"],
         ["2", "26.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"]
     ]  # TODO: get real races instead of example ones
+    if not races:
+        prompt_utils.println("Žiadne preteky nie sú aktívne.")
+        return
+    prompt_utils.println("Tieto preteky sú aktívne. Vyberte tie, na ktoré chcete prihlásiť používateľov.")
     prompt_utils.println(tabulate(races, headers=RACES_TABLE_HEADERS, tablefmt='double_grid'))
     user_response = prompt_utils.input(prompt="číslo pretekov", default=races[0][0]).input_string
     while not validate_multiple_number_input(user_response, max_value=int(races[-1][0]), max_numbers=1):

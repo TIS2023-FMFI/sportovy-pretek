@@ -4,10 +4,16 @@ from consolemenu.prompt_utils import *
 from datetime import datetime
 from .utils import *
 from tabulate import tabulate
+from importlib.metadata import version, PackageNotFoundError
 
 CLEAR_SCREEN = False
-# TODO: add real package version
-menu = ConsoleMenu(f"Hlavné menu", "Orienter v1.0.0",
+VERSION = None
+try:
+    VERSION = version('orienter')
+except PackageNotFoundError:
+    VERSION = "0.0.0"
+
+menu = ConsoleMenu(f"Hlavné menu", f"Orienter v{VERSION}",
                    exit_option_text="Koniec", clear_screen=CLEAR_SCREEN)
 prompt_utils = PromptUtils(menu.screen)
 

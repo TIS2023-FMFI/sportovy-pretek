@@ -24,11 +24,13 @@ def add_race():
     user_response = prompt_utils.input(prompt="mesiac konania pretekov", default=current_month).input_string
     while not validate_month_str(user_response):
         user_response = prompt_utils.input(prompt="mesiac konania pretekov", default=current_month).input_string
-    # TODO: handle if no races are returned
     races = [
         ["1", "25.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"],
         ["2", "26.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"]
     ]  # TODO: get real races instead of example ones
+    if not races:
+        prompt_utils.println("V zadanom mesiaci sa nekonajú žiadne preteky.")
+        return
     prompt_utils.println(tabulate(races, headers=RACES_TABLE_HEADERS, tablefmt='double_grid'))
     user_response = prompt_utils.input(prompt="čísla pretekov oddelené čiarkou", default="vsetky").input_string
     while not validate_multiple_number_input(user_response, max_value=int(races[-1][0])):

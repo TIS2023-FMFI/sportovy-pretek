@@ -82,3 +82,8 @@ class Menu:
             user_response = self.prompt_utils.input(prompt="čísla pretekárov oddelené čiarkou",
                                                     default=races[0][0]).input_string
         # TODO: do stuff with the selection
+
+
+if __name__ == "__main__":
+    menu = Menu()
+    menu.show()

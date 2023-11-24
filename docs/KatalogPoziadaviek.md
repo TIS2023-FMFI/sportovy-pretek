@@ -42,7 +42,7 @@ Produkt musí zabezpečiť obojstrannú komunikáciu klubovej aplikácie so syst
 
 Želanými pretekmi sa rozumejú preteky, ktoré si správca zvolí spomedzi vyfiltrovaných pretekov na základe preddefinovaných filtrov, akými budú predovšetkým kalendárny mesiac začiatku konania, prípadne disciplína pretekov. Želanými pretekármi sa rozumejú takí pretekári, ktorých si správca zvolí spomedzi pretekárov, ktorí sa prihlásili na preteky v klubovej aplikácii.
 
-Taktiež treba zabezpečiť vygenerovanie štatistík pre želaných pretekárov na základe dát zo systému SZOS. To budú pre zvolené obdobie grafy poradia na pretekoch, kĺzavého mediánu poradia na pretekoch, počet účastí na pretekoch, počet víťazstiev na pretekoch. Ďalej zobrazí poradie pretekára v klube, celkový počet účastí na pretekoch a víťazstiev na pretekoch. Okrem toho systém získa automatickým procesom ďalšie údaje priamo z webu SZOS, pomocou ktorých zobrazí rozšírené štatistiky, teda 1) vývoj percentuálneho odklonu dĺžky trate jedného alebo viacerých zvolených pretekárov oproti ideálnej trase v jednotlivých pretekoch, 2) penalizácia jedného alebo viacerých pretekárov klubu prirážkou - stĺpcový graf cez jednotlivé preteky, 3) graf priemernej rýchlosti jedného alebo viacerých pretekárov klubu cez jednotlivé preteky, 4) graf vývoja percentilu jedného alebo viacerých pretekárov klubu v pretekoch, 5) relatívne porovnanie časov pretekárov klubu v zvolenom preteku. 
+Taktiež treba zabezpečiť vygenerovanie štatistík pre želaných pretekárov na základe dát zo systému SZOS. To budú pre zvolené obdobie grafy poradia na pretekoch, kĺzavého mediánu poradia na pretekoch. Na týchto grafoch po každom preteku vznikne nový bod. Taktiež vygeneruje grafy počtu účastí na pretekoch a počtu víťazstiev na pretekoch, kde na grafe budú body pre nejaké časové obdobie kratšie ako zvolené obdobie štatistík a aplikácia si ho sama zvolí. Ďalej zobrazí poradie pretekára v klube, celkový počet účastí na pretekoch a víťazstiev na pretekoch. Okrem toho systém získa automatickým procesom ďalšie údaje priamo z webu SZOS, pomocou ktorých zobrazí rozšírené štatistiky, teda 1) vývoj percentuálneho odklonu dĺžky trate jedného alebo viacerých zvolených pretekárov oproti ideálnej trase v jednotlivých pretekoch, 2) penalizácia jedného alebo viacerých pretekárov klubu prirážkou - stĺpcový graf cez jednotlivé preteky, 3) graf priemernej rýchlosti jedného alebo viacerých pretekárov klubu cez jednotlivé preteky, 4) graf vývoja percentilu jedného alebo viacerých pretekárov klubu v pretekoch, 5) relatívne porovnanie časov pretekárov klubu v zvolenom preteku. 
 
 Štatistiky sa generujú v grafickej podobe vo forme HTML súborov (a vložených obrázkov), ich generovanie sa bude štartovať z webovej aplikácie pre športový klub, ktorá ich aj zobrazí vo webovom prehliadači, takže na generovanie/prezeranie štatistík sa používateľ nemusí prihlasovať na Linuxový server.
 
@@ -59,16 +59,16 @@ Rozhraním klubového systému je predovšetkým databáza SQLite. Rozhraním sy
 
 # 3 Špecifické požiadavky {#3}
 - **3.1 Stiahnutie požadovaných pretekov z API**
-	+ 3.1.1 Správca si v produkte zvolí mesiac konania pretekov, údaje o týchto sa získajú z API SZOS
-	+ 3.1.2 Z pretekov obdržaných od API SZOS vyhovujúcich nastaveným parametrom si správca vyberie jeden alebo viacero z nich. 
-	+ 3.1.3 Údaje vybraných pretekoch sa stiahnu z API SZOS a uložia do databázy klubovej aplikácie.
-      + 3.1.3.1 Pridané preteky nebudú označené ako aktívne
-	+ 3.1.4 V prípade, že obsahuje pretek nejakú vekovú kategóriu, ktorá ešte nie je v databáze, pridá ju do nej.
-	+ 3.1.5 V prípade, ak už je nejaký zvolený pretek v databáze, nevloží ho druhý krát.
+	+ 3.1.1 Správca si v produkte zvolí mesiac konania pretekov, údaje o týchto sa získajú z API SZOS a zobrazia sa správcovi v zozname.
+	+ 3.1.2 Zo zobrazených pretekov si správca vyberie jeden alebo viacero z nich. 
+	+ 3.1.3 Údaje vybraných pretekoch sa uložia do databázy klubovej aplikácie.
+      		+ 3.1.3.1 Pridané preteky nebudú označené ako aktívne.
+		+ 3.1.3.2 V prípade, že obsahuje pretek nejakú vekovú kategóriu, ktorá ešte nie je v databáze, pridá ju do nej.
+		+ 3.1.3.3 V prípade, ak už je nejaký zvolený pretek v databáze, nevloží ho druhýkrát a upozorní používateľa.
 
 - **3.2 Prihlásenie pretekárov na preteky**
 	+ 3.2.1 Produkt správcovi umožní prečítať z databázy pretekárov, ktorí sa prihlásili na zvolené preteky a prihlási ich na príslušné preteky v systéme SZOS.
-	+ 3.2.2 V prípade, ak už je nejaký z pretekárov prihlásený na tieto preteky, neprihlási ho druhý krát.
+	+ 3.2.2 V prípade, ak už je nejaký z pretekárov prihlásený na tieto preteky, neprihlási ho druhý krát a upozorní používateľa.
 
 - **3.3 Jednoduché štatistiky** - Pre vybraného pretekára spomedzi členov klubu vypočíta a zobrazí na základe údajov z databázy a API SZOS jeho celkový počet účastí na pretekoch, celkový počet víťazstiev na pretekoch, poradie pretekára spomedzi pretekárov v klube.
 

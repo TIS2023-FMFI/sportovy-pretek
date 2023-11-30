@@ -93,8 +93,24 @@ q - návrat
 pretekári >>>
 ```
 
+# Návrh grafického rozhrania
+## Pridanie nových pretekov
+![Pridanie nových pretekov](images/novy_pretek.png)
 
+## Prihlasovanie účastníkov pretekov
+![Prihlasovanie pretekárov](images/pridanie_pretekov.png)
+
+## Generovanie štatistík
+![Generovanie štatistík](images/generovanie_statistik.png)
+
+# Návrh zobrazenia štatistík
+## Štatistiky jedného pretekára
+![štatistiky jedného pretekára](images/statistics_mockup_one_racer.jpeg)
+
+## Štatistiky viacerých pretekárov
+![štatistiky viacerých pretekárov](images/statistics_mockup_multiple_racers.jpeg)
 
 # Diagramy
 ![Sekvenčný diagram](images/sekvencny_diagram.png)
 ![Use case diagram](images/use_case_diagram.png)
+![Component diagram](images/komponent_diagram.png)

@@ -101,13 +101,19 @@ pretekári >>>
 ![Prihlasovanie pretekárov](images/pridanie_pretekov.png)
 
 ## Generovanie štatistík
+Používateľ vyznačením zaškrtávacích okienok zvolí pretekárov, pre ktorých aplikácia vygeneruje HTML súbor obsahujúci ich štatistiky. Pri zvolení len jednoho pretekára, bude vygenerovaný sumár jeho individuálnych štatistík. Pri zvolení viacerych pretekárov, bude vygenerovaný tiež len jeden súbor, kde budú títo pretekári porovnaní na základe ich štatistík. Ak je funkcia spustená z webového rozhrania, časový interval, za ktorý sú štatistiky generované, je automaticky nastavený na jeden rok. V konzolovej aplikácii si však správca môže zvoliť ľubovoľný časový rozsah.
+
 ![Generovanie štatistík](images/generovanie_statistik.png)
 
 # Návrh zobrazenia štatistík
+Vygenerovaný HTML dokument obsahujúci štatistiky pretekára alebo pretekárov pozostáva z dvoch sekcii. Prvá je Prehľad - ten zobrazí akumulované informácie za celú zaznamenanú históriu pretekára v klube Sandberg. Druhá sú grafy na základe štatistík za zvolený alebo prednastavený časový interval. 
+
 ## Štatistiky jedného pretekára
 ![štatistiky jedného pretekára](images/statistics_mockup_one_racer.jpeg)
 
 ## Štatistiky viacerých pretekárov
+Štatistiky porovnávajúce viacerých pretekárov obsahujú jeden graf navyše, a to porovnanie časov na pretekoch za dané čaosvé obdobie. Porovnávať časy medzi pretekmi jednoho pretekára by vzhľadom na odlišné dĺžky ich trás nemalo význam.
+
 ![štatistiky viacerých pretekárov](images/statistics_mockup_multiple_racers.jpeg)
 
 # Diagramy

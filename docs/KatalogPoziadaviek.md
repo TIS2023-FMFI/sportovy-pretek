@@ -119,13 +119,13 @@ API kľúče na overenie identity používateľa. Formát výmeny dát je JSON.
       štatistík.
     + 3.3.2 Produkt na základe vybraných používateľov a vybraného obdobia vygeneruje HTML súbor, ktorý bude obsahovať
       tieto štatistiky:
-        + 3.3.2.1 jednoduché štatistiky, akými sú:
+        + 3.3.2.1 jednoduché štatistiky zobrazené v tabuľke, akými sú:
             + celkový počet účastí na pretekoch
             + celkový počet víťazstiev na pretekoch
             + poradie pretekára spomedzi pretekárov v klube
         + 3.3.2.2 grafy:
-            + poradia na pretekoch na ktorých sa používateľ zúčastnil, pre každý pretek jeden bod na grafe
-            + kĺzavého mediánu poradia na pretekoch, pre každý pretek jeden bod na grafe
+            + poradia na pretekoch, na ktorých sa aspoň jeden používateľ zúčastnil, pre každý pretek jeden bod na grafe
+            + kĺzavého mediánu poradia z posledných piatich pretekov, na ktorých sa zúčastnil, pre každý pretek jeden bod na grafe
             + počet účastí na pretekoch, kde jeden bod na grafe predstavuje časové obdobie kratšie ako časové obdobie
               štatistík a produkt si ho určí sám
             + počet víťazstiev na pretekoch, kde jeden bod na grafe predstavuje časové obdobie kratšie ako časové
@@ -133,7 +133,7 @@ API kľúče na overenie identity používateľa. Formát výmeny dát je JSON.
             + percentuálneho odklonu dĺžky trate oproti ideálnej trase, pre každý pretek jeden bod na grafe
             + penalizácie prirážkou, pre každý pretek jeden bod na grafe
             + priemernej rýchlosti, pre každý pretek jeden bod na grafe
-            + vývoja percentilu v klube, pre každý pretek jeden bod na grafe
+            + vývoja percentilu z každého preteku spomedzi prekátorov, ktorí sú v klube, pre každý pretek jeden bod na grafe
             + časov pretekov, pre každý pretek jeden bod na grafe, zobrazený len pri výbere viacerých pretekárov za
               účelom ich porovnania
 

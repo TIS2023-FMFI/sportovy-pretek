@@ -70,7 +70,7 @@ preddefinovaných filtrov, akými budú predovšetkým kalendárny mesiac začia
 preteky v klubovej aplikácii.
 
 Taktiež treba zabezpečiť vygenerovanie štatistík pre jedného alebo viacerých zvolených pretekárov pre zadané časové
-obdobie na základe dát zo systému SZOS. Sú podrobne popísané v časti 3.3.2.2. Štatistiky sa generujú v grafickej podobe
+obdobie na základe dát zo systému SZOS. Sú podrobne popísané v časti 3.3. Štatistiky sa generujú v grafickej podobe
 vo forme jedného HTML súboru (a vložených obrázkov), ktorý bude obsahovať vždy všetky štatistiky pre zvolený výber
 pretekárov a časového obdobia a ich generovanie bude možné spustiť aj z webovej aplikácie pre športový klub, ktorá ich
 aj zobrazí vo webovom prehliadači, takže na generovanie/prezeranie štatistík sa používateľ nemusí prihlasovať na

@@ -101,7 +101,7 @@ pretekári >>>
 ![Prihlasovanie pretekárov](images/pridanie_pretekov.png)
 
 ## Generovanie štatistík
-Používateľ vyznačením zaškrtávacích okienok zvolí pretekárov, pre ktorých aplikácia vygeneruje HTML súbor obsahujúci ich štatistiky. Pri zvolení len jednoho pretekára, bude vygenerovaný sumár jeho individuálnych štatistík. Pri zvolení viacerych pretekárov, bude vygenerovaný tiež len jeden súbor, kde budú títo pretekári porovnaní na základe ich štatistík. Ak je funkcia spustená z webového rozhrania, časový interval, za ktorý sú štatistiky generované, je automaticky nastavený na jeden rok. V konzolovej aplikácii si však správca môže zvoliť ľubovoľný časový rozsah.
+Používateľ vyznačením zaškrtávacích okienok zvolí pretekárov, pre ktorých aplikácia vygeneruje HTML súbor obsahujúci ich štatistiky. Pri zvolení len jedného pretekára, bude vygenerovaný sumár jeho individuálnych štatistík. Pri zvolení viacerych pretekárov, bude vygenerovaný tiež len jeden súbor, kde budú títo pretekári porovnaní na základe ich štatistík. Ak je funkcia spustená z webového rozhrania, časový interval, za ktorý sú štatistiky generované, je automaticky nastavený na jeden rok. V konzolovej aplikácii si však správca môže zvoliť ľubovoľný časový rozsah.
 
 ![Generovanie štatistík](images/generovanie_statistik.png)
 

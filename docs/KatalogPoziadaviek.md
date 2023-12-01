@@ -69,7 +69,12 @@ preddefinovaných filtrov, akými budú predovšetkým kalendárny mesiac začia
 Želanými pretekármi sa rozumejú takí pretekári, ktorých si správca zvolí spomedzi pretekárov, ktorí sa prihlásili na
 preteky v klubovej aplikácii.
 
-Taktiež treba zabezpečiť vygenerovanie štatistík pre jedného alebo viacerých zvolených pretekárov pre zadané časové obdobie na základe dát zo systému SZOS. Sú podrobne popísané v časti 3.3.2.2. Štatistiky sa generujú v grafickej podobe vo forme jedného HTML súboru (a vložených obrázkov), ktorý bude obsahovať vždy všetky štatistiky pre zvolený výber pretekárov a časového obdobia a ich generovanie bude možné spustiť aj z webovej aplikácie pre športový klub, ktorá ich aj zobrazí vo webovom prehliadači, takže na generovanie/prezeranie štatistík sa používateľ nemusí prihlasovať na Linuxový server. Funkcionalitu ale môže vyvolať aj z príkazového riadku a vygeneruje sa HTML súbor.
+Taktiež treba zabezpečiť vygenerovanie štatistík pre jedného alebo viacerých zvolených pretekárov pre zadané časové
+obdobie na základe dát zo systému SZOS. Sú podrobne popísané v časti 3.3.2.2. Štatistiky sa generujú v grafickej podobe
+vo forme jedného HTML súboru (a vložených obrázkov), ktorý bude obsahovať vždy všetky štatistiky pre zvolený výber
+pretekárov a časového obdobia a ich generovanie bude možné spustiť aj z webovej aplikácie pre športový klub, ktorá ich
+aj zobrazí vo webovom prehliadači, takže na generovanie/prezeranie štatistík sa používateľ nemusí prihlasovať na
+Linuxový server. Funkcionalitu ale môže vyvolať aj z príkazového riadku a vygeneruje sa HTML súbor.
 
 Produkt bude mať charakter konzolovej aplikácie, ktorú bude používateľ ovládať cez konzolu. V každej fáze používania
 produktu budú používateľovi vypísané jeho aktuálne možnosti a bude od neho očakávaná odpoveď, ktorá buď zvolí ďalšiu
@@ -124,8 +129,10 @@ API kľúče na overenie identity používateľa. Formát výmeny dát je JSON.
             + celkový počet víťazstiev na pretekoch
             + poradie pretekára spomedzi pretekárov v klube
         + 3.3.2.2 grafy:
-            + poradia na pretekoch, na ktorých sa aspoň jeden používateľ zúčastnil, pre každý pretek jeden bod na grafe
-            + kĺzavého mediánu poradia z posledných piatich pretekov, na ktorých sa zúčastnil, pre každý pretek jeden bod na grafe
+            + poradia na pretekoch, na ktorých sa aspoň jeden vybraný používateľ zúčastnil, pre každý pretek jeden bod
+              na grafe
+            + kĺzavého mediánu poradia z posledných piatich pretekov, na ktorých sa zúčastnil, pre každý pretek jeden
+              bod na grafe
             + počet účastí na pretekoch, kde jeden bod na grafe predstavuje časové obdobie kratšie ako časové obdobie
               štatistík a produkt si ho určí sám
             + počet víťazstiev na pretekoch, kde jeden bod na grafe predstavuje časové obdobie kratšie ako časové
@@ -133,7 +140,7 @@ API kľúče na overenie identity používateľa. Formát výmeny dát je JSON.
             + percentuálneho odklonu dĺžky trate oproti ideálnej trase, pre každý pretek jeden bod na grafe
             + penalizácie prirážkou, pre každý pretek jeden bod na grafe
             + priemernej rýchlosti, pre každý pretek jeden bod na grafe
-            + vývoja percentilu z každého preteku spomedzi prekátorov, ktorí sú v klube, pre každý pretek jeden bod na grafe
+            + vývoja percentilu v porovnaní s pretekármi, ktorí sú v klube, pre každý pretek jeden bod na grafe
             + časov pretekov, pre každý pretek jeden bod na grafe, zobrazený len pri výbere viacerých pretekárov za
               účelom ich porovnania
 

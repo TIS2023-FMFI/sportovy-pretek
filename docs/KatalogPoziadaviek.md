@@ -69,19 +69,7 @@ preddefinovaných filtrov, akými budú predovšetkým kalendárny mesiac začia
 Želanými pretekármi sa rozumejú takí pretekári, ktorých si správca zvolí spomedzi pretekárov, ktorí sa prihlásili na
 preteky v klubovej aplikácii.
 
-Taktiež treba zabezpečiť vygenerovanie štatistík pre želaných pretekárov na základe dát zo systému SZOS. To bude graf
-poradia na pretekoch pre správcom zvolené obdobie a graf kĺzavého mediánu poradia želaných pretekárov v posledných piatich
-pretekoch, na ktorých sa zúčastnili. Na týchto grafoch po každom preteku vznikne nový bod.
-Ďalej zobrazí poradie pretekára v klube, celkový počet účastí na pretekoch a víťazstiev na pretekoch. Okrem toho systém získa
-automatickým procesom ďalšie údaje priamo z webu SZOS, pomocou ktorých zobrazí rozšírené štatistiky, teda 1) vývoj
-percentuálneho odklonu dĺžky trate jedného alebo viacerých zvolených pretekárov oproti ideálnej trase v jednotlivých
-pretekoch, 2) penalizácia jedného alebo viacerých pretekárov klubu prirážkou - stĺpcový graf cez jednotlivé preteky, 3)
-graf priemernej rýchlosti jedného alebo viacerých pretekárov klubu cez jednotlivé preteky, 4) graf vývoja percentilu
-jedného alebo viacerých pretekárov klubu v pretekoch, 5) relatívne porovnanie časov pretekárov klubu v zvolenom období.
-
-Štatistiky sa generujú v grafickej podobe vo forme HTML súborov (a vložených obrázkov), ich generovanie bude možné spustiť
-aj z webovej aplikácie pre športový klub, ktorá ich aj zobrazí vo webovom prehliadači, takže na
-generovanie/prezeranie štatistík sa používateľ nemusí prihlasovať na Linuxový server.
+Taktiež treba zabezpečiť vygenerovanie štatistík pre jedného alebo viacerých zvolených pretekárov pre zadané časové obdobie na základe dát zo systému SZOS. Sú podrobne popísané v časti 3.3.2.2. Štatistiky sa generujú v grafickej podobe vo forme jedného HTML súboru (a vložených obrázkov), ktorý bude obsahovať vždy všetky štatistiky pre zvolený výber pretekárov a časového obdobia a ich generovanie bude možné spustiť aj z webovej aplikácie pre športový klub, ktorá ich aj zobrazí vo webovom prehliadači, takže na generovanie/prezeranie štatistík sa používateľ nemusí prihlasovať na Linuxový server. Funkcionalitu ale môže vyvolať aj z príkazového riadku a vygeneruje sa HTML súbor.
 
 Produkt bude mať charakter konzolovej aplikácie, ktorú bude používateľ ovládať cez konzolu. V každej fáze používania
 produktu budú používateľovi vypísané jeho aktuálne možnosti a bude od neho očakávaná odpoveď, ktorá buď zvolí ďalšiu

@@ -15,7 +15,7 @@ oficiálnym [aplikačným rozhraním SZOS][API SZOS]. Ďalej je potrebné umožn
 zúčastnených športovcov buď priamo z príkazového riadku alebo cez modikovaný webový interfejs existujúcej aplikácie
 Športový klub.
 
-## 1.3 Definície s skratky
+## 1.3 Definície a skratky
 
 - produkt - výsledný informačný systém, ktorý bude riešením týchto požiadaviek
 - klubová aplikácia - webová aplikácia, ktorú používajú členovia Športového klubu Sandberg ako aj správca
@@ -69,19 +69,18 @@ preddefinovaných filtrov, akými budú predovšetkým kalendárny mesiac začia
 Želanými pretekármi sa rozumejú takí pretekári, ktorých si správca zvolí spomedzi pretekárov, ktorí sa prihlásili na
 preteky v klubovej aplikácii.
 
-Taktiež treba zabezpečiť vygenerovanie štatistík pre želaných pretekárov na základe dát zo systému SZOS. To budú pre
-zvolené obdobie grafy poradia na pretekoch, kĺzavého mediánu poradia na pretekoch. Na týchto grafoch po každom preteku
-vznikne nový bod. Taktiež produkt vygeneruje grafy počtu účastí na pretekoch a počtu víťazstiev na pretekoch, kde na
-grafe budú body pre nejaké časové obdobie kratšie ako zvolené obdobie štatistík a aplikácia si ho sama zvolí. Ďalej
-zobrazí poradie pretekára v klube, celkový počet účastí na pretekoch a víťazstiev na pretekoch. Okrem toho systém získa
+Taktiež treba zabezpečiť vygenerovanie štatistík pre želaných pretekárov na základe dát zo systému SZOS. To bude graf
+poradia na pretekoch pre správcom zvolené obdobie a graf kĺzavého mediánu poradia želaných pretekárov v posledných piatich
+pretekoch, na ktorých sa zúčastnili. Na týchto grafoch po každom preteku vznikne nový bod.
+Ďalej zobrazí poradie pretekára v klube, celkový počet účastí na pretekoch a víťazstiev na pretekoch. Okrem toho systém získa
 automatickým procesom ďalšie údaje priamo z webu SZOS, pomocou ktorých zobrazí rozšírené štatistiky, teda 1) vývoj
 percentuálneho odklonu dĺžky trate jedného alebo viacerých zvolených pretekárov oproti ideálnej trase v jednotlivých
 pretekoch, 2) penalizácia jedného alebo viacerých pretekárov klubu prirážkou - stĺpcový graf cez jednotlivé preteky, 3)
 graf priemernej rýchlosti jedného alebo viacerých pretekárov klubu cez jednotlivé preteky, 4) graf vývoja percentilu
 jedného alebo viacerých pretekárov klubu v pretekoch, 5) relatívne porovnanie časov pretekárov klubu v zvolenom období.
 
-Štatistiky sa generujú v grafickej podobe vo forme HTML súborov (a vložených obrázkov), ich generovanie sa bude
-štartovať z webovej aplikácie pre športový klub, ktorá ich aj zobrazí vo webovom prehliadači, takže na
+Štatistiky sa generujú v grafickej podobe vo forme HTML súborov (a vložených obrázkov), ich generovanie bude možné spustiť
+aj z webovej aplikácie pre športový klub, ktorá ich aj zobrazí vo webovom prehliadači, takže na
 generovanie/prezeranie štatistík sa používateľ nemusí prihlasovať na Linuxový server.
 
 Produkt bude mať charakter konzolovej aplikácie, ktorú bude používateľ ovládať cez konzolu. V každej fáze používania

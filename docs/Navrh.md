@@ -8,9 +8,14 @@ požiadaviek v kóde, mimo neho a ďalšie úpravy.
 
 # Špecifikácia vonkajších interfejsov
 
-Medzi vonkajšie interfejsy aplikácie patria jej konzolové rozhranie a aj grafické rozhranie existujúcej aplikácie, ktorá
-bude rozšírená o nové prvky. ďalej k nim patria súbory exportu vo formáte HTML, súbor databázy SQLite a
-aj [API SZOS](https://sandberg.orienteering.sk/api/API-dokumentacia.html).
+Medzi vonkajšie interfejsy aplikácie patria:
+- konfiguračný súbor vo formáte TOML, z ktorého produkt načítava svoje nastavenia
+- konzolové rozhranie, s ktorým používateľ obsluhuje funkcie produktu
+- CLI rozhranie, pomocou ktorého spúšťa funkcie produktu existujúca klubová aplikácia
+- webové rozhranie existujúcej klubovej aplikácie
+- súbory štatistík vo formáte HTML
+- súbor SQLite databázy klubovej aplikácie
+- [API SZOS](https://sandberg.orienteering.sk/api/API-dokumentacia.html)
 
 # Návrh dátového modelu
 
@@ -152,3 +157,12 @@ ten zobrazí akumulované informácie za celú zaznamenanú históriu pretekára
 ![Sekvenčný diagram](images/sekvencny_diagram.png)
 ![Use case diagram](images/use_case_diagram.png)
 ![Component diagram](images/komponent_diagram.png)
+
+# Harmonogram implementácie
+1. implementovať nasledovné:
+   - konfiguračný súbor aplikácie
+   - databázové CRUD operácie
+   - všetky API volania
+   - CLI rozhranie
+   - šablóna štatistík
+2. otestovať všetky tieto komponenty osobitne

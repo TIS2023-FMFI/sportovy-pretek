@@ -99,7 +99,7 @@ class Menu:
                                    multi_select=True, accept_keys=("enter", "q"))
         selected_racers = racers_menu.show()
         if racers_menu.chosen_accept_key == 'q':
-            Menu.main_menu()
+            Menu.signup_menu()
             return
 
         print("Selected racers:", selected_racers)  # TODO: do stuff with the selection

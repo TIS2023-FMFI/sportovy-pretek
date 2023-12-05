@@ -1,89 +1,115 @@
-from consolemenu import *
-from consolemenu.items import *
-from consolemenu.prompt_utils import *
-from datetime import datetime
-from .utils import *
-from tabulate import tabulate
+import random
+import string
 from importlib.metadata import version, PackageNotFoundError
+from os import environ
+from pathlib import Path
+
+from simple_term_menu import TerminalMenu
+
+from .utils import MONTHS_FULL
 
 
 class Menu:
-    def __init__(self):
-        self.CLEAR_SCREEN = False
-        self.VERSION = None
+    @staticmethod
+    def main_menu():
         try:
-            self.VERSION = version('orienter')
+            orienter_version = version('orienter')
         except PackageNotFoundError:
-            self.VERSION = "0.0.0"
+            orienter_version = "0.0.0"
 
-        self.menu = ConsoleMenu(f"Hlavné menu", f"Orienter v{self.VERSION}",
-                                exit_option_text="Koniec", clear_screen=self.CLEAR_SCREEN)
-        self.prompt_utils = PromptUtils(self.menu.screen)
-
-        add_race_item = FunctionItem("Pridanie nových pretekov", self.add_race, menu=self.menu)
-        self.menu.append_item(add_race_item)
-
-        signup_racer_item = FunctionItem("Prihlasovanie účastníkov", self.signup_racer, menu=self.menu)
-        self.menu.append_item(signup_racer_item)
-
-        statistics_submenu = SelectionMenu([], exit_option_text="Návrat", clear_screen=self.CLEAR_SCREEN)
-        statistics_item = SubmenuItem("Štatistiky", statistics_submenu, self.menu)
-        self.menu.append_item(statistics_item)
-
-    def show(self):
-        self.menu.show()
-
-    def add_race(self):
-        current_month = month_number_to_str(datetime.now().month - 1)
-        user_response = self.prompt_utils.input(prompt="mesiac konania pretekov", default=current_month).input_string
-        while not validate_month_str(user_response):
-            user_response = self.prompt_utils.input(prompt="mesiac konania pretekov",
-                                                    default=current_month).input_string
-        races = [
-            ["1", "25.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"],
-            ["2", "26.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"]
-        ]  # TODO: get real races instead of example ones
-        if not races:
-            self.prompt_utils.println("V zadanom mesiaci sa nekonajú žiadne preteky.")
+        options = ["Pridanie nových pretekov", "Prihlasovanie účastníkov", "Štatistiky"]
+        menu = TerminalMenu(options, title=f"Orienter v{orienter_version} - Hlavné menu\n"
+                                           "(ukončiť pomocou klávesu q)", accept_keys=("enter", "q"))
+        selected_option_index = menu.show()
+        if menu.chosen_accept_key == 'q':
             return
-        self.prompt_utils.println(tabulate(races, headers=RACES_TABLE_HEADERS, tablefmt='double_grid'))
-        user_response = self.prompt_utils.input(prompt="čísla pretekov oddelené čiarkou", default="vsetky").input_string
-        while not validate_multiple_number_input(user_response, max_value=int(races[-1][0])):
-            user_response = self.prompt_utils.input(prompt="čísla pretekov oddelené čiarkou",
-                                                    default="vsetky").input_string
-        self.prompt_utils.println("vybrane preteky:", user_response)
-        # TODO: do stuff with the selection
 
-    def signup_racer(self):
-        races = [
-            ["1", "25.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"],
-            ["2", "26.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"]
-        ]  # TODO: get real races instead of example ones
-        if not races:
-            self.prompt_utils.println("Žiadne preteky nie sú aktívne.")
+        submenus = [Menu.add_race_menu, Menu.signup_menu, Menu.statistics_menu]
+        submenus[selected_option_index]()
+
+    @staticmethod
+    def add_race_menu():
+        month_menu = TerminalMenu(MONTHS_FULL, title="(návrat pomocou klávesu q)", accept_keys=("enter", "q"))
+        selected_month_index = month_menu.show()
+        if month_menu.chosen_accept_key == 'q':
+            Menu.main_menu()
             return
-        self.prompt_utils.println("Tieto preteky sú aktívne. Vyberte tie, na ktoré chcete prihlásiť používateľov.")
-        self.prompt_utils.println(tabulate(races, headers=RACES_TABLE_HEADERS, tablefmt='double_grid'))
-        user_response = self.prompt_utils.input(prompt="číslo pretekov", default=races[0][0]).input_string
-        while not validate_multiple_number_input(user_response, max_value=int(races[-1][0]), max_numbers=1):
-            user_response = self.prompt_utils.input(prompt="čísla pretekov oddelené čiarkou",
-                                                    default="vsetky").input_string
 
-        self.prompt_utils.println("Títo pretekári sa prihlásili na zvolené preteky.")
-        self.prompt_utils.println("Zadajte čísla tých, ktorých neprihlásiť.")
+        races = [
+            ["Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT", "25.05.2024"],
+            ["Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT", "26.05.2024"]
+        ]  # TODO: get real races instead of example ones
+        # TODO: handle empty races
+        joined_races = [", ".join(race) for race in races]
+        races_menu = TerminalMenu(joined_races, title="Vyberte preteky.\n"
+                                                      "Názov, miesto konania, organizátor, dátum konania"
+                                                      "(návrat pomocou klávesu q)",
+                                  multi_select=True, accept_keys=("enter", "q"))
+        selected_races = races_menu.show()
+        if races_menu.chosen_accept_key == 'q':
+            Menu.add_race_menu()
+            return
+        print("Selected races:", selected_races)  # TODO: do stuff with the selection
+
+    @staticmethod
+    def signup_menu():
+        active_races = [
+            ["Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT", "25.05.2024"],
+            ["Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT", "26.05.2024"]
+        ]  # TODO: get real races instead of example ones
+        # TODO: handle empty races
+        joined_races = [", ".join(race) for race in active_races]
+        races_menu = TerminalMenu(joined_races, title="Vyberte preteky.\n"
+                                                      "Názov, miesto konania, organizátor, dátum konania"
+                                                      "(návrat pomocou klávesu q)",
+                                  multi_select=False, accept_keys=("enter", "q"))
+        selected_races = races_menu.show()
+        if races_menu.chosen_accept_key == 'q':
+            Menu.main_menu()
+            return
+
         racers = [
-            ["1", "David Krchňavý", "SKS01101", "chory"],
-            ["2", "Ondrej Bublavý", "SKS00109", ""],
+            ["David Krchňavý", "SKS01101", "chory"],
+            ["Ondrej Bublavý", "SKS00109", ""],
         ]  # TODO: get real racers instead of example ones
-        self.prompt_utils.println(tabulate(racers, headers=RACES_TABLE_HEADERS, tablefmt='double_grid'))
-        user_response = self.prompt_utils.input(prompt="čísla pretekárov oddelené čiarkou",
-                                                default=races[0][0]).input_string
-        while not validate_multiple_number_input(user_response, max_value=int(races[-1][0])):
-            user_response = self.prompt_utils.input(prompt="čísla pretekárov oddelené čiarkou",
-                                                    default=races[0][0]).input_string
-        # TODO: do stuff with the selection
+        # TODO: handle empty racers
+        joined_racers = [", ".join(racer) for racer in racers]
+        racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
+                                                        "Meno a priezvisko, klubové id, poznámka"
+                                                        "(návrat pomocou klávesu q)",
+                                   multi_select=True, accept_keys=("enter", "q"))
+        selected_racers = racers_menu.show()
+        if racers_menu.chosen_accept_key == 'q':
+            Menu.signup_menu()
+            return
+
+        print("Selected racers:", selected_racers)  # TODO: do stuff with the selection
+
+    @staticmethod
+    def statistics_menu():
+        racers = [
+            ["David Krchňavý", "SKS01101", "chory"],
+            ["Ondrej Bublavý", "SKS00109", ""],
+        ]  # TODO: get real racers instead of example ones
+        # TODO: handle empty racers
+        joined_racers = [", ".join(racer) for racer in racers]
+        racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
+                                                        "Meno a priezvisko, klubové id, poznámka"
+                                                        "(návrat pomocou klávesu q)",
+                                   multi_select=True, accept_keys=("enter", "q"))
+        selected_racers = racers_menu.show()
+        if racers_menu.chosen_accept_key == 'q':
+            Menu.signup_menu()
+            return
+
+        print("Selected racers:", selected_racers)  # TODO: do stuff with the selection
+        filename = "orienter_" + ''.join(random.choice(string.ascii_lowercase) for _ in range(6)) + ".html"
+        path = Path(environ["HOME"]) / filename
+        chosen_path = input(f"Zadajte názov súboru aj s cestou [{path}]: ")
+        path = chosen_path or path
+
+        print("Chosen path:", path)  # TODO: do stuff with the selection
 
 
 if __name__ == "__main__":
-    menu = Menu()
-    menu.show()
+    Menu.main_menu()

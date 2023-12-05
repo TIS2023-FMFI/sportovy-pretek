@@ -1,4 +1,6 @@
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
+MONTHS_FULL = ["Január", "Február", "Marec", "Arpíl", "Máj", "Jún",
+               "Júl", "August", "September", "Október", "November", "December"]
 RACES_TABLE_HEADERS = ["Číslo", "Dátum", "Názov", "Miesto", "Organizátor"]
 RACER_TABLE_HEADERS = ["Číslo", "Meno a priezvisko", "Klubové ID", "Poznámka"]
 

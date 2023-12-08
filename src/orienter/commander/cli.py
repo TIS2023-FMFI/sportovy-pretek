@@ -1,10 +1,13 @@
 import click
+from .menu import Menu
 
 
-@click.group()
-def cli():
-    ...
-    # this will contain a call to the menu in case no parameters are passed
+@click.group(invoke_without_command=True)
+@click.pass_context
+def cli(ctx):
+    if ctx.invoked_subcommand is None:
+        Menu.main_menu()
+        return
 
 
 @cli.command()

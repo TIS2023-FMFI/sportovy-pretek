@@ -1,6 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey, Date, DateTime, Time, Text, Boolean, Float
 
-
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -51,7 +50,8 @@ class Competition(Base):
     is_active = Column("aktiv", Boolean)
     comment = Column("poznamka", Text)
 
-class Competition_categories(Base):
+
+class CompetitionCategory(Base):
     __tablename__ = "Kategorie_pre"
     comp_cat_id = Column("id", Integer, primary_key=True, autoincrement=True)
     competition_id = Column("id_pret", Integer, ForeignKey("Preteky.id"))

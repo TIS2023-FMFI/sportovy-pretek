@@ -102,6 +102,8 @@ class Registration:
 
     @classmethod
     def from_obj(cls, obj):
+        obj['date_from'] = datetime.strptime(obj['date_from'], '%Y-%m-%d')
+        obj['date_to'] = datetime.strptime(obj['date_to'], '%Y-%m-%d')
         return cls(**obj)
 
 

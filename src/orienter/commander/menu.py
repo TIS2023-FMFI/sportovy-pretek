@@ -3,6 +3,8 @@ import string
 from importlib.metadata import version, PackageNotFoundError
 from os import environ
 from pathlib import Path
+from datetime import datetime
+import calendar
 from ..communicator import api
 from ..configurator import configuration
 
@@ -34,7 +36,7 @@ class Menu:
     @staticmethod
     def add_race_menu():
         month_menu = TerminalMenu(MONTHS_FULL, title="(návrat pomocou klávesu q)", accept_keys=("enter", "q"))
-        selected_month_index = month_menu.show()
+        selected_month = month_menu.show() + 1
         if month_menu.chosen_accept_key == 'q':
             Menu.main_menu()
             return
@@ -43,9 +45,17 @@ class Menu:
         #    ["25.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"],
         #    ["26.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"]
         # ]
-        races = Menu.API.competitions()
-        # TODO: get real races instead of example ones
+        now = datetime.now()
+        date_from = now.replace(year=now.year + 1 if selected_month < now.month else 0, month=selected_month, day=1)
+        date_to = date_from.replace(day=calendar.monthrange(date_from.year, selected_month)[1])
+        response_obj = Menu.API.competitions(date_from=date_from.strftime('%Y-%m-%d'),
+                                             date_to=date_to.strftime('%Y-%m-%d'))
         # TODO: handle empty races
+        clubs = {}
+        races = []
+        for race_obj in response_obj:
+            for event_obj in race_obj['events']:
+                races.append([event_obj['date'], event_obj['title_sk'], race_obj['place'], clubs.get(race_obj['organizers'][0]['name'], "---")])
         joined_races = [", ".join(race) for race in races]
         races_menu = TerminalMenu(joined_races, title="Vyberte preteky.\n"
                                                       "dátum konania, názov, miesto konania, organizátor\n"

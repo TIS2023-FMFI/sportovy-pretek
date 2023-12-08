@@ -1,8 +1,6 @@
-import tomllib
+import toml
 from dataclasses import dataclass, asdict, field, fields
 from .constants import CONFIG_FILE_PATH
-
-import tomli_w
 
 
 @dataclass(kw_only=True)
@@ -25,8 +23,8 @@ class Config:
     def _load_config(self):
         if not CONFIG_FILE_PATH.is_file():
             self._create_example_config()
-        with open(CONFIG_FILE_PATH, 'rb') as f:
-            config_dict = tomllib.load(f)
+        with open(CONFIG_FILE_PATH, 'r') as f:
+            config_dict = toml.load(f)
             for fld in fields(self):
                 try:
                     setattr(self, fld.name, config_dict[fld.name])
@@ -34,8 +32,8 @@ class Config:
                     raise SyntaxError(f"Failed to parse config file. Required entry {fld.name} not found.")
 
     def _save_config(self):
-        with open(CONFIG_FILE_PATH, 'wb') as f:
-            tomli_w.dump(asdict(self), f)
+        with open(CONFIG_FILE_PATH, 'w') as f:
+            toml.dump(asdict(self), f)
 
 
 configuration = Config()

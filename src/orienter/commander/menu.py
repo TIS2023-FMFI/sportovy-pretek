@@ -1,19 +1,18 @@
+import inspect
 import random
 import string
-import inspect
-import datetime
 from importlib.metadata import version, PackageNotFoundError
 from os import environ
 from pathlib import Path
-from .utils import get_races_in_month, get_clubs
-from ..communicator import api
-from ..configurator import configuration
-from ..databasor import session
-from ..databasor import models
 
 from simple_term_menu import TerminalMenu
 
 from .utils import MONTHS_FULL
+from .utils import get_races_in_month, get_clubs
+from ..communicator import api
+from ..configurator import configuration
+from ..databasor import models
+from ..databasor import session
 
 
 class Menu:

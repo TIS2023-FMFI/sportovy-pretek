@@ -1,5 +1,6 @@
 from typing import List
 from dataclasses import dataclass
+from datetime import datetime
 
 
 @dataclass
@@ -8,10 +9,11 @@ class Event:
     discipline_id: int
     title_sk: str
     title_en: str
-    date: str
+    date: datetime
 
     @classmethod
     def from_obj(cls, obj):
+        obj['date'] = datetime.strptime(obj['date'], '%Y-%m-%d')
         return cls(**obj)
 
 
@@ -59,6 +61,8 @@ class Competition:
     def from_obj(cls, obj):
         obj['events'] = [Event.from_obj(event) for event in obj['events']]
         obj['documents'] = [Document.from_obj(doc) for doc in obj['documents']]
+        obj['date_from'] = datetime.strptime(obj['date_from'], '%Y-%m-%d')
+        obj['date_to'] = datetime.strptime(obj['date_to'], '%Y-%m-%d')
         return cls(**obj)
 
 
@@ -84,6 +88,7 @@ class Club:
     def from_obj(cls, obj):
         return cls(**obj)
 
+
 @dataclass
 class Registration:
     id: int
@@ -98,6 +103,7 @@ class Registration:
     @classmethod
     def from_obj(cls, obj):
         return cls(**obj)
+
 
 @dataclass
 class Runner:
@@ -114,6 +120,7 @@ class Runner:
     def from_obj(cls, obj):
         obj['registrations'] = [Registration.from_obj(reg) for reg in obj['registrations']]
         return cls(**obj)
+
 
 @dataclass
 class Runner:

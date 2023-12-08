@@ -150,5 +150,4 @@ API kľúče na overenie identity používateľa. Formát výmeny dát je JSON.
 - **3.7 Obmedzenie kategórii** - Pri prihlasovaní používateľa na pretek v klubovej aplikácii nebudú v zozname vekových
   kategórii také kategórie, na ktoré by sa používateľ na základe pravidiel pretekov nemal mať možnosť prihlásiť.
 
-- **3.8 Integrovanie s klubovou aplikáciou** - Všetky funkcie produktu budú dostupné aj prostredníctvom klubovej
-  aplikácie.
+- **3.8 Integrovanie s klubovou aplikáciou** - Všetky funkcie produktu budú dostupné aj prostredníctvom klubovej aplikácie.

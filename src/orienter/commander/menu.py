@@ -3,6 +3,8 @@ import string
 from importlib.metadata import version, PackageNotFoundError
 from os import environ
 from pathlib import Path
+from ..communicator import api
+from ..configurator import configuration
 
 from simple_term_menu import TerminalMenu
 
@@ -10,6 +12,8 @@ from .utils import MONTHS_FULL
 
 
 class Menu:
+    API = api.API(configuration.API_KEY, configuration.API_ENDPOINT)
+
     @staticmethod
     def main_menu():
         try:
@@ -35,10 +39,12 @@ class Menu:
             Menu.main_menu()
             return
 
-        races = [
-            ["25.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"],
-            ["26.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"]
-        ]  # TODO: get real races instead of example ones
+        # races = [
+        #    ["25.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"],
+        #    ["26.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"]
+        # ]
+        races = Menu.API.competitions()
+        # TODO: get real races instead of example ones
         # TODO: handle empty races
         joined_races = [", ".join(race) for race in races]
         races_menu = TerminalMenu(joined_races, title="Vyberte preteky.\n"
@@ -49,7 +55,8 @@ class Menu:
         if races_menu.chosen_accept_key == 'q':
             Menu.add_race_menu()
             return
-        print("Selected races:", selected_races)  # TODO: do stuff with the selection
+        print("Selected races:", selected_races)
+        # TODO: do stuff with the selection
 
     @staticmethod
     def signup_menu():

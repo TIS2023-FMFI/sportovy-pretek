@@ -3,7 +3,7 @@ from dataclasses import dataclass, asdict, field, fields
 from .constants import CONFIG_FILE_PATH
 
 
-@dataclass(kw_only=True)
+@dataclass
 class Config:
     API_KEY: str = field(init=False, repr=False, default="")
     API_ENDPOINT: str = field(init=False, default="https://is.orienteering.sk/api")

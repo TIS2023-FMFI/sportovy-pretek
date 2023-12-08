@@ -9,8 +9,8 @@ from datetime import timedelta
 
 from simple_term_menu import TerminalMenu
 
-from .utils import MONTHS_FULL
-from .utils import get_races_in_month, get_clubs
+from .utils import MONTHS_FULL, API
+from .utils import get_races_in_month, get_clubs, encode_competition_id, decode_competition_id
 from ..databasor import models, session
 
 
@@ -58,20 +58,41 @@ class Menu:
         if races_menu.chosen_accept_key == 'q':
             Menu.add_race_menu()
             return
-        for selected_race in selected_races:
-            race = races[races_list[selected_race][0]]
-            event = race.events[races_list[selected_race][1]]
-            stmt = select(models.Competition).where(models.Competition.competition_id == race.id)
-            existing = session.session.scalars(stmt)
-            if existing.all():
-                print("Tieto preteky už existujú:", choices[selected_race])
-                continue
-            three_days = timedelta(days=3)
-            stmt = insert(models.Competition).values(competition_id=race.id, name=event.title_sk, date=event.date,
-                                                     signup_deadline=event.date - three_days, is_active=0, comment="")
-            session.session.execute(stmt)
-            session.session.commit()
-            # TODO: CATEGORIES!!!!
+        try:
+            session.session.begin()
+            for selected_race in selected_races:
+                race = races[races_list[selected_race][0]]
+                event = race.events[races_list[selected_race][1]]
+                competition_id = encode_competition_id(int(race.id), int(event.id))
+                stmt = select(models.Competition).where(models.Competition.competition_id == competition_id)
+                existing = session.session.scalars(stmt)
+                if existing.all():
+                    print("Tieto preteky už existujú:", choices[selected_race])
+                    continue
+                three_days = timedelta(days=3)
+                stmt = insert(models.Competition).values(competition_id=competition_id, name=event.title_sk,
+                                                         date=event.date, signup_deadline=event.date - three_days,
+                                                         is_active=0, comment="")
+                session.session.execute(stmt)
+                race_details = API.competition_details(race.id)
+                categories = API.get_category_list()
+                for race_category in race_details.categories:
+                    category_id = race_category.category_id
+                    category_name = categories[category_id]
+                    stmt = select(models.Category).where(models.Category.category_id == category_id)
+                    existing = session.session.scalars(stmt)
+                    if not existing.all():
+                        stmt = insert(models.Category).values(category_id=category_id, category_name=category_name)
+                        session.session.execute(stmt)
+                    stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
+                                                                     category_id=category_id)
+                    session.session.execute(stmt)
+        except:
+            session.session.rollback()
+            print("Neporadilo sa uložiť do databázy. Zmeny boli vrátené.")
+            return
+        session.session.commit()
+        print("Preteky sa úspešne uložili.")
 
     @staticmethod
     def signup_menu():

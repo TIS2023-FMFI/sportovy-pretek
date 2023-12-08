@@ -33,6 +33,17 @@ def validate_multiple_number_input(user_input: str, max_value: int = 1_000_000, 
     return True
 
 
+def encode_competition_id(competition_id: int, event_id: int):
+    multiplier = 100_000_000
+    if event_id >= multiplier:
+        raise ValueError("Event ID too large. GG")
+    return competition_id * multiplier + event_id
+
+
+def decode_competition_id(competition_id: int) -> (int, int):
+    return divmod(competition_id, 100_000_000)
+
+
 API = api.API(configuration.API_KEY, configuration.API_ENDPOINT)
 
 

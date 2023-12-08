@@ -1,6 +1,7 @@
 from collections.abc import Mapping, Sequence
-from typing import Any
-from ..configurator import configuration
+from typing import Dict
+
+from .objects import *
 
 import requests
 
@@ -42,15 +43,14 @@ class API:
         self._handle_response(response)
         return response.json()
 
-    def competition_details(self, competition_id) -> Mapping:
+    def competition_details(self, competition_id) -> CompetitionDetails:
         """
         Returns detailed information about the competition and its settings.
         :param competition_id:
         """
         response = requests.get(f"{self.api_endpoint}/competitions/{competition_id}", headers=self._get_auth_headers())
         self._handle_response(response)
-        return response.json()
-
+        return CompetitionDetails.from_obj(response.json())
 
     def competition_registrations(self, competition_id, club_id) -> Sequence:
         """
@@ -114,7 +114,7 @@ class API:
         :param date_to:
         """
         response = requests.get(f"{self.api_endpoint}/runners/{runner_id}/results",
-                                params={"date_from" : date_from, "date_to" : date_to}, headers=self._get_auth_headers())
+                                params={"date_from": date_from, "date_to": date_to}, headers=self._get_auth_headers())
         self._handle_response(response)
         return response.json()
 
@@ -139,13 +139,11 @@ class API:
         self._handle_response(response)
         return response.json()
 
-    def get_lists(self, list_id) -> Sequence:
+    def get_category_list(self) -> Dict:
         """
-        Returns the list of data from the selected directory
-        :param list_id:
+        Returns the list of data from the selected directory.
         """
-        response = requests.get(f"{self.api_endpoint}/lists/{list_id}",
+        response = requests.get(f"{self.api_endpoint}/lists/category",
                                 headers=self._get_auth_headers())
         self._handle_response(response)
-        return response.json()
-
+        return {category.id: category for category in (Category.from_obj(obj) for obj in response.json())}

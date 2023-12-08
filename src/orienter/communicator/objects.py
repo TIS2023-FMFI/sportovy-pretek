@@ -1,5 +1,5 @@
 from typing import List
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from datetime import datetime
 
 
@@ -114,6 +114,22 @@ class EntryPrice:
 @dataclass
 class Category:
     id: int
+    name: str
+    weight: int
+    group: str
+    age_from: int
+    age_to: int
+    gender: int
+    ranking_category: int
+
+    @classmethod
+    def from_obj(cls, obj):
+        return cls(**obj)
+
+
+@dataclass
+class CompetitionCategory:
+    id: int
     category_id: int
     category_coeficient_id: int
     coeficient: float
@@ -132,14 +148,16 @@ class CompetitionDetails:
     competition: Competition
     services: List[Service]
     entry_dates: List[EntryDate]
-    categories: List[Category]
+    categories: List[CompetitionCategory]
     documents: List[Document]
 
     @classmethod
     def from_obj(cls, obj):
-        return cls(competition=Competition.from_obj(**obj),
+        comp_fields = {field.name for field in fields(Competition)}
+        competition = Competition.from_obj({k1: obj[k1] for k1 in obj if k1 in comp_fields})
+        return cls(competition=competition,
                    services=[Service.from_obj(service) for service in obj['services']],
-                   categories=[Category.from_obj(category) for category in obj['categories']],
+                   categories=[CompetitionCategory.from_obj(category) for category in obj['categories']],
                    entry_dates=[EntryDate.from_obj(entry_date) for entry_date in obj['entry_dates']],
                    documents=[Document.from_obj(document) for document in obj['documents']])
 

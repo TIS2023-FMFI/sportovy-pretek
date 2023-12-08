@@ -1,22 +1,20 @@
-import inspect
 import random
 import string
+from datetime import timedelta
 from importlib.metadata import version, PackageNotFoundError
 from os import environ
 from pathlib import Path
-from sqlalchemy import select, insert
-from datetime import timedelta
 
 from simple_term_menu import TerminalMenu
+from sqlalchemy import select, insert
 
 from .utils import MONTHS_FULL
 from .utils import get_races_in_month, get_clubs
 from ..databasor import models, session
+from ..statista import statistics
 
 
 class Menu:
-    API = api.API(configuration.API_KEY, configuration.API_ENDPOINT)
-    generator = statistics.Generator()
 
     @staticmethod
     # TODO: make this a while loop
@@ -141,7 +139,8 @@ class Menu:
         path = chosen_path or path
 
         user_ids = [int(racer.user_id) for racer in selected_racers]
-        Menu.generator.render(user_ids)
+        generator = statistics.Generator()
+        generator.render(user_ids)
 
 
 if __name__ == "__main__":

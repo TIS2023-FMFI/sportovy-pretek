@@ -76,8 +76,7 @@ class Menu:
 
     @staticmethod
     def signup_menu():
-        # TODO: for now only the competitions name is shown
-        stmt = select(models.Competition).where(models.Competition.is_active == 1)
+        stmt = select(models.Competition)
         active_races_raw = session.session.scalars(stmt)
 
         choices = [f"{race.date}, {race.name}" for race in active_races_raw]
@@ -94,32 +93,11 @@ class Menu:
             Menu.main_menu()
             return
 
-        # TODO: for now only the competitors name is shown
-
-        stmt = select(models.User)
-        racers_raw = session.session.scalars(stmt)
-
-        joined_racers = [f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20]}" for racer
-                         in racers_raw]
-        if len(joined_racers) == 0:
-            print("Nenašli sa žiadni pretekári")
-            return
-
-        racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
-                                                        "Meno a priezvisko, klubové id, poznámka\n"
-                                                        "(návrat pomocou klávesu q)",
-                                   multi_select=True, accept_keys=("enter", "q"))
-        selected_racers = racers_menu.show()
-        if racers_menu.chosen_accept_key == 'q':
-            Menu.signup_menu()
-            return
-
-        print("Selected racers:", selected_racers)  # TODO: do stuff with the selection
 
     @staticmethod
     def statistics_menu():
-        stmt = session.select(models.User).where(models.User.first_name == ".")
-        racers_raw = session.session.scalars(stmt)
+        stmt = session.select(models.User)
+        racers_raw = session.session.scalars(stmt).all()
 
         joined_racers = [f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20]}" for racer
                          in racers_raw]
@@ -141,11 +119,10 @@ class Menu:
         chosen_path = input(f"Zadajte názov súboru aj s cestou [{path}]: ")
         path = chosen_path or path
 
-        user_ids = [int(racer.user_id) for racer in selected_racers]
-        Menu.generator.render(user_ids)
-        user_ids = [int(racer.user_id) for racer in selected_racers]
+        user_ids = [int(racers_raw[racer_col_num].user_id) for racer_col_num in selected_racers]
         generator = statistics.Generator()
-        generator.render(user_ids)
+        with open(path, 'w', encoding='utf-8') as html:
+            html.write(generator.render(user_ids))
 
 
 if __name__ == "__main__":

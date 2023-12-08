@@ -1,10 +1,14 @@
 import random
 import string
+import inspect
+import datetime
 from importlib.metadata import version, PackageNotFoundError
 from os import environ
 from pathlib import Path
 from ..communicator import api
 from ..configurator import configuration
+from ..databasor import session
+from ..databasor import models
 
 from simple_term_menu import TerminalMenu
 
@@ -43,8 +47,7 @@ class Menu:
         #    ["25.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"],
         #    ["26.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"]
         # ]
-        races = Menu.API.competitions()
-        # TODO: get real races instead of example ones
+        races = Menu.API.competitions(datetime.date.today(), )
         # TODO: handle empty races
         joined_races = [", ".join(race) for race in races]
         races_menu = TerminalMenu(joined_races, title="Vyberte preteky.\n"
@@ -60,25 +63,33 @@ class Menu:
 
     @staticmethod
     def signup_menu():
-        active_races = [
-            ["25.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"],
-            ["26.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"]
-        ]  # TODO: get real races instead of example ones
+        # TODO: for now only the competitions name is shown
+        stmt = session.select(models.Competition).where(models.Competition.is_active == 1)
+        active_races_raw = session.session.scalars(stmt)
+
         # TODO: handle empty races
-        joined_races = [", ".join(race) for race in active_races]
-        races_menu = TerminalMenu(joined_races, title="Vyberte preteky.\n"
-                                                      "dátum konania, názov, miesto konania, organizátor\n"
-                                                      "(návrat pomocou klávesu q)",
+        choices = [f"{race.date}, {race.name}" for race in active_races_raw]
+        races_menu = TerminalMenu(choices, title="Vyberte preteky.\n"
+                                                 "dátum konania, názov\n"
+                                                 "(návrat pomocou klávesu q)",
                                   multi_select=False, accept_keys=("enter", "q"))
         selected_races = races_menu.show()
         if races_menu.chosen_accept_key == 'q':
             Menu.main_menu()
             return
 
-        racers = [
-            ["David Krchňavý", "SKS01101", "chory"],
-            ["Ondrej Bublavý", "SKS00109", ""],
-        ]  # TODO: get real racers instead of example ones
+        # TODO: for now only the competitors name is shown
+
+        stmt = session.select(models.User)
+        racers_raw = session.session.scalars(stmt)
+        racers = []
+        for scalar in racers_raw:
+            tmp = []
+            for member in inspect.getmembers(scalar):
+                if member[0] == "first_name":
+                    tmp.append(str(member[1]))
+            racers.append(tmp[:])
+
         # TODO: handle empty racers
         joined_racers = [", ".join(racer) for racer in racers]
         racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"

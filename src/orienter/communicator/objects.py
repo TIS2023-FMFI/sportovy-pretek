@@ -67,6 +67,84 @@ class Competition:
 
 
 @dataclass
+class Service:
+    id: int
+    price_type_id: int
+    name_sk: str
+    name_en: str
+    price: str
+    price_variant: int
+    administrative: bool
+    max_limit: int
+
+    def __post_init__(self):
+        self.administrative = self.administrative == "1"
+
+    @classmethod
+    def from_obj(cls, obj):
+        return cls(**obj)
+
+
+@dataclass
+class EntryDate:
+    id: int
+    weight: int
+    entries_from: datetime
+    entries_to: datetime
+
+    @classmethod
+    def from_obj(cls, obj):
+        obj['entries_from'] = datetime.strptime(obj['entries_from'], '%Y-%m-%d')
+        obj['entries_to'] = datetime.strptime(obj['entries_to'], '%Y-%m-%d')
+        return cls(**obj)
+
+
+@dataclass
+class EntryPrice:
+    entry_date_id: int
+    competition_category_id: int
+    start_price: str
+    start_price_all: str
+
+    @classmethod
+    def from_obj(cls, obj):
+        return cls(**obj)
+
+
+@dataclass
+class Category:
+    id: int
+    category_id: int
+    category_coeficient_id: int
+    coeficient: float
+    coeficientz: float
+    weight: int
+    entry_prices: List[EntryPrice]
+
+    @classmethod
+    def from_obj(cls, obj):
+        obj['entry_prices'] = [EntryPrice.from_obj(doc) for doc in obj['entry_prices']]
+        return cls(**obj)
+
+
+@dataclass
+class CompetitionDetails:
+    competition: Competition
+    services: List[Service]
+    entry_dates: List[EntryDate]
+    categories: List[Category]
+    documents: List[Document]
+
+    @classmethod
+    def from_obj(cls, obj):
+        return cls(competition=Competition.from_obj(**obj),
+                   services=[Service.from_obj(service) for service in obj['services']],
+                   categories=[Category.from_obj(category) for category in obj['categories']],
+                   entry_dates=[EntryDate.from_obj(entry_date) for entry_date in obj['entry_dates']],
+                   documents=[Document.from_obj(document) for document in obj['documents']])
+
+
+@dataclass
 class Club:
     id: int
     name: str
@@ -87,7 +165,6 @@ class Club:
     @classmethod
     def from_obj(cls, obj):
         return cls(**obj)
-
 
 # TODO: fix the cyclic dependency
 # @dataclass

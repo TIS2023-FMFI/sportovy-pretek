@@ -36,13 +36,13 @@ class Menu:
             return
 
         races = [
-            ["Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT", "25.05.2024"],
-            ["Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT", "26.05.2024"]
+            ["25.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"],
+            ["26.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"]
         ]  # TODO: get real races instead of example ones
         # TODO: handle empty races
         joined_races = [", ".join(race) for race in races]
         races_menu = TerminalMenu(joined_races, title="Vyberte preteky.\n"
-                                                      "Názov, miesto konania, organizátor, dátum konania"
+                                                      "dátum konania, názov, miesto konania, organizátor\n"
                                                       "(návrat pomocou klávesu q)",
                                   multi_select=True, accept_keys=("enter", "q"))
         selected_races = races_menu.show()
@@ -54,13 +54,13 @@ class Menu:
     @staticmethod
     def signup_menu():
         active_races = [
-            ["Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT", "25.05.2024"],
-            ["Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT", "26.05.2024"]
+            ["25.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"],
+            ["26.05.2024", "Majstrovstvá Slovenska v OB v šprintových štafetách", "Martin", "ZMT"]
         ]  # TODO: get real races instead of example ones
         # TODO: handle empty races
         joined_races = [", ".join(race) for race in active_races]
         races_menu = TerminalMenu(joined_races, title="Vyberte preteky.\n"
-                                                      "Názov, miesto konania, organizátor, dátum konania"
+                                                      "dátum konania, názov, miesto konania, organizátor\n"
                                                       "(návrat pomocou klávesu q)",
                                   multi_select=False, accept_keys=("enter", "q"))
         selected_races = races_menu.show()
@@ -75,7 +75,7 @@ class Menu:
         # TODO: handle empty racers
         joined_racers = [", ".join(racer) for racer in racers]
         racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
-                                                        "Meno a priezvisko, klubové id, poznámka"
+                                                        "Meno a priezvisko, klubové id, poznámka\n"
                                                         "(návrat pomocou klávesu q)",
                                    multi_select=True, accept_keys=("enter", "q"))
         selected_racers = racers_menu.show()
@@ -94,7 +94,7 @@ class Menu:
         # TODO: handle empty racers
         joined_racers = [", ".join(racer) for racer in racers]
         racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
-                                                        "Meno a priezvisko, klubové id, poznámka"
+                                                        "Meno a priezvisko, klubové id, poznámka\n"
                                                         "(návrat pomocou klávesu q)",
                                    multi_select=True, accept_keys=("enter", "q"))
         selected_racers = racers_menu.show()

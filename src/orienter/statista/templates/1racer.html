@@ -5,12 +5,46 @@
 src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
 </script>
 <head>
-    <title>Štatistiky pretekára {{first_name}} {{last_name}}</title>
+    <title>Štatistiky pretekára {{name}}</title>
+    <style>
+        h1 {
+            text-align: center;
+        }
+        h2 {
+            text-align: center;
+        }
+        table {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        td, th {
+          border: 1px solid black;
+          width: 200px;
+          height: 50px;
+          text-align: center;
+        }
+        th {
+          background-color: #D6EEEE;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>Štatistiky pretekára {{first_name}} {{last_name}}</h1>
-	<h2>Odchyľka od ideálnej vzdialenosti</h2>
+    <h1>Štatistiky pretekára {{name}}</h1>
+	<h2><u>Prehľad:</u></h2>
+    <table>
+        <tr>
+            <th>Účasti na pretekoch:</th>
+            <th>Víťazstvá:</th>
+            <th>Poradie v klube:</th>
+        </tr>
+        <tr>
+            <td>{{participations}}</td>
+            <td>{{wins}}</td>
+            <td>{{rank}}</td>
+        </tr>
+    </table>
+	<h3>Odchyľka od ideálnej vzdialenosti</h3>
     <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
     <script>
     const xValues = ["Veľká cena Malých karpát 2023",

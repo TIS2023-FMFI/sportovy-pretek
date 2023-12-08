@@ -4,21 +4,19 @@ import string
 from importlib.metadata import version, PackageNotFoundError
 from os import environ
 from pathlib import Path
+from sqlalchemy import select, insert
+from datetime import timedelta
 
 from simple_term_menu import TerminalMenu
 
 from .utils import MONTHS_FULL
 from .utils import get_races_in_month, get_clubs
-from ..communicator import api
-from ..configurator import configuration
-from ..databasor import models
-from ..databasor import session
+from ..databasor import models, session
 
 
 class Menu:
-    API = api.API(configuration.API_KEY, configuration.API_ENDPOINT)
-
     @staticmethod
+    # TODO: make this a while loop
     def main_menu():
         try:
             orienter_version = version('orienter')
@@ -46,10 +44,12 @@ class Menu:
         # TODO: handle empty races
         races = get_races_in_month(selected_month)
         clubs = get_clubs()
-        choices = list()
-        for race in races:
-            for event in race.events:
-                choices.append(f"{event.date}, {event.title_sk}, {race.place}, {clubs[race.organizers[0]].name}")
+        races_list = list()
+        for i, race in enumerate(races):
+            for j, event in enumerate(race.events):
+                races_list.append(
+                    [i, j, event.date.strftime('%Y-%m-%d'), event.title_sk, race.place, clubs[race.organizers[0]].name])
+        choices = [", ".join(race[2:]) for race in races_list]
         races_menu = TerminalMenu(choices, title="Vyberte preteky.\n"
                                                  "dátum konania, názov, miesto konania, organizátor\n"
                                                  "(návrat pomocou klávesu q)",
@@ -58,13 +58,25 @@ class Menu:
         if races_menu.chosen_accept_key == 'q':
             Menu.add_race_menu()
             return
-        print("Selected races:", selected_races)
-        # TODO: do stuff with the selection
+        for selected_race in selected_races:
+            race = races[races_list[selected_race][0]]
+            event = race.events[races_list[selected_race][1]]
+            stmt = select(models.Competition).where(models.Competition.competition_id == race.id)
+            existing = session.session.scalars(stmt)
+            if existing.all():
+                print("Tieto preteky už existujú:", choices[selected_race])
+                continue
+            three_days = timedelta(days=3)
+            stmt = insert(models.Competition).values(competition_id=race.id, name=event.title_sk, date=event.date,
+                                                     signup_deadline=event.date - three_days, is_active=0, comment="")
+            session.session.execute(stmt)
+            session.session.commit()
+            # TODO: CATEGORIES!!!!
 
     @staticmethod
     def signup_menu():
         # TODO: for now only the competitions name is shown
-        stmt = session.select(models.Competition).where(models.Competition.is_active == 1)
+        stmt = select(models.Competition).where(models.Competition.is_active == 1)
         active_races_raw = session.session.scalars(stmt)
 
         # TODO: handle empty races
@@ -80,7 +92,7 @@ class Menu:
 
         # TODO: for now only the competitors name is shown
 
-        stmt = session.select(models.User)
+        stmt = select(models.User)
         racers_raw = session.session.scalars(stmt)
         racers = []
         for scalar in racers_raw:

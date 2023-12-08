@@ -1,5 +1,6 @@
 from collections.abc import Mapping, Sequence
 from typing import Any
+from orienter.configuration import configuration
 
 import requests
 
@@ -37,7 +38,7 @@ class API:
         '''
         Returns a list of all upcoming competitions.
         '''
-        response = requests.get(f"{self.api_endpoint}/competitions", headers=self._get_auth_headers(), count=30)
+        response = requests.get(f"{self.api_endpoint}/competitions", headers=self._get_auth_headers(), params={"count": 30})
         self._handle_response(response)
         return response.json()
 
@@ -147,3 +148,4 @@ class API:
                                 headers=self._get_auth_headers())
         self._handle_response(response)
         return response.json()
+

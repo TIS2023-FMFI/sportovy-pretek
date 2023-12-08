@@ -83,3 +83,50 @@ class Club:
     @classmethod
     def from_obj(cls, obj):
         return cls(**obj)
+
+@dataclass
+class Registration:
+    id: int
+    runner_id: int
+    registration_type_id: int
+    club_id: int
+    date_from: str
+    date_to: str
+    reg_number: str
+    runner: Runner
+
+    @classmethod
+    def from_obj(cls, obj):
+        return cls(**obj)
+
+@dataclass
+class Runner:
+    id: int
+    gender: int
+    first_name: str
+    surname: str
+    birth_name: str
+    sportident: int
+    has_account: bool
+    registrations: List[Registration]
+
+    @classmethod
+    def from_obj(cls, obj):
+        obj['registrations'] = [Registration.from_obj(reg) for reg in obj['registrations']]
+        return cls(**obj)
+
+@dataclass
+class Runner:
+    id: int
+    gender: int
+    first_name: str
+    surname: str
+    birth_name: str
+    sportident: int
+    has_account: bool
+    registrations: List[Registration]
+
+    @classmethod
+    def from_obj(cls, obj):
+        obj['registrations'] = [Registration.from_obj(reg) for reg in obj['registrations']]
+        return cls(**obj)

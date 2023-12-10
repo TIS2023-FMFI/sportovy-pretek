@@ -1,20 +1,21 @@
-import inspect
 import random
 import string
+from datetime import timedelta
 from importlib.metadata import version, PackageNotFoundError
 from os import environ
 from pathlib import Path
-from sqlalchemy import select, insert
-from datetime import timedelta
 
 from simple_term_menu import TerminalMenu
+from sqlalchemy import select, insert
 
 from .utils import MONTHS_FULL, API
 from .utils import get_races_in_month, get_clubs, encode_competition_id, decode_competition_id
 from ..databasor import models, session
+from ..statista import statistics
 
 
 class Menu:
+
     @staticmethod
     # TODO: make this a while loop
     def main_menu():
@@ -96,12 +97,14 @@ class Menu:
 
     @staticmethod
     def signup_menu():
-        # TODO: for now only the competitions name is shown
-        stmt = select(models.Competition).where(models.Competition.is_active == 1)
+        stmt = select(models.Competition)
         active_races_raw = session.session.scalars(stmt)
 
-        # TODO: handle empty races
         choices = [f"{race.date}, {race.name}" for race in active_races_raw]
+        if len(choices) == 0:
+            print("Nenašli sa žiadne preteky")
+            return
+
         races_menu = TerminalMenu(choices, title="Vyberte preteky.\n"
                                                  "dátum konania, názov\n"
                                                  "(návrat pomocou klávesu q)",
@@ -111,39 +114,18 @@ class Menu:
             Menu.main_menu()
             return
 
-        # TODO: for now only the competitors name is shown
-
-        stmt = select(models.User)
-        racers_raw = session.session.scalars(stmt)
-        racers = []
-        for scalar in racers_raw:
-            tmp = []
-            for member in inspect.getmembers(scalar):
-                if member[0] == "first_name":
-                    tmp.append(str(member[1]))
-            racers.append(tmp[:])
-
-        # TODO: handle empty racers
-        joined_racers = [", ".join(racer) for racer in racers]
-        racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
-                                                        "Meno a priezvisko, klubové id, poznámka\n"
-                                                        "(návrat pomocou klávesu q)",
-                                   multi_select=True, accept_keys=("enter", "q"))
-        selected_racers = racers_menu.show()
-        if racers_menu.chosen_accept_key == 'q':
-            Menu.signup_menu()
-            return
-
-        print("Selected racers:", selected_racers)  # TODO: do stuff with the selection
 
     @staticmethod
     def statistics_menu():
-        racers = [
-            ["David Krchňavý", "SKS01101", "chory"],
-            ["Ondrej Bublavý", "SKS00109", ""],
-        ]  # TODO: get real racers instead of example ones
-        # TODO: handle empty racers
-        joined_racers = [", ".join(racer) for racer in racers]
+        stmt = session.select(models.User)
+        racers_raw = session.session.scalars(stmt).all()
+
+        joined_racers = [f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20]}" for racer
+                         in racers_raw]
+        if len(joined_racers) == 0:
+            print("Nenašli sa žiadni pretekári")
+            return
+
         racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
                                                         "Meno a priezvisko, klubové id, poznámka\n"
                                                         "(návrat pomocou klávesu q)",
@@ -153,13 +135,15 @@ class Menu:
             Menu.signup_menu()
             return
 
-        print("Selected racers:", selected_racers)  # TODO: do stuff with the selection
         filename = "orienter_" + ''.join(random.choice(string.ascii_lowercase) for _ in range(6)) + ".html"
         path = Path(environ["HOME"]) / filename
         chosen_path = input(f"Zadajte názov súboru aj s cestou [{path}]: ")
         path = chosen_path or path
 
-        print("Chosen path:", path)  # TODO: do stuff with the selection
+        user_ids = [int(racers_raw[racer_col_num].user_id) for racer_col_num in selected_racers]
+        generator = statistics.Generator()
+        with open(path, 'w', encoding='utf-8') as html:
+            html.write(generator.render(user_ids))
 
 
 if __name__ == "__main__":

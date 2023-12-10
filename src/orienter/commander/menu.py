@@ -1,6 +1,6 @@
 import random
 import string
-from datetime import timedelta
+from datetime import timedelta, datetime
 from importlib.metadata import version, PackageNotFoundError
 from os import environ
 from pathlib import Path
@@ -100,8 +100,9 @@ class Menu:
 
     @staticmethod
     def signup_menu():
-        stmt = select(models.Competition)
-        active_races_raw = session.session.scalars(stmt)
+        stmt = session.select(models.Competition).where(models.Competition.is_active == 1) \
+            .where(models.Competition.date > datetime.now())
+        active_races_raw = session.session.scalars(stmt).all()
 
         choices = [f"{race.date}, {race.name}" for race in active_races_raw]
         if len(choices) == 0:
@@ -112,9 +113,30 @@ class Menu:
                                                  "dátum konania, názov\n"
                                                  "(návrat pomocou klávesu q)",
                                   multi_select=False, accept_keys=("enter", "q"))
-        selected_races = races_menu.show()
+        selected_race_number = races_menu.show()
         if races_menu.chosen_accept_key == 'q':
             return
+        selected_race = active_races_raw[selected_race_number]
+        stmt = session.select(models.User).join(models.Signup, models.Signup.user_id == models.User.user_id) \
+            .where(models.Signup.competition_id == selected_race.competition_id)
+        racers_raw = session.session.scalars(stmt)
+
+        joined_racers = [f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20]}" for racer
+                         in racers_raw]
+        if len(joined_racers) == 0:
+            print("Nenašli sa žiadni pretekári")
+            return
+
+        racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
+                                                        "Meno a priezvisko, klubové id, poznámka\n"
+                                                        "(návrat pomocou klávesu q)",
+                                   multi_select=True, accept_keys=("enter", "q"))
+        selected_racers = racers_menu.show()
+        if racers_menu.chosen_accept_key == 'q':
+            Menu.signup_menu()
+            return
+
+        print("Selected racers:", selected_racers)  # TODO: do stuff with the selection
 
     @staticmethod
     def statistics_menu():

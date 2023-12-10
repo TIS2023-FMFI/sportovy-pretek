@@ -40,8 +40,11 @@ class Menu:
         if month_menu.chosen_accept_key == 'q':
             return
 
-        # TODO: handle empty races
         races = get_races_in_month(selected_month)
+        if not races:
+            print("V zvolenom mesiaci sa nekonajú žiadne preteky.")
+            return
+
         clubs = get_clubs()
         races_list = list()
         for i, race in enumerate(races):

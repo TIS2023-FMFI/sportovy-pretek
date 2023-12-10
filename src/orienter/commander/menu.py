@@ -15,7 +15,6 @@ from ..statista import statistics
 
 
 class Menu:
-
     @staticmethod
     def main_menu():
         try:
@@ -87,8 +86,10 @@ class Menu:
                     stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
                                                                      category_id=category_id)
                     session.session.execute(stmt)
-        except:
+        except Exception:
             session.session.rollback()
+            import traceback
+            print(traceback.format_exc())
             print("Neporadilo sa uložiť do databázy. Zmeny boli vrátené.")
             return
         session.session.commit()

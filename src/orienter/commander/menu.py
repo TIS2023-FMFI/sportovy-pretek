@@ -9,7 +9,7 @@ from simple_term_menu import TerminalMenu
 from sqlalchemy import select, insert
 
 from .utils import MONTHS_FULL, API
-from .utils import get_races_in_month, get_clubs, encode_competition_id, decode_competition_id
+from .utils import get_races_in_month, get_clubs, encode_competition_id
 from ..databasor import models, session
 from ..statista import statistics
 
@@ -17,7 +17,6 @@ from ..statista import statistics
 class Menu:
 
     @staticmethod
-    # TODO: make this a while loop
     def main_menu():
         try:
             orienter_version = version('orienter')
@@ -27,19 +26,19 @@ class Menu:
         options = ["Pridanie nových pretekov", "Prihlasovanie účastníkov", "Štatistiky"]
         menu = TerminalMenu(options, title=f"Orienter v{orienter_version} - Hlavné menu\n"
                                            "(ukončiť pomocou klávesu q)", accept_keys=("enter", "q"))
-        selected_option_index = menu.show()
-        if menu.chosen_accept_key == 'q':
-            return
+        while True:
+            selected_option_index = menu.show()
+            if menu.chosen_accept_key == 'q':
+                return
 
-        submenus = [Menu.add_race_menu, Menu.signup_menu, Menu.statistics_menu]
-        submenus[selected_option_index]()
+            submenus = [Menu.add_race_menu, Menu.signup_menu, Menu.statistics_menu]
+            submenus[selected_option_index]()
 
     @staticmethod
     def add_race_menu():
         month_menu = TerminalMenu(MONTHS_FULL, title="(návrat pomocou klávesu q)", accept_keys=("enter", "q"))
         selected_month = month_menu.show() + 1
         if month_menu.chosen_accept_key == 'q':
-            Menu.main_menu()
             return
 
         # TODO: handle empty races
@@ -111,9 +110,7 @@ class Menu:
                                   multi_select=False, accept_keys=("enter", "q"))
         selected_races = races_menu.show()
         if races_menu.chosen_accept_key == 'q':
-            Menu.main_menu()
             return
-
 
     @staticmethod
     def statistics_menu():

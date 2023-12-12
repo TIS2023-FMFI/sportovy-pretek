@@ -8,7 +8,7 @@ from pathlib import Path
 from simple_term_menu import TerminalMenu
 from sqlalchemy import select, insert
 
-from .utils import MONTHS_FULL, API
+from .utils import MONTHS_FULL, DATE_FORMAT, API
 from .utils import get_races_in_month, get_clubs, encode_competition_id
 from ..databasor import models, session
 from ..statista import statistics
@@ -50,7 +50,7 @@ class Menu:
         for i, race in enumerate(races):
             for j, event in enumerate(race.events):
                 races_list.append(
-                    [i, j, event.date.strftime('%Y-%m-%d'), event.title_sk, race.place, clubs[race.organizers[0]].name])
+                    [i, j, event.date.strftime(DATE_FORMAT), event.title_sk, race.place, clubs[race.organizers[0]].name])
         choices = [", ".join(race[2:]) for race in races_list]
         races_menu = TerminalMenu(choices, title="Vyberte preteky.\n"
                                                  "dátum konania, názov, miesto konania, organizátor\n"
@@ -104,7 +104,7 @@ class Menu:
             .where(models.Competition.date > datetime.now())
         active_races_raw = session.session.scalars(stmt).all()
 
-        choices = [f"{race.date}, {race.name}" for race in active_races_raw]
+        choices = [f"{race.date.strftime(DATE_FORMAT)}, {race.name}" for race in active_races_raw]
         if len(choices) == 0:
             print("Nenašli sa žiadne preteky")
             return
@@ -121,8 +121,8 @@ class Menu:
             .where(models.Signup.competition_id == selected_race.competition_id)
         racers_raw = session.session.scalars(stmt)
 
-        joined_racers = [f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20]}" for racer
-                         in racers_raw]
+        joined_racers = [f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20] or '--'}" for
+                         racer in racers_raw]
         if len(joined_racers) == 0:
             print("Nenašli sa žiadni pretekári")
             return

@@ -6,6 +6,7 @@ from ..communicator import api
 from ..communicator.objects import *
 from ..configurator import configuration
 
+DATE_FORMAT = '%A, %d.%m. %Y'
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
 MONTHS_FULL = ["Január", "Február", "Marec", "Apríl", "Máj", "Jún",
                "Júl", "August", "September", "Október", "November", "December"]

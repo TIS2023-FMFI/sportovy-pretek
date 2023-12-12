@@ -42,75 +42,60 @@ Medzi vonkajšie interfejsy aplikácie patria:
 ## Hlavné menu
 
 ```
-Orienter v1.0.0 - Hlavné menu
-1. Pridanie nových pretekov
-2. Prihlasovanie účastníkov
-3. Štatistiky
-q - ukončiť
-
-zvoľte akciu [1] >>>
+Orienter v0.0.0 - Hlavné menu                                                                                                                                                                       
+(ukončiť pomocou klávesu q)                                                                                                                                                                         
+> Pridanie nových pretekov                                                                                                                                                                          
+  Prihlasovanie účastníkov                                                                                                                                                                          
+  Štatistiky
 ```
 
 ## Pridať preteky
 
 ```
-Pridanie nových pretekov > Voľba mesiaca konania
-Zadajte mesiac konania pretekov.
-q - návrat
-
-mesiac konania pretekov [jun] >>>
+(návrat pomocou klávesu q)                                                                                                                                                                          
+> Január                                                                                                                                                                                            
+  Február                                                                                                                                                                                           
+  Marec                                                                                                                                                                                             
+  Apríl                                                                                                                                                                                             
+  Máj                                                                                                                                                                                               
+  Jún                                                                                                                                                                                               
+  Júl                                                                                                                                                                                               
+  August                                                                                                                                                                                            
+  September                                                                                                                                                                                         
+  Október                                                                                                                                                                                           
+  November                                                                                                                                                                                          
+  December
 ```
 
 ## Voľba pretekov
 
 ```
-Pridanie nových pretekov > Voľba mesiaca konania > Voľba pretekov
-Vyberte preteky podľa ich čísel, oddelené čiarkou.
-╔═══════╦════════════╦═════════════════════════════════════════════════════╦════════╦═════════════╗
-║ Číslo ║ Dátum      ║ Názov                                               ║ Miesto ║ Organizátor ║
-╠═══════╬════════════╬═════════════════════════════════════════════════════╬════════╬═════════════╣
-║ 1.    ║ 25.05.2024 ║ Majstrovstvá Slovenska v OB v šprintových štafetách ║ Martin ║ ZMT         ║
-╠═══════╬════════════╬═════════════════════════════════════════════════════╬════════╬═════════════╣
-║ 2.    ║ 26.05.2024 ║ Majstrovstvá Slovenska v OB v šprintových štafetách ║ Martin ║ ZMT         ║
-╚═══════╩════════════╩═════════════════════════════════════════════════════╩════════╩═════════════╝
-
-q - návrat
-
-preteky [vsetky] >>>
+Vyberte preteky.                                                                                                                                                                                    
+dátum konania, názov, miesto konania, organizátor                                                                                                                                                   
+(návrat pomocou klávesu q)                                                                                                                                                                          
+> [*] 2024-04-06, Slovenský rebríček jednotlivcov - E1, Záhorie, KOBRA Bratislava                                                                                                                   
+  [ ] 2024-04-07, Slovenský rebríček jednotlivcov - E2, Záhorie, KOBRA Bratislava                                                                                                                   
+  [ ] 2024-04-20, Majstrovstvá Slovenska v šprinte + Slovenský rebríček v šprintových štafetách - E1, Trenčín, Klub OB Sokol Pezinok                                                                
+  [ ] 2024-04-21, Majstrovstvá Slovenska v šprinte + Slovenský rebríček v šprintových štafetách - E2, Trenčín, Klub OB Sokol Pezinok
 ```
 
 ## Prihlasovanie
 
 ```
-Prihlasovanie > Voľba pretekov
-Tieto preteky sú aktívne. Vyberte tie, na ktoré chcete prihlásiť používateľov.
-╔═══════╦════════════╦═════════════════════════════════════════════════════╦════════╦═════════════╗
-║ Číslo ║ Dátum      ║ Názov                                               ║ Miesto ║ Organizátor ║
-╠═══════╬════════════╬═════════════════════════════════════════════════════╬════════╬═════════════╣
-║ 1.    ║ 25.05.2024 ║ Majstrovstvá Slovenska v OB v šprintových štafetách ║ Martin ║ ZMT         ║
-╠═══════╬════════════╬═════════════════════════════════════════════════════╬════════╬═════════════╣
-║ 2.    ║ 26.05.2024 ║ Majstrovstvá Slovenska v OB v šprintových štafetách ║ Martin ║ ZMT         ║
-╚═══════╩════════════╩═════════════════════════════════════════════════════╩════════╩═════════════╝
-q - návrat
-
-preteky [1] >>>
+Vyberte preteky.                                                                                                                                                                                    
+dátum konania, názov                                                                                                                                                                                
+(návrat pomocou klávesu q)                                                                                                                                                                          
+> 2024-11-04 11:00:00, 09 Jesenny Sporko
 ```
 
 ## Voľba prihlásených pretekárov
 
 ```
-Prihlasovanie > Voľba pretekov > Voľba pretekárov
-Títo používatelia sa prihlásili na zvolené preteky. Vyberte tých ktorých neprihlásiť, oddeľte čiarkou.
-╔═══════╦═══════════════════╦════════════╦══════════╗
-║ Číslo ║ Meno a priezvisko ║ Klubové ID ║ Poznámka ║
-╠═══════╬═══════════════════╬════════════╬══════════╣
-║ 1.    ║ David Krchňavý    ║ id1        ║ chory    ║
-╠═══════╬═══════════════════╬════════════╬══════════╣
-║ 2.    ║ Ondrej Bublavý    ║ id2        ║ zdravy   ║
-╚═══════╩═══════════════════╩════════════╩══════════╝
-
-q - návrat
-pretekári >>>
+Vyberte pretekárov.                                                                                                                                                                                 
+Meno a priezvisko, klubové id, poznámka                                                                                                                                                             
+(návrat pomocou klávesu q)                                                                                                                                                                          
+> [ ] Richard Havran, SKS0001                                                                                                                                                                      
+  [ ] Monika Škorcová, SKS0002                                                                                                                                                                                                                                                                                                                         
 ```
 
 # Návrh zobrazenia štatistík

@@ -154,8 +154,19 @@ ten zobrazí akumulované informácie za celú zaznamenanú históriu pretekára
 
 # Diagramy
 
+Nasledujúci obrázok popisuje, ako komunikujú vnútorné komponenty systému pri prihlasovaní
+pretekárov z klubovej aplikácie na preteky (požiadavka 3.2).
 ![Sekvenčný diagram](images/sekvencny_diagram.png)
+
+Nasledujúci obrázok obsahuje use case diagram, ktorý zobrazuje všetky činnosti,
+ktoré bude vykonávať správca systému.
 ![Use case diagram](images/use_case_diagram.png)
+
+Nasledujúci obrázok zobrazuje komponenty systému a ich vzájomné prepojenie.
+Podsystém _Communicator_ sa stará o komunikáciu s API a načítanie konfigurácie.
+Podsystém _Databasor_ obsahuje ORM na prácu s databázou.
+Podsystém _Statista_ obsahuje šablónu štatistík a generuje ich.
+Podsystém _Commander_ zabezpečuje funkčnosť používateľského rozhrania.
 ![Component diagram](images/komponent_diagram.png)
 
 # Harmonogram implementácie
@@ -166,3 +177,7 @@ ten zobrazí akumulované informácie za celú zaznamenanú históriu pretekára
    - CLI rozhranie
    - šablóna štatistík
 2. otestovať všetky tieto komponenty osobitne
+3. implementovať položky tieto menu a prepojiť ich s príslušnými komponentami:
+    - pridávanie nových pretekov
+    - prihlasovanie pretekárov na preteky
+    - generovanie štatistík

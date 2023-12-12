@@ -9,6 +9,7 @@ požiadaviek v kóde, mimo neho a ďalšie úpravy.
 # Špecifikácia vonkajších interfejsov
 
 Medzi vonkajšie interfejsy aplikácie patria:
+
 - konfiguračný súbor vo formáte TOML, z ktorého produkt načítava svoje nastavenia
 - konzolové rozhranie, s ktorým používateľ obsluhuje funkcie produktu
 - CLI rozhranie, pomocou ktorého spúšťa funkcie produktu existujúca klubová aplikácia
@@ -113,28 +114,6 @@ q - návrat
 pretekári >>>
 ```
 
-# Návrh grafického rozhrania
-
-## Pridanie nových pretekov
-
-![Pridanie nových pretekov](images/novy_pretek.png)
-
-## Prihlasovanie účastníkov pretekov
-
-![Prihlasovanie pretekárov](images/pridanie_pretekov.png)
-
-## Generovanie štatistík
-
-Používateľ vyznačením zaškrtávacích okienok zvolí pretekárov, pre ktorých aplikácia vygeneruje HTML súbor obsahujúci ich
-štatistiky. Pri zvolení len jedného pretekára, bude vygenerovaný sumár jeho individuálnych štatistík. Pri zvolení
-viacerych pretekárov, bude vygenerovaný tiež len jeden súbor, kde budú títo pretekári porovnaní na základe ich
-štatistík. Taktiež si zvolí začiatok a koniec obdobia, z ktorého sa majú štatistiky vygenerovať.
-
-Vygenerované štatistiky sa zobrazia v novej karte prehliadača a používateľ ich môže exportovať do PDF súboru využitím
-funkcie prehliadača "Tlač do PDF".
-
-![Generovanie štatistík](images/generovanie_statistik.png)
-
 # Návrh zobrazenia štatistík
 
 Vygenerovaný HTML dokument obsahujúci štatistiky pretekára alebo pretekárov pozostáva z dvoch sekcii. Prvá je Prehľad -
@@ -170,12 +149,13 @@ Podsystém _Commander_ zabezpečuje funkčnosť používateľského rozhrania.
 ![Component diagram](images/komponent_diagram.png)
 
 # Harmonogram implementácie
+
 1. implementovať nasledovné:
-   - konfiguračný súbor aplikácie
-   - databázové CRUD operácie
-   - všetky API volania
-   - CLI rozhranie
-   - šablóna štatistík
+    - konfiguračný súbor aplikácie
+    - databázové CRUD operácie
+    - všetky API volania
+    - CLI rozhranie
+    - šablóna štatistík
 2. otestovať všetky tieto komponenty osobitne
 3. implementovať položky tieto menu a prepojiť ich s príslušnými komponentami:
     - pridávanie nových pretekov

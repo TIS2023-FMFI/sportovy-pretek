@@ -27,15 +27,14 @@ Medzi vonkajšie interfejsy aplikácie patria:
 # Analýza použitých technológii
 
 - HTML, CSS, JavaScript - výstupné súbory štatistík
-- PHP, SQLite - prevzaté z pôvodnej aplikácie
-- Python 3.11 - primárny jazyk aplikácie
+- PHP 5.6, SQLite - prevzaté z pôvodnej aplikácie
+- Python 3.8 - primárny jazyk aplikácie
 - [Chart.js](https://www.w3schools.com/js/js_graphics_chartjs.asp) - grafy v štatistikách
 - pip - balíčkovanie aplikácie
 - pip balíčky, na ktorých aplikácia závisí
     - [SQLAlchemy](https://docs.sqlalchemy.org/en/20/) - práca s databázou
-    - [tabulate](https://pypi.org/project/tabulate/) - plaintextové tabuľky
     - [requests](https://pypi.org/project/requests/) - komunikácia s API
-    - [tomli-w](https://pypi.org/project/tomli-w/) - export konfigurácie do súboru
+    - [toml](https://pypi.org/project/toml/) - export konfigurácie do súboru
     - [jinja](https://jinja.palletsprojects.com/en/3.0.x/) - exportovanie štatistík
 
 # Návrh konzolového rozhrania

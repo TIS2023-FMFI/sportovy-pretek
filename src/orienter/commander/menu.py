@@ -81,11 +81,11 @@ class Menu:
                 categories = API.get_category_list()
                 for race_category in race_details.categories:
                     category_id = race_category.category_id
-                    category_name = categories[category_id]
+                    category_name = categories[category_id].name
                     stmt = select(models.Category).where(models.Category.category_id == category_id)
                     existing = session.scalars(stmt)
                     if not existing.all():
-                        stmt = insert(models.Category).values(category_id=category_id, category_name=category_name)
+                        stmt = insert(models.Category).values(category_id=category_id, name=category_name)
                         session.execute(stmt)
                     stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
                                                                      category_id=category_id)
@@ -96,8 +96,9 @@ class Menu:
     @staticmethod
     def signup_menu():
         with Session.begin() as session:
-            #stmt = select(models.Competition).where(models.Competition.is_active == 1).where(models.Competition.date < datetime.now())
-            stmt = select(models.Competition).where(models.Competition.date > datetime.now()).where(models.Competition.is_active == 1)
+            # stmt = select(models.Competition).where(models.Competition.is_active == 1).where(models.Competition.date < datetime.now())
+            stmt = select(models.Competition).where(models.Competition.date > datetime.now()).where(
+                models.Competition.is_active == 1)
             active_races_raw = session.scalars(stmt).all()
 
             choices = [f"{race.date.strftime(DATE_FORMAT)}, {race.name}" for race in active_races_raw]
@@ -155,7 +156,7 @@ class Menu:
                     ]'''
                     "categories": [
                         {"competition_event_id": comp_event_id,
-                            "competition_category_id": c.category_id} for c in categorie_for_comp
+                         "competition_category_id": c.category_id} for c in categorie_for_comp
                     ]
                 }
                 response = API.create_registration(comp_event_id, input_mapping)
@@ -192,7 +193,6 @@ class Menu:
         with open(path, 'w', encoding='utf-8') as html:
             html.write(generator.render(user_ids))
 
-        
 
 if __name__ == "__main__":
     Menu.main_menu()

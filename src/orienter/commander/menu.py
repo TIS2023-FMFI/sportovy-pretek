@@ -10,7 +10,8 @@ from sqlalchemy import select, insert
 
 from .utils import MONTHS_FULL, DATE_FORMAT, API
 from .utils import get_races_in_month, get_clubs, encode_competition_id
-from ..databasor import models, session
+from ..databasor import models
+from ..databasor.session import Session
 from ..statista import statistics
 
 
@@ -50,7 +51,8 @@ class Menu:
         for i, race in enumerate(races):
             for j, event in enumerate(race.events):
                 races_list.append(
-                    [i, j, event.date.strftime(DATE_FORMAT), event.title_sk, race.place, clubs[race.organizers[0]].name])
+                    [i, j, event.date.strftime(DATE_FORMAT), event.title_sk, race.place,
+                     clubs[race.organizers[0]].name])
         choices = [", ".join(race[2:]) for race in races_list]
         races_menu = TerminalMenu(choices, title="Vyberte preteky.\n"
                                                  "dátum konania, názov, miesto konania, organizátor\n"
@@ -60,88 +62,84 @@ class Menu:
         if races_menu.chosen_accept_key == 'q':
             Menu.add_race_menu()
             return
-        try:
-            session.session.begin()
+        with Session.begin() as session:
             for selected_race in selected_races:
                 race = races[races_list[selected_race][0]]
                 event = race.events[races_list[selected_race][1]]
                 competition_id = encode_competition_id(int(race.id), int(event.id))
                 stmt = select(models.Competition).where(models.Competition.competition_id == competition_id)
-                existing = session.session.scalars(stmt)
+                existing = session.scalars(stmt)
                 if existing.all():
                     print("Tieto preteky už existujú:", choices[selected_race])
                     continue
                 three_days = timedelta(days=3)
-                stmt = insert(models.Competition).values(competition_id=competition_id, name=event.title_sk,
-                                                         date=event.date, signup_deadline=event.date - three_days,
-                                                         is_active=0, comment="")
-                session.session.execute(stmt)
+                competition = models.Competition(competition_id=competition_id, name=event.title_sk,
+                                                 date=event.date, signup_deadline=event.date - three_days,
+                                                 is_active=0, comment="")
+                session.add(competition)
                 race_details = API.competition_details(race.id)
                 categories = API.get_category_list()
                 for race_category in race_details.categories:
                     category_id = race_category.category_id
                     category_name = categories[category_id]
                     stmt = select(models.Category).where(models.Category.category_id == category_id)
-                    existing = session.session.scalars(stmt)
+                    existing = session.scalars(stmt)
                     if not existing.all():
                         stmt = insert(models.Category).values(category_id=category_id, category_name=category_name)
-                        session.session.execute(stmt)
+                        session.execute(stmt)
                     stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
                                                                      category_id=category_id)
-                    session.session.execute(stmt)
-        except Exception:
-            session.session.rollback()
-            import traceback
-            print(traceback.format_exc())
-            print("Neporadilo sa uložiť do databázy. Zmeny boli vrátené.")
-            return
-        session.session.commit()
+                    session.execute(stmt)
+            session.commit()
         print("Preteky sa úspešne uložili.")
 
     @staticmethod
     def signup_menu():
-        stmt = session.select(models.Competition).where(models.Competition.is_active == 1) \
-            .where(models.Competition.date > datetime.now())
-        active_races_raw = session.session.scalars(stmt).all()
+        with Session.begin() as session:
+            stmt = select(models.Competition).where(models.Competition.is_active == 1) \
+                .where(models.Competition.date > datetime.now())
+            active_races_raw = session.session.scalars(stmt).all()
 
-        choices = [f"{race.date.strftime(DATE_FORMAT)}, {race.name}" for race in active_races_raw]
-        if len(choices) == 0:
-            print("Nenašli sa žiadne preteky")
-            return
+            choices = [f"{race.date.strftime(DATE_FORMAT)}, {race.name}" for race in active_races_raw]
+            if len(choices) == 0:
+                print("Nenašli sa žiadne preteky")
+                return
 
-        races_menu = TerminalMenu(choices, title="Vyberte preteky.\n"
-                                                 "dátum konania, názov\n"
-                                                 "(návrat pomocou klávesu q)",
-                                  multi_select=False, accept_keys=("enter", "q"))
-        selected_race_number = races_menu.show()
-        if races_menu.chosen_accept_key == 'q':
-            return
-        selected_race = active_races_raw[selected_race_number]
-        stmt = session.select(models.User).join(models.Signup, models.Signup.user_id == models.User.user_id) \
-            .where(models.Signup.competition_id == selected_race.competition_id)
-        racers_raw = session.session.scalars(stmt)
+            races_menu = TerminalMenu(choices, title="Vyberte preteky.\n"
+                                                     "dátum konania, názov\n"
+                                                     "(návrat pomocou klávesu q)",
+                                      multi_select=False, accept_keys=("enter", "q"))
+            selected_race_number = races_menu.show()
+            if races_menu.chosen_accept_key == 'q':
+                return
+            selected_race = active_races_raw[selected_race_number]
+            stmt = select(models.User).join(models.Signup, models.Signup.user_id == models.User.user_id) \
+                .where(models.Signup.competition_id == selected_race.competition_id)
+            racers_raw = session.session.scalars(stmt)
 
-        joined_racers = [f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20] or '--'}" for
-                         racer in racers_raw]
-        if len(joined_racers) == 0:
-            print("Nenašli sa žiadni pretekári")
-            return
+            joined_racers = [f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20] or '--'}"
+                             for
+                             racer in racers_raw]
+            if len(joined_racers) == 0:
+                print("Nenašli sa žiadni pretekári")
+                return
 
-        racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
-                                                        "Meno a priezvisko, klubové id, poznámka\n"
-                                                        "(návrat pomocou klávesu q)",
-                                   multi_select=True, accept_keys=("enter", "q"))
-        selected_racers = racers_menu.show()
-        if racers_menu.chosen_accept_key == 'q':
-            Menu.signup_menu()
-            return
+            racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
+                                                            "Meno a priezvisko, klubové id, poznámka\n"
+                                                            "(návrat pomocou klávesu q)",
+                                       multi_select=True, accept_keys=("enter", "q"))
+            selected_racers = racers_menu.show()
+            if racers_menu.chosen_accept_key == 'q':
+                Menu.signup_menu()
+                return
 
-        print("Selected racers:", selected_racers)  # TODO: do stuff with the selection
+            print("Selected racers:", selected_racers)  # TODO: do stuff with the selection
 
     @staticmethod
     def statistics_menu():
-        stmt = session.select(models.User)
-        racers_raw = session.session.scalars(stmt).all()
+        with Session.begin() as session:
+            stmt = select(models.User)
+            racers_raw = session.session.scalars(stmt).all()
 
         joined_racers = [f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20]}" for racer
                          in racers_raw]

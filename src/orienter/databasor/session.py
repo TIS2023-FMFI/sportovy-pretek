@@ -1,16 +1,18 @@
-from sqlalchemy import create_engine
-from sqlalchemy import select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, event
+from sqlalchemy.orm import sessionmaker, mapper, scoped_session
+
+from .models import *
+from .schemas import *
 from ..configurator import configuration
-from ..databasor.models import *
 
 engine = create_engine(f"sqlite:///{configuration.DATABASE_PATH}")
-Session = sessionmaker()
-Session.configure(bind=engine)
-session = Session()
+Session = sessionmaker(bind=engine)
+session = scoped_session(Session)
+event.listen(mapper, "after_configured", setup_schema(Base, session))
+Base.metadata.create_all(engine)
+
 
 if __name__ == "__main__":
-    stmt = select(User).where(User.user_id == 1)
-
-    for user in session.scalars(stmt):
-        print(user.first_name, user.last_name)
+    section_schema = Section.__marshmallow__()
+    data = section_schema.load({'id': 244, 'nazov': "HELO"}, session=session)
+    print(data)

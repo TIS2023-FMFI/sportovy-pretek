@@ -1,14 +1,16 @@
-from sqlalchemy import Column, Integer, ForeignKey, Date, DateTime, Time, Text, Boolean, Float
+from sqlalchemy import Column, Integer, ForeignKey, Date, DateTime, Text, Boolean
 
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import Mapped, mapped_column, declarative_base
 
 Base = declarative_base()
 
 
 class Section(Base):
     __tablename__ = "Oddiely"
-    section_id = Column("id", Integer, primary_key=True, autoincrement=True)
-    name = Column("nazov", Text)
+    # section_id = Column("id", Integer, primary_key=True, autoincrement=True)
+    # name = Column("nazov", Text)
+    section_id: Mapped[int] = mapped_column("id", primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column("nazov")
 
 
 class UserInfo(Base):

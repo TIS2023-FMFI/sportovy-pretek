@@ -80,11 +80,11 @@ class Menu:
                 race_details = API.competition_details(race.id)
                 categories = API.get_category_list()
                 for race_category in race_details.categories:
-                    category_id = race_category.category_id
-                    category_name = categories[category_id].name
+                    category_id = int(race_category.category_id) * 1_000_000
+                    category_name = categories[race_category.category_id].name
                     stmt = select(models.Category).where(models.Category.category_id == category_id)
-                    existing = session.scalars(stmt)
-                    if not existing.all():
+                    existing = session.scalars(stmt).one_or_none()
+                    if existing is None:
                         stmt = insert(models.Category).values(category_id=category_id, name=category_name)
                         session.execute(stmt)
                     stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,

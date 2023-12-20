@@ -7,12 +7,11 @@ from sqlalchemy.dialects import sqlite
 from orienter.databasor.schemas import UserSchema
 from . import models
 from .session import Session
-
-PEHAPEZOR_URL = 'http://localhost:8080/pehapezor.php'
+from ..configurator import configuration
 
 
 def exec_select(query: Select) -> Sequence:
-    response = requests.post(PEHAPEZOR_URL, json={
+    response = requests.post(configuration.WEB_APP_URL, json={
         'query': str(query.compile(dialect=sqlite.dialect(), compile_kwargs={"literal_binds": True}))})
     if 200 <= response.status_code < 300:
         return response.json()
@@ -20,7 +19,7 @@ def exec_select(query: Select) -> Sequence:
 
 
 def exec_query(query) -> bool:
-    response = requests.post(PEHAPEZOR_URL, json={
+    response = requests.post(configuration.WEB_APP_URL, json={
         'query': str(query.compile(dialect=sqlite.dialect(), compile_kwargs={"literal_binds": True}))})
     if 200 <= response.status_code < 300:
         return response.json()['success']
@@ -35,7 +34,6 @@ if __name__ == "__main__":
         for user_dict in result:
             user = user_schema.load(user_dict, session=session)
             print(user.first_name, user.last_name)
-
 
         q = delete(models.User).where(models.User.user_id == 170)
         success = exec_query(q)

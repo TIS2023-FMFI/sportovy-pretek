@@ -9,6 +9,7 @@ class Config:
     API_ENDPOINT: str = field(init=False, default="https://is.orienteering.sk/api")
     API_CLUB_ID: int = field(init=False, default=46)
     DATABASE_PATH: str = field(init=False, default="")
+    WEB_APP_URL: str = field(init=False, default="http://localhost:8080/pehapezor.php")
 
     def __post_init__(self):
         self._load_config()

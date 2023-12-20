@@ -75,7 +75,7 @@ class Menu:
                 three_days = timedelta(days=3)
                 competition = models.Competition(competition_id=competition_id, name=event.title_sk,
                                                  date=event.date, signup_deadline=event.date - three_days,
-                                                 is_active=0, comment="")
+                                                 is_active=1, comment="")
                 session.add(competition)
                 race_details = API.competition_details(race.id)
                 categories = API.get_category_list()

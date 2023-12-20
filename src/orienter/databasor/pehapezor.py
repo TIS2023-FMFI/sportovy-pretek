@@ -1,4 +1,4 @@
-from typing import Mapping
+from typing import Sequence
 
 import requests
 from sqlalchemy import Select, delete, select
@@ -11,7 +11,7 @@ from .session import Session
 PEHAPEZOR_URL = 'http://localhost:8080/pehapezor.php'
 
 
-def exec_select(query: Select) -> Mapping:
+def exec_select(query: Select) -> Sequence:
     response = requests.post(PEHAPEZOR_URL, json={
         'query': str(query.compile(dialect=sqlite.dialect(), compile_kwargs={"literal_binds": True}))})
     if 200 <= response.status_code < 300:

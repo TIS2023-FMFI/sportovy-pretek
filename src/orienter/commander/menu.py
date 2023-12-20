@@ -11,6 +11,7 @@ from sqlalchemy import select, insert
 from .utils import MONTHS_FULL, DATE_FORMAT, API
 from .utils import get_races_in_month, get_clubs, encode_competition_id, decode_competition_id
 from ..databasor import models
+from ..databasor import pehapezor, schemas
 from ..databasor.session import Session
 from ..statista import statistics
 
@@ -68,29 +69,29 @@ class Menu:
                 event = race.events[races_list[selected_race][1]]
                 competition_id = encode_competition_id(int(race.id), int(event.id))
                 stmt = select(models.Competition).where(models.Competition.competition_id == competition_id)
-                existing = session.scalars(stmt)
-                if existing.one_or_none():
+                existing = pehapezor.exec_select(stmt)
+                if existing:
                     print("Tieto preteky už existujú:", choices[selected_race])
                     continue
                 three_days = timedelta(days=3)
-                competition = models.Competition(competition_id=competition_id, name=event.title_sk,
-                                                 date=event.date, signup_deadline=event.date - three_days,
-                                                 is_active=1, comment="")
-                session.add(competition)
+                stmt = insert(models.Competition).values(competition_id=competition_id, name=event.title_sk,
+                                                         date=event.date, is_active=1, comment="",
+                                                         signup_deadline=event.date - three_days)
+                pehapezor.exec_query(stmt)
                 race_details = API.competition_details(race.id)
                 categories = API.get_category_list()
                 for race_category in race_details.categories:
                     category_id = int(race_category.category_id) * 1_000_000
                     category_name = categories[race_category.category_id].name
                     stmt = select(models.Category).where(models.Category.category_id == category_id)
-                    existing = session.scalars(stmt).one_or_none()
-                    if existing is None:
+                    existing = pehapezor.exec_select(stmt)
+                    if not existing:
                         stmt = insert(models.Category).values(category_id=category_id, name=category_name)
-                        session.execute(stmt)
+                        pehapezor.exec_query(stmt)
                     stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
                                                                      category_id=category_id,
                                                                      api_category_id=race_category.id)
-                    session.execute(stmt)
+                    pehapezor.exec_query(stmt)
             session.commit()
         print("Preteky sa úspešne uložili.")
 
@@ -99,7 +100,8 @@ class Menu:
         with (Session.begin() as session):
             stmt = select(models.Competition).where(models.Competition.date > datetime.now()).where(
                 models.Competition.is_active == 1)
-            active_races_raw = session.scalars(stmt).all()
+            competition_schema = schemas.CompetitionSchema()
+            active_races_raw = [competition_schema.load(obj, session=session) for obj in pehapezor.exec_select(stmt)]
 
             choices = [f"{race.date.strftime(DATE_FORMAT)}, {race.name}" for race in active_races_raw]
             if len(choices) == 0:
@@ -117,10 +119,10 @@ class Menu:
             stmt = session.query(models.User, models.Signup) \
                 .join(models.Signup, models.Signup.user_id == models.User.user_id) \
                 .where(models.Signup.competition_id == selected_race.competition_id)
-            racers_raw = session.execute(stmt).mappings().all()
+            racers_raw = pehapezor.exec_select(stmt.statement)
 
             joined_racers = [
-                f"{row.User.first_name} {row.User.last_name}, {row.User.user_club_id}, {row.User.comment[:20] or '--'}"
+                f"{row['meno']} {row['priezvisko']}, {row['os_i_c']}, {row['poznamka'][:20] or '--'}"
                 for row in racers_raw
             ]
             if len(joined_racers) == 0:
@@ -145,19 +147,19 @@ class Menu:
                           (models.Signup.competition_id == models.CompetitionCategory.competition_id) &
                           (models.Signup.category_id == models.CompetitionCategory.category_id)) \
                     .where(models.Signup.competition_id == selected_race.competition_id) \
-                    .where(models.Signup.user_id == selected_racer.user_id)
-                result = session.execute(stmt).mappings().one_or_none()
+                    .where(models.Signup.user_id == selected_racer['id'])
+                result = pehapezor.exec_select(stmt.statement)[0]
                 input_mapping = {
                     "registration_id": "0",
-                    "first_name": selected_racer.first_name,
-                    "surname": selected_racer.last_name,
-                    "reg_number": selected_racer.user_club_id,
-                    "sportident": selected_racer.chip_number,
-                    "comment": selected_racer.comment,
+                    "first_name": selected_racer['meno'],
+                    "surname": selected_racer['priezvisko'],
+                    "reg_number": selected_racer['os_i_c'],
+                    "sportident": selected_racer['cip'],
+                    "comment": selected_racer['poznamka'],
                     "categories": [
                         {
                             "competition_event_id": event_id,
-                            "competition_category_id": result.CompetitionCategory.api_category_id
+                            "competition_category_id": result['api_comp_cat_id']
                         }
                     ]
                 }

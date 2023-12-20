@@ -3,3 +3,4 @@ Podla coho robit poradie pretekarov v klube?
 
 Na vyslednej DB treba spustit:
 UPDATE "Pouzivatelia" SET id_oddiel=NULL WHERE id_oddiel='';
+ALTER TABLE Kategorie_pre ADD COLUMN api_comp_cat_id INTEGER NOT NULL DEFAULT 0;

@@ -9,7 +9,7 @@ from simple_term_menu import TerminalMenu
 from sqlalchemy import select, insert
 
 from .utils import MONTHS_FULL, DATE_FORMAT, API
-from .utils import get_races_in_month, get_clubs, encode_competition_id
+from .utils import get_races_in_month, get_clubs, encode_competition_id, decode_competition_id
 from ..databasor import models
 from ..databasor.session import Session
 from ..statista import statistics
@@ -96,9 +96,9 @@ class Menu:
     @staticmethod
     def signup_menu():
         with Session.begin() as session:
-            stmt = select(models.Competition).where(models.Competition.is_active == 1) \
-                .where(models.Competition.date > datetime.now())
-            active_races_raw = session.session.scalars(stmt).all()
+            #stmt = select(models.Competition).where(models.Competition.is_active == 1).where(models.Competition.date < datetime.now())
+            stmt = select(models.Competition).where(models.Competition.date > datetime.now()).where(models.Competition.is_active == 1)
+            active_races_raw = session.scalars(stmt).all()
 
             choices = [f"{race.date.strftime(DATE_FORMAT)}, {race.name}" for race in active_races_raw]
             if len(choices) == 0:
@@ -112,14 +112,13 @@ class Menu:
             selected_race_number = races_menu.show()
             if races_menu.chosen_accept_key == 'q':
                 return
-            selected_race = active_races_raw[selected_race_number]
+            selected_race: models.Competition = active_races_raw[selected_race_number]
             stmt = select(models.User).join(models.Signup, models.Signup.user_id == models.User.user_id) \
                 .where(models.Signup.competition_id == selected_race.competition_id)
-            racers_raw = session.session.scalars(stmt)
+            racers_raw = session.scalars(stmt)
 
             joined_racers = [f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20] or '--'}"
-                             for
-                             racer in racers_raw]
+                             for racer in racers_raw]
             if len(joined_racers) == 0:
                 print("Nenašli sa žiadni pretekári")
                 return
@@ -133,7 +132,34 @@ class Menu:
                 Menu.signup_menu()
                 return
 
-            print("Selected racers:", selected_racers)  # TODO: do stuff with the selection
+            # print("Selected racers:", selected_racers)  # TODO: do stuff with the selection
+
+            comp_event_id, event_id = decode_competition_id(selected_race.competition_id)
+            stmt = select(models.CompetitionCategory).where(models.CompetitionCategory.competition_id == comp_event_id)
+            categorie_for_comp = session.scalars(stmt)
+
+            for selected_racer_num in selected_racers:
+                selected_racer: models.User = racers_raw[selected_racer_num]
+                input_mapping = {
+                    "registration_id": "0",
+                    "first_name": selected_racer.first_name,
+                    "surname": selected_racer.last_name,
+                    "reg_number": selected_racer.user_club_id,
+                    "sportident": selected_racer.chip_number,
+                    "comment": selected_racer.comment,
+                    '''"categories": [
+                        {
+                            "competition_event_id": comp_event_id,
+                            "competition_category_id": event_id
+                        }
+                    ]'''
+                    "categories": [
+                        {"competition_event_id": comp_event_id,
+                            "competition_category_id": c.category_id} for c in categorie_for_comp
+                    ]
+                }
+                response = API.create_registration(comp_event_id, input_mapping)
+                print(f"entry_id: {response['entry_id']}, entry_runner_id: {response['entry_runner_id']}")
 
     @staticmethod
     def statistics_menu():
@@ -166,6 +192,7 @@ class Menu:
         with open(path, 'w', encoding='utf-8') as html:
             html.write(generator.render(user_ids))
 
+        
 
 if __name__ == "__main__":
     Menu.main_menu()

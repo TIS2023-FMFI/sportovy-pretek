@@ -88,7 +88,8 @@ class Menu:
                         stmt = insert(models.Category).values(category_id=category_id, name=category_name)
                         session.execute(stmt)
                     stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
-                                                                     category_id=category_id)
+                                                                     category_id=category_id,
+                                                                     api_category_id=race_category.id)
                     session.execute(stmt)
             session.commit()
         print("Preteky sa úspešne uložili.")

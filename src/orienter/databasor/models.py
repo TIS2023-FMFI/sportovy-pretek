@@ -59,6 +59,7 @@ class CompetitionCategory(Base):
     comp_cat_id = Column("id", Integer, primary_key=True, autoincrement=True)
     competition_id = Column("id_pret", Integer, ForeignKey("Preteky.id"))
     category_id = Column("id_kat", Integer, ForeignKey("Kategorie.id"))
+    api_category_id = Column("api_comp_cat_id", Integer)
 
 
 class Category(Base):

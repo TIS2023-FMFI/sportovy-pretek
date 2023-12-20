@@ -14,7 +14,7 @@ class Loader:
             self.load_one(id)
     def load_one(self, racer_id):
         self.overview[racer_id] = dict()
-        racer = session.session.scalars(session.select(User).where(User.user_id == racer_id)).all()[0]
+        racer = session.session.scalars(session.select(User).where(User.user_id == racer_id)).one_or_none()
         racer_name = f"{racer.first_name} {racer.last_name}"
         participations = session.session.scalars(session.select(Signup).where(Signup.user_id == racer_id)).all()
         wins = session.session.scalars(session.select(Performance).where(Performance.user_id == racer_id)

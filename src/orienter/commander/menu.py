@@ -69,7 +69,7 @@ class Menu:
                 competition_id = encode_competition_id(int(race.id), int(event.id))
                 stmt = select(models.Competition).where(models.Competition.competition_id == competition_id)
                 existing = session.scalars(stmt)
-                if existing.all():
+                if existing.one_or_none():
                     print("Tieto preteky už existujú:", choices[selected_race])
                     continue
                 three_days = timedelta(days=3)

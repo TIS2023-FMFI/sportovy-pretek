@@ -42,8 +42,8 @@ class UserSchema(SQLAlchemySchema):
     os_i_c = auto_field("user_club_id")
     cip = auto_field("chip_number")
     poznamka = auto_field("comment")
-    id_oddiel = auto_field("section_id")
-    id_kmen_clen = auto_field("info_id")
+    id_oddiel = auto_field("section_id", load_default=None)
+    id_kmen_clen = auto_field("info_id", load_default=None)
     uspech = auto_field("success")
 
 
@@ -60,14 +60,23 @@ class CompetitionSchema(SQLAlchemySchema):
     poznamka = auto_field("comment")
 
 
-class CategorySchema(SQLAlchemySchema):
+class CompetitionCategorySchema(SQLAlchemySchema):
     class Meta:
-        model = models.Category
+        model = models.CompetitionCategory
         load_instance = True
 
     id = auto_field("comp_cat_id")
     id_pret = auto_field("competition_id")
     id_kat = auto_field("category_id")
+
+
+class CategorySchema(SQLAlchemySchema):
+    class Meta:
+        model = models.Category
+        load_instance = True
+
+    id = auto_field("category_id")
+    nazov = auto_field("name")
 
 
 class SignupSchema(SQLAlchemySchema):

@@ -1,2 +1,5 @@
 Polozka "vitaz" vo vykonoch je krstne meno aj priezvisko?
 Podla coho robit poradie pretekarov v klube?
+
+Na vyslednej DB treba spustit:
+UPDATE "Pouzivatelia" SET id_oddiel=NULL WHERE id_oddiel='';

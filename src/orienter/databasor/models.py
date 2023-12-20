@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy import Column, Integer, ForeignKey, Date, DateTime, Text, Boolean
 
 from sqlalchemy.orm import Mapped, mapped_column, declarative_base
@@ -31,16 +33,15 @@ class UserInfo(Base):
 
 class User(Base):
     __tablename__ = "Pouzivatelia"
-    user_id = Column("id", Integer, primary_key=True, autoincrement=True)
-    first_name = Column("meno", Text)
-    last_name = Column("priezvisko", Text)
-    user_club_id = Column("os_i_c", Text,
-                          comment="Unikátne číslo používateľa pridelené klubom, kombinácia čísel a znakov")
-    chip_number = Column("cip", Text)
-    comment = Column("poznamka", Text)
-    section_id = Column("id_oddiel", Integer)
-    info_id = Column("id_kmen_clen", Integer)
-    success = Column("uspech", Text)
+    user_id: Mapped[int] = mapped_column("id", primary_key=True, autoincrement=True)
+    first_name: Mapped[str] = mapped_column("meno")
+    last_name: Mapped[str] = mapped_column("priezvisko")
+    user_club_id: Mapped[str] = mapped_column("os_i_c")
+    chip_number: Mapped[str] = mapped_column("cip")
+    comment: Mapped[str] = mapped_column("poznamka")
+    section_id: Mapped[Optional[int]] = mapped_column("id_oddiel")
+    info_id: Mapped[Optional[int]] = mapped_column("id_kmen_clen")
+    success: Mapped[str] = mapped_column("uspech")
 
 
 class Competition(Base):

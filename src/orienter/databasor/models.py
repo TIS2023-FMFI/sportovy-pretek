@@ -23,7 +23,7 @@ class UserInfo(Base):
     permanent_residence_country = Column("krajina_trvaleho_pobytu", Text)
     street = Column("ulica", Text)
     house_number = Column("cislo_domu", Integer)
-    zip_code = Column("pcs", Integer)
+    zip_code = Column("psc", Integer)
     city = Column("mesto", Text)
     phone_number = Column("telefon", Text)
     email = Column("mail", Text)

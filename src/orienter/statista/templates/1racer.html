@@ -18,14 +18,20 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
             margin-right: auto;
         }
         td, th {
-          border: 1px solid black;
-          width: 200px;
-          height: 50px;
-          text-align: center;
+            border: 1px solid black;
+            width: 200px;
+            height: 50px;
+            text-align: center;
         }
         th {
-          background-color: #D6EEEE;
+            background-color: #D6EEEE;
         }
+        /*
+        canvas {
+            width:700px !important;
+            height:400px !important;
+        }
+        */
     </style>
 </head>
 <body>
@@ -44,34 +50,85 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
             <td>{{rank}}</td>
         </tr>
     </table>
-	<h3>Odchyľka od ideálnej vzdialenosti</h3>
-    <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
-    <script>
-    const xValues = ["Veľká cena Malých karpát 2023",
-					"OMV orienteering challenge 2023",
-					"XI. Medzidunajská cena",
-					"Orientačný pohár L. Bartáka 2023",
-					"Pohár Slovenskej Sporiteľne 2023",
-					"XVII. Beh patriotov",
-					"XXV. Vyšehradský pohár",
-					"XVIII. Cena Petržalky"];
-    const yValues = [6.15, 1.81, 1.26, 11.62, 1.94, 1.78, 3.58, 4.35];
-    const barColors = ["yellow", "yellow","yellow", "yellow", "yellow", "yellow", "yellow", "yellow"];
 
-    new Chart("myChart", {
-      type: "bar",
-      data: {
-        labels: xValues,
-        datasets: [{
-          backgroundColor: barColors,
-          data: yValues
-        }]
-      },
-      options: {legend: {display: false},
-    title: {
-      display: true,
-      text: "Percentuálne odchýľka od ideálnej vzdialenosti"
-    }}
+	<h2>"Štatistiky za obdobie {{date_from}} - {{date_to}}"</h2>
+
+    <canvas id="Poradie_na_preteku"></canvas>
+    <script>
+    new Chart("Poradie_na_preteku", {
+        type: "bar",
+        data: {
+            labels: {{race_names|safe}},
+            datasets: [{
+                backgroundColor: "purple",
+                data: {{placements|safe}}
+            }]
+        },
+        options: {
+            legend: {display: false},
+            title: {display: true, text: "Poradie na preteku"},
+            scales: {
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+    </script>
+
+    <canvas id="Klzavy_median"></canvas>
+    <script>
+    new Chart("Klzavy_median", {
+        type: "line",
+        data: {
+            labels: {{race_names|safe}},
+            datasets: [{
+                backgroundColor: "green",
+                borderColor: "green",
+                data: {{sliding_medians|safe}}
+            }]
+        },
+        options: {
+            legend: {display: false},
+            title: {display: true, text: "Kĺzavý medián poradia za posledných 5 pretekov"},
+            scales: {
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+    </script>
+
+    <canvas id="Ucasti"></canvas>
+    <script>
+    new Chart("Ucasti", {
+        type: "bar",
+        data: {
+            labels: {{months|safe}},
+            datasets: [{
+                backgroundColor: "brown",
+                data: {{attendances|safe}}
+            }]
+        },
+        options: {
+            legend: {display: false},
+            title: {display: true, text: "Účasti na pretekoch"},
+            scales: {
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
     });
     </script>
 </body>

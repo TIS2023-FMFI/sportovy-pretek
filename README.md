@@ -1,2 +1,10 @@
 # sportovy-pretek
-Projekt na Tvorbu informačných systémov 2023 - registrácia na športový pretek
+
+Projekt na Tvorbu informačných systémov 2023 - aplikácia pre prácu so systémom SZOS a webovou aplikáciou ŠK Sandberg
+
+# Inštalácia
+
+Aplikácia vyžaduje operačný systém Linux. Iný operačný systém nie je podporovaný.
+
+1. poskladanie balíčka príkazom `make build`
+2. inštalácia balíčka (pri verzii 1.0.0) je možná príkazom `pip install dist/orienter-1.0.0-py3-none-any.whl`

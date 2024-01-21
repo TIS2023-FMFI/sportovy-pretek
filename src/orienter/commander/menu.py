@@ -8,12 +8,14 @@ from pathlib import Path
 from simple_term_menu import TerminalMenu
 from sqlalchemy import select, insert
 
-from .utils import MONTHS_FULL, DATE_FORMAT, API
+from .utils import MONTHS_FULL, DATE_FORMAT
 from .utils import get_races_in_month, get_clubs, encode_competition_id, decode_competition_id
 from ..databasor import models
 from ..databasor import pehapezor, schemas
 from ..databasor.session import Session
 from ..statista import statistics
+from ..configurator import configuration
+from ..communicator.api import API
 
 
 class Menu:
@@ -42,12 +44,12 @@ class Menu:
         if month_menu.chosen_accept_key == 'q':
             return
 
-        races = get_races_in_month(selected_month)
+        api = API(configuration.API_KEY, configuration.API_ENDPOINT)
+        races = get_races_in_month(api, selected_month)
         if not races:
             print("V zvolenom mesiaci sa nekonajú žiadne preteky.")
             return
-
-        clubs = get_clubs()
+        clubs = get_clubs(api)
         races_list = list()
         for i, race in enumerate(races):
             for j, event in enumerate(race.events):
@@ -78,8 +80,8 @@ class Menu:
                                                          date=event.date, is_active=1, comment="",
                                                          signup_deadline=event.date - three_days)
                 pehapezor.exec_query(stmt)
-                race_details = API.competition_details(race.id)
-                categories = API.get_category_list()
+                race_details = api.competition_details(race.id)
+                categories = api.get_category_list()
                 for race_category in race_details.categories:
                     category_id = int(race_category.category_id) * 1_000_000
                     category_name = categories[race_category.category_id].name
@@ -163,7 +165,8 @@ class Menu:
                         }
                     ]
                 }
-                response = API.create_registration(comp_id, input_mapping)
+                api = API(configuration.API_KEY, configuration.API_ENDPOINT)
+                response = api.create_registration(comp_id, input_mapping)
                 out = f"OK - {selected_racer.first_name} {selected_racer.last_name}, entry_id: {response['entry_id']}" \
                       + ", entry_runner_id: {response['entry_runner_id']}"
                 print(out)

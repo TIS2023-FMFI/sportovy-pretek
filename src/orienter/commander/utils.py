@@ -1,8 +1,7 @@
 import calendar
 
-from ..communicator import api
+from ..communicator.api import API
 from ..communicator.objects import *
-from ..configurator import configuration
 
 DATE_FORMAT = '%A, %d.%m.%Y'
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
@@ -43,19 +42,16 @@ def decode_competition_id(competition_id: int) -> (int, int):
     return divmod(competition_id, 100_000_000)
 
 
-API = api.API(configuration.API_KEY, configuration.API_ENDPOINT)
-
-
-def get_clubs():
-    response_obj = API.clubs()
+def get_clubs(api: API):
+    response_obj = api.clubs()
     return {int(obj['id']): Club.from_obj(obj) for obj in response_obj}
 
 
-def get_races_in_month(month: int):
+def get_races_in_month(api: API, month: int):
     now = datetime.now()
     date_from = now.replace(year=now.year + 1 if month < now.month else 0, month=month, day=1)
     date_to = date_from.replace(day=calendar.monthrange(date_from.year, month)[1])
-    response_obj = API.competitions(date_from=date_from.strftime('%Y-%m-%d'),
+    response_obj = api.competitions(date_from=date_from.strftime('%Y-%m-%d'),
                                     date_to=date_to.strftime('%Y-%m-%d'))
     result: List[Competition] = [Competition.from_obj(obj) for obj in response_obj]
     return result

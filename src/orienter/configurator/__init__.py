@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import toml
 from dataclasses import dataclass, asdict, field, fields
 from .constants import CONFIG_FILE_PATH
@@ -13,12 +15,10 @@ class Config:
 
     def __post_init__(self):
         self._load_config()
-        if not CONFIG_FILE_PATH.is_file():
-            raise FileNotFoundError(f"Database file not found at {self.DATABASE_PATH}.")
 
     def _create_example_config(self):
         if not CONFIG_FILE_PATH.is_file():
-            CONFIG_FILE_PATH.touch(mode=0o660, exist_ok=True)
+            CONFIG_FILE_PATH.touch(mode=0o640, exist_ok=True)
         self._save_config()
         raise FileNotFoundError(f"No config file found. An empty one has been created at {CONFIG_FILE_PATH}.")
 

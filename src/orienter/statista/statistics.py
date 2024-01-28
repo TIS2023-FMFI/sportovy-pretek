@@ -1,35 +1,33 @@
-from jinja2 import Environment, PackageLoader, select_autoescape
+from collections.abc import Sequence, MutableSequence
 from datetime import datetime, timedelta
 from html import unescape
+
+from jinja2 import Environment, PackageLoader, select_autoescape, Template
 from numpy import median
-from ..databasor import session
-from ..databasor.models import *
-from ..commander.utils import DATE_FORMAT, MONTHS_FULL
+
 from ..commander.utils import API
+from ..commander.utils import DATE_FORMAT, MONTHS_FULL
+from ..configurator import configuration
 
 NOW = datetime.now()
 YEAR_AGO = NOW - timedelta(days=365)
 
-env = Environment(
-    loader=PackageLoader('orienter.statista'),
-    autoescape=select_autoescape()
-)
-
 
 class Loader:
-    def __init__(self, racer_names_list, since):
+    def __init__(self, racer_names_list: MutableSequence[Sequence[str]], since: datetime):
         self.stats = dict()
         self.since = since
+        self.api = API(configuration.API_KEY, configuration.API_ENDPOINT)
 
         temp_racers_that_participated = dict()
 
-        all_races = API.competitions(YEAR_AGO, NOW)
+        all_races = self.api.competitions(YEAR_AGO, NOW)
         for race in all_races:
             self.stats[race["id"]] = dict()
             self.stats[race["id"]]["race_name"] = unescape(race["title_sk"])
             self.stats[race["id"]]["month"] = datetime.strptime(race["date_from"], "%Y-%m-%d").month
             for event in race["events"]:
-                race_results = API.event_results(race["id"], event["id"])
+                race_results = self.api.event_results(race["id"], event["id"])
                 for performance in race_results:
                     racer_name_tuple = (performance["first_name"], performance["surname"])
 
@@ -52,10 +50,18 @@ class Loader:
 
 
 class Generator:
-    def render(self, racer_names_list, since):
+    def __init__(self):
+        self.template: Template | None = None
+        self.since: datetime | None = None
+
+    def render(self, racer_names_list: MutableSequence[Sequence[str]], since: datetime):
         self.since = since
         loader = Loader(racer_names_list, since)
         stats = loader.stats
+        env = Environment(
+            loader=PackageLoader('orienter.statista'),
+            autoescape=select_autoescape()
+        )
         if len(racer_names_list) == 1:
             self.template = env.get_template("1racer.html")
             return self.render_one(stats, racer_names_list[0])

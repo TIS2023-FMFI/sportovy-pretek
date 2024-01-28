@@ -15,5 +15,3 @@ class PehapezorTestCase(unittest.TestCase):
             competition_schema = schemas.CompetitionSchema()
             competitions = [competition_schema.load(obj, session=session) for obj in competitions_objs]
             self.assertTrue(competitions)
-
-

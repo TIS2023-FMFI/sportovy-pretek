@@ -1,7 +1,7 @@
-from pathlib import Path
+from dataclasses import dataclass, asdict, field, fields
 
 import toml
-from dataclasses import dataclass, asdict, field, fields
+
 from .constants import CONFIG_FILE_PATH
 
 
@@ -20,7 +20,10 @@ class Config:
         if not CONFIG_FILE_PATH.is_file():
             CONFIG_FILE_PATH.touch(mode=0o640, exist_ok=True)
         self._save_config()
-        raise FileNotFoundError(f"No config file found. An empty one has been created at {CONFIG_FILE_PATH}.")
+        print(f"Konfigurácia sa nenašla. Prázdna konfigurácia bola vytvorená v {CONFIG_FILE_PATH}.")
+        print("Nakonfigurujte si aplikáciu príkazom:")
+        print("python -m orienter configure")
+        exit(1)
 
     def _load_config(self):
         if not CONFIG_FILE_PATH.is_file():
@@ -31,7 +34,8 @@ class Config:
                 try:
                     setattr(self, fld.name, config_dict[fld.name])
                 except KeyError:
-                    raise SyntaxError(f"Failed to parse config file. Required entry {fld.name} not found.")
+                    print("Nepodarilo sa prečítať konfiguráciu, požadovaný kľúč sa nenašiel:", fld.name)
+                    exit(2)
 
     def _save_config(self):
         with open(CONFIG_FILE_PATH, 'w') as f:

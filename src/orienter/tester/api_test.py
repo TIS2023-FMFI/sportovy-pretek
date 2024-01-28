@@ -7,11 +7,11 @@ from ..configurator import configuration
 
 class ApiTestCase(unittest.TestCase):
     def setUp(self):
+        if not configuration.API_KEY:
+            raise unittest.SkipTest("no API key configured")
         self.api = API(configuration.API_KEY, configuration.API_ENDPOINT)
 
     def test_api_get_category_list(self):
-        if not configuration.API_KEY:
-            raise unittest.SkipTest("no API key configured")
         self.assertIsNotNone(self.api.get_category_list())
 
     def test_get_clubs(self):

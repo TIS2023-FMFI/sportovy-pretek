@@ -19,7 +19,7 @@ class ConfigTestCase(unittest.TestCase):
             os.rename(CONFIG_FILE_PATH, original_config_file_path)
         try:
             _ = Config()
-        except FileNotFoundError:
+        except SystemExit:
             config = Config()
             with open(CONFIG_FILE_PATH, 'r') as f:
                 config_dict = toml.load(f)

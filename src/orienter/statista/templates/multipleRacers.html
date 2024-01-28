@@ -5,7 +5,7 @@
 src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
 </script>
 <head>
-    <title>Štatistiky pretekára {{name}}</title>
+    <title>Porovnanie pretekárov</title>
     <style>
         h1 {
             text-align: center;
@@ -36,39 +36,63 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
 </head>
 <body>
 
-    <h1>Štatistiky pretekára {{name}}</h1>
+    <h1>Porovnanie pretekárov</h1>
 	<h2><u>Prehľad:</u></h2>
     <table>
-        <tr>
-            <th>Účasti na pretekoch:</th>
-            <th>Víťazstvá:</th>
-        </tr>
-        <tr>
-            <td>{{participations}}</td>
-            <td>{{wins}}</td>
-        </tr>
+        <thead>
+            <tr>
+                <th>Pretekár:</th>
+                <th>Účasti na pretekoch:</th>
+                <th>Víťazstvá:</th>
+            </tr>
+        </thead>
+        <tbody id="overviewBody">
+            <!-- Table body will be generated dynamically -->
+        </tbody>
     </table>
 
-	<h2>Štatistiky za obdobie {{date_from}} - {{date_to}}</h2>
+    <script>
+        var tableBody = document.getElementById("overviewBody");
+        var html = "";
+        for (var i = 0; i < {{racers_count}}; i++) {
+            html += "<tr>";
+            html += "<td>" + {{names|safe}}[i] + "</td>";
+            html += "<td>" + {{participations}}[i] + "</td>";
+            html += "<td>" + {{wins}}[i] + "</td>";
+            html += "</tr>";
+        }
+        tableBody.innerHTML = html;
+    </script>
 
+	<h2>Štatistiky za obdobie {{date_from}} - {{date_to}}</h2>
     <canvas id="Poradie_na_preteku"></canvas>
     <canvas id="Klzavy_median"></canvas>
     <canvas id="Ucasti"></canvas>
     <canvas id="Vitazstva"></canvas>
+    <canvas id="Casy"></canvas>
     <script>
+    var colors = ["blue", "orange", "green", "purple", "yellow", "cyan", "red"];
+    var dataPlacements = [];
+    var dataMedians = [];
+    var dataParticipations = [];
+    var dataWins = [];
+    var dataTimes = [];
+    for (var i = 0; i < {{racers_count}}; i++) {
+        dataPlacements.push({label: {{names|safe}}[i], borderColor: colors[i % 7], backgroundColor: "white", data: {{placements|safe}}[i], lineTension: 0});
+        dataMedians.push({label: {{names|safe}}[i], borderColor: colors[i % 7], backgroundColor: "white", data: {{sliding_medians|safe}}[i], lineTension: 0});
+        dataParticipations.push({label: {{names|safe}}[i], backgroundColor: colors[i % 7], data: {{attendances|safe}}[i]});
+        dataWins.push({label: {{names|safe}}[i], backgroundColor: colors[i % 7], data: {{victories|safe}}[i]});
+        dataTimes.push({label: {{names|safe}}[i], borderColor: colors[i % 7], backgroundColor: "white", data: {{times|safe}}[i], lineTension: 0});
+    }
+
     new Chart("Poradie_na_preteku", {
         type: "line",
         data: {
             labels: {{race_names|safe}},
-            datasets: [{
-                borderColor: "purple",
-                backgroundColor: "white",
-                data: {{placements|safe}},
-                lineTension: 0
-            }]
+            datasets: dataPlacements
         },
         options: {
-            legend: {display: false},
+            legend: {display: true},
             title: {display: true, text: "Poradie na preteku"},
             scales: {
                  xAxes: [{
@@ -93,18 +117,13 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
         type: "line",
         data: {
             labels: {{race_names|safe}},
-            datasets: [{
-                borderColor: "green",
-                backgroundColor: "white",
-                data: {{sliding_medians|safe}},
-                lineTension: 0
-            }]
+            datasets: dataMedians
         },
         options: {
-            legend: {display: false},
+            legend: {display: true},
             title: {display: true, text: "Kĺzavý medián poradia za posledných 5 pretekov"},
             scales: {
-                xAxes: [{
+                 xAxes: [{
                     gridLines: {
                         display:false
                     }
@@ -126,13 +145,10 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
         type: "bar",
         data: {
             labels: {{months|safe}},
-            datasets: [{
-                backgroundColor: "brown",
-                data: {{attendances|safe}}
-            }]
+            datasets: dataParticipations
         },
         options: {
-            legend: {display: false},
+            legend: {display: true},
             title: {display: true, text: "Účasti na pretekoch"},
             scales: {
                 yAxes: [{
@@ -150,13 +166,10 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
         type: "bar",
         data: {
             labels: {{months|safe}},
-            datasets: [{
-                backgroundColor: "brown",
-                data: {{victories|safe}}
-            }]
+            datasets: dataWins
         },
         options: {
-            legend: {display: false},
+            legend: {display: true},
             title: {display: true, text: "Víťazstvá"},
             scales: {
                 yAxes: [{
@@ -169,6 +182,35 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
             }
         }
     });
+
+    new Chart("Casy", {
+        type: "line",
+        data: {
+            labels: {{race_names|safe}},
+            datasets: dataTimes
+        },
+        options: {
+            legend: {display: true},
+            title: {display: true, text: "Zabehnuté časy (v minútach)"},
+            scales: {
+                 xAxes: [{
+                    gridLines: {
+                        display:false
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        reverse: true,
+                        max: {{worst_time}}
+                    },
+                    gridLines: {
+                        display:false
+                    },
+                }]
+            }
+        }
+    });
+
     </script>
 </body>
 </html>

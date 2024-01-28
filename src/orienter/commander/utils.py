@@ -49,7 +49,7 @@ def get_clubs(api: API):
 
 def get_races_in_month(api: API, month: int):
     now = datetime.now()
-    date_from = now.replace(year=now.year + 1 if month < now.month else 0, month=month, day=1)
+    date_from = now.replace(year=now.year + 1 if month < now.month else now.year, month=month, day=1)
     date_to = date_from.replace(day=calendar.monthrange(date_from.year, month)[1])
     response_obj = api.competitions(date_from=date_from.strftime('%Y-%m-%d'),
                                     date_to=date_to.strftime('%Y-%m-%d'))

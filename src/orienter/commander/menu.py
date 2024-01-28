@@ -197,10 +197,10 @@ class Menu:
         chosen_path = input(f"Zadajte názov súboru aj s cestou [{path}]: ")
         path = chosen_path or path
 
-        user_ids = [int(racers_raw[racer_col_num].user_id) for racer_col_num in selected_racers]
+        user_ids = [(racers_raw[racer_col_num].first_name, racers_raw[racer_col_num].last_name) for racer_col_num in selected_racers]
         generator = statistics.Generator()
         with open(path, 'w', encoding='utf-8') as html:
-            html.write(generator.render(user_ids))
+            html.write(generator.render(user_ids, datetime.now() - timedelta(days=365)))
 
 
 if __name__ == "__main__":

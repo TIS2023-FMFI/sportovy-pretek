@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="sk">
-<meta charset="UTF-8">
 <script
-src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
 </script>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Štatistiky pretekára {{name}}</title>
     <style>
+        body {
+            min-width: 750px;
+        }
+
         h1 {
             text-align: center;
         }
@@ -26,16 +31,23 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
         th {
             background-color: #D6EEEE;
         }
-        /*
-        canvas {
-            width:700px !important;
-            height:400px !important;
+
+        .canvases {
+            display: flex;
+            flex-flow: row wrap;
+            gap: 0.5rem;
         }
-        */
+
+        .canvas {
+            max-width: 45%;
+            min-width: 500px;
+            min-height: 500px;
+            box-sizing: border-box;
+        }
     </style>
 </head>
-<body>
 
+<body onresize="responsiveFont()">
     <h1>Štatistiky pretekára {{name}}</h1>
 	<h2><u>Prehľad:</u></h2>
     <table>
@@ -51,10 +63,14 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
 
 	<h2>Štatistiky za obdobie {{date_from}} - {{date_to}}</h2>
 
-    <canvas id="Poradie_na_preteku"></canvas>
-    <canvas id="Klzavy_median"></canvas>
-    <canvas id="Ucasti"></canvas>
-    <canvas id="Vitazstva"></canvas>
+    <section class="canvases">
+        <canvas id="Poradie_na_preteku" class="canvas"></canvas>
+        <canvas id="Klzavy_median" class="canvas"></canvas>
+        <canvas id="Ucasti" class="canvas"></canvas>
+        <canvas id="Vitazstva" class="canvas"></canvas>
+        <canvas id="Casy" class="canvas"></canvas>
+    </section>
+
     <script>
     new Chart("Poradie_na_preteku", {
         type: "line",
@@ -71,20 +87,18 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
             legend: {display: false},
             title: {display: true, text: "Poradie na preteku"},
             scales: {
-                 xAxes: [{
-                    gridLines: {
+                 x: {
+                    grid: {
                         display:false
                     }
-                }],
-                yAxes: [{
-                    ticks: {
-                        reverse: true,
-                        max: {{worst_placement}}
-                    },
-                    gridLines: {
+                },
+                y: {
+                    reverse: true,
+                    max: {{worst_placement}},
+                    grid: {
                         display:false
                     },
-                }]
+                }
             }
         }
     });
@@ -104,20 +118,18 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
             legend: {display: false},
             title: {display: true, text: "Kĺzavý medián poradia za posledných 5 pretekov"},
             scales: {
-                xAxes: [{
-                    gridLines: {
+                x: {
+                    grid: {
                         display:false
                     }
-                }],
-                yAxes: [{
-                    ticks: {
-                        reverse: true,
-                        max: {{worst_placement}}
-                    },
-                    gridLines: {
+                },
+                y: {
+                    reverse: true,
+                    max: {{worst_placement}},
+                    grid: {
                         display:false
                     },
-                }]
+                }
             }
         }
     });
@@ -135,13 +147,13 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
             legend: {display: false},
             title: {display: true, text: "Účasti na pretekoch"},
             scales: {
-                yAxes: [{
+                y: {
                     display: true,
+                    beginAtZero: true,
                     ticks: {
-                        beginAtZero: true,
                         stepSize: 1
                     }
-                }]
+                }
             }
         }
     });
@@ -159,16 +171,20 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
             legend: {display: false},
             title: {display: true, text: "Víťazstvá"},
             scales: {
-                yAxes: [{
+                y: {
                     display: true,
+                    beginAtZero: true,
                     ticks: {
-                        beginAtZero: true,
                         stepSize: 1
                     }
-                }]
+                }
             }
         }
     });
+
+    function responsiveFont() {
+        Chart.defaults.font.size = Math.max(Math.floor(window.outerWidth / 100), 3);
+    }
     </script>
 </body>
 </html>

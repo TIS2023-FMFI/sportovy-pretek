@@ -29,7 +29,7 @@ class Config:
     def _load_config(self):
         if not CONFIG_FILE_PATH.is_file():
             self._create_example_config()
-        with open(CONFIG_FILE_PATH, 'r') as f:
+        with open(CONFIG_FILE_PATH, 'r', encoding='UTF-8') as f:
             config_dict = toml.load(f)
             for fld in fields(self):
                 try:
@@ -38,7 +38,7 @@ class Config:
                     sys.exit(f"Nepodarilo sa prečítať konfiguráciu, požadovaný kľúč sa nenašiel: {fld.name}")
 
     def _save_config(self):
-        with open(CONFIG_FILE_PATH, 'w') as f:
+        with open(CONFIG_FILE_PATH, 'w', encoding='UTF-8') as f:
             toml.dump(asdict(self), f)
 
 

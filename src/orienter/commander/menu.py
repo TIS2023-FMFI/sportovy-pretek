@@ -199,7 +199,7 @@ class Menu:
 
         user_names = [(racers_raw[racer_col_num].first_name, racers_raw[racer_col_num].last_name) for racer_col_num in selected_racers]
         generator = statistics.Generator()
-        with open(path, 'w', encoding='utf-8') as html:
+        with open(path, 'w', encoding='UTF-8') as html:
             html.write(generator.render(user_names, datetime.now() - timedelta(days=365)))
 
 

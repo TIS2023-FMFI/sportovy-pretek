@@ -21,7 +21,7 @@ class ConfigTestCase(unittest.TestCase):
             _ = Config()
         except SystemExit:
             config = Config()
-            with open(CONFIG_FILE_PATH, 'r') as f:
+            with open(CONFIG_FILE_PATH, 'r', encoding='UTF-8') as f:
                 config_dict = toml.load(f)
                 for fld in fields(Config):
                     self.assertEqual(getattr(config, fld.name), config_dict[fld.name],

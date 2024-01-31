@@ -186,7 +186,7 @@ class Generator:
 
 if __name__ == '__main__':
     g = Generator()
-    with open('output.html', 'w', encoding='utf-8') as html:
+    with open('output.html', 'w', encoding='UTF-8') as html:
         # html.write(g.render([("Andrea", "Papugová")], since=YEAR_AGO))
         html.write(g.render([("Andrea", "Papugová"),
                              ("Karol", "Janšo"),

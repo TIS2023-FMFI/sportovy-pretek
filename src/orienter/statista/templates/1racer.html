@@ -72,11 +72,13 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
     </section>
 
     <script>
+    {% set my_string = "'" ~ name ~ "'"%}
     new Chart("Poradie_na_preteku", {
         type: "line",
         data: {
             labels: {{race_names|safe}},
             datasets: [{
+                label: {{my_string|safe}},
                 borderColor: "purple",
                 backgroundColor: "white",
                 data: {{placements|safe}},
@@ -85,7 +87,12 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
         },
         options: {
             legend: {display: false},
-            title: {display: true, text: "Poradie na preteku"},
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Poradie na preteku"
+                }
+            },
             scales: {
                  x: {
                     grid: {
@@ -108,6 +115,7 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
         data: {
             labels: {{race_names|safe}},
             datasets: [{
+                labels: {{race_names|safe}},
                 borderColor: "green",
                 backgroundColor: "white",
                 data: {{sliding_medians|safe}},
@@ -116,7 +124,11 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
         },
         options: {
             legend: {display: false},
-            title: {display: true, text: "Kĺzavý medián poradia za posledných 5 pretekov"},
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Kĺzavý medián poradia za posledných 5 pretekov"}
+            },
             scales: {
                 x: {
                     grid: {
@@ -139,13 +151,18 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
         data: {
             labels: {{months|safe}},
             datasets: [{
+                labels: {{race_names|safe}},
                 backgroundColor: "brown",
                 data: {{attendances|safe}}
             }]
         },
         options: {
             legend: {display: false},
-            title: {display: true, text: "Účasti na pretekoch"},
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Účasti na pretekoch"}
+            },
             scales: {
                 y: {
                     display: true,
@@ -163,13 +180,19 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
         data: {
             labels: {{months|safe}},
             datasets: [{
+                labels: {{race_names|safe}},
                 backgroundColor: "brown",
                 data: {{victories|safe}}
             }]
         },
         options: {
             legend: {display: false},
-            title: {display: true, text: "Víťazstvá"},
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Víťazstvá"
+                }
+            },
             scales: {
                 y: {
                     display: true,

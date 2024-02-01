@@ -43,8 +43,8 @@ class Loader:
                 if racer_name_t not in self.stats[race["id"]]:
                     self.stats[race["id"]][racer_name_t] = None
 
-        temp_most_participating_racers = dict(sorted(temp_racers_that_participated.items(), key=lambda item: item[1]))
-
+        # temp_most_participating_racers = dict(sorted(temp_racers_that_participated.items(), key=lambda item: item[1]))
+        #
         # for key, value in temp_most_participating_racers.items():
         #     print(f"{key}: {value}")  # printed reversed so that top values are seen at the bottom of the console
 
@@ -59,7 +59,7 @@ class Generator:
         loader = Loader(racer_names_list, since)
         stats = loader.stats
         env = Environment(
-            loader=PackageLoader('orienter.statista'),
+            loader=PackageLoader(__name__, 'templates'),
             autoescape=select_autoescape()
         )
         if len(racer_names_list) == 1:

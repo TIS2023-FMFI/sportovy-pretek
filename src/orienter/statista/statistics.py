@@ -45,8 +45,8 @@ class Loader:
 
         temp_most_participating_racers = dict(sorted(temp_racers_that_participated.items(), key=lambda item: item[1]))
 
-        for key, value in temp_most_participating_racers.items():
-            print(f"{key}: {value}")  # printed reversed so that top values are seen at the bottom of the console
+        # for key, value in temp_most_participating_racers.items():
+        #     print(f"{key}: {value}")  # printed reversed so that top values are seen at the bottom of the console
 
 
 class Generator:
@@ -165,7 +165,7 @@ class Generator:
             attendances.append(month_counts[racer_order][NOW.month + 1:] + month_counts[racer_order][:NOW.month + 1])
             victories.append(month_wins[racer_order][NOW.month + 1:] + month_wins[racer_order][:NOW.month + 1])
 
-        print(victories)
+        # print(victories)
 
         return self.template.render(racers_count=racers_count,
                                     names=[f"{rnt[0]} {rnt[1]}" for rnt in racer_name_tuples],

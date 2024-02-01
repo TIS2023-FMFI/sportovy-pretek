@@ -82,7 +82,7 @@
         data: {
             labels: {{race_names|safe}},
             datasets: [{
-                labels: {{race_names|safe}},
+                label: "{{ name }}",
                 borderColor: "green",
                 backgroundColor: "white",
                 data: {{sliding_medians|safe}},
@@ -119,7 +119,7 @@
         data: {
             labels: {{months|safe}},
             datasets: [{
-                labels: {{race_names|safe}},
+                label: "{{ name }}",
                 backgroundColor: "brown",
                 data: {{attendances|safe}}
             }]
@@ -149,7 +149,7 @@
         data: {
             labels: {{months|safe}},
             datasets: [{
-                labels: {{race_names|safe}},
+                label: "{{ name }}",
                 backgroundColor: "brown",
                 data: {{victories|safe}}
             }]

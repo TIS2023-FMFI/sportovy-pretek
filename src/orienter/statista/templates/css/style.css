@@ -1,0 +1,46 @@
+body {
+    min-width: 750px;
+}
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+}
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td, th {
+    border: 1px solid black;
+    width: 200px;
+    height: 50px;
+    text-align: center;
+}
+
+th {
+    background-color: #D6EEEE;
+}
+
+.canvases {
+    display: flex;
+    flex-direction: column;
+}
+
+.canvases .row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.canvas {
+    max-width: 45%;
+    min-width: 500px;
+    min-height: 500px;
+    box-sizing: border-box;
+}

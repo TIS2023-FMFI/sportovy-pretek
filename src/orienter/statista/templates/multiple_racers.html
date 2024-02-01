@@ -1,102 +1,94 @@
 <!DOCTYPE html>
 <html lang="sk">
-<meta charset="UTF-8">
-<script
-src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
-</script>
 <head>
     <title>Porovnanie pretekárov</title>
-    <style>
-        body {
-            min-width: 750px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-        h2 {
-            text-align: center;
-        }
-        table {
-            margin-left: auto;
-            margin-right: auto;
-        }
-        td, th {
-            border: 1px solid black;
-            width: 200px;
-            height: 50px;
-            text-align: center;
-        }
-        th {
-            background-color: #D6EEEE;
-        }
-
-        .canvases {
-            display: flex;
-            flex-flow: row wrap;
-            gap: 0.5rem;
-        }
-
-        .canvas {
-            max-width: 45%;
-            min-width: 500px;
-            min-height: 500px;
-            box-sizing: border-box;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>{% include 'css/style.css' %}</style>
+    <script>{% include 'js/chart.min.js' %}</script>
 </head>
 
 <body onresize="responsiveFont()">
+<div style="display: flex; flex-direction: column">
     <h1>Porovnanie pretekárov</h1>
-	<h2><u>Prehľad:</u></h2>
+    <h2><u>Prehľad:</u></h2>
     <table>
         <thead>
-            <tr>
-                <th>Pretekár:</th>
-                <th>Účasti na pretekoch:</th>
-                <th>Víťazstvá:</th>
-            </tr>
+        <tr>
+            <th>Pretekár:</th>
+            <th>Účasti na pretekoch:</th>
+            <th>Víťazstvá:</th>
+        </tr>
         </thead>
         <tbody id="overviewBody">
-            <!-- Table body will be generated dynamically -->
+        {# Table body will be generated dynamically #}
         </tbody>
     </table>
+</div>
 
-    <script>
-        var tableBody = document.getElementById("overviewBody");
-        var html = "";
-        for (var i = 0; i < {{racers_count}}; i++) {
-            html += "<tr>";
-            html += "<td>" + {{names|safe}}[i] + "</td>";
-            html += "<td>" + {{participations}}[i] + "</td>";
-            html += "<td>" + {{wins}}[i] + "</td>";
-            html += "</tr>";
-        }
-        tableBody.innerHTML = html;
-    </script>
+<script>
+    const tableBody = document.getElementById("overviewBody");
+    let html = "";
+    for (let i = 0; i < {{racers_count}}; i++) {
+        html += "<tr>";
+        html += "<td>" + {{names|safe}}[i] + "</td>";
+        html += "<td>" + {{participations}}[i] + "</td>";
+        html += "<td>" + {{wins}}[i] + "</td>";
+        html += "</tr>";
+    }
+    tableBody.innerHTML = html;
+</script>
 
-	<h2>Štatistiky za obdobie {{date_from}} - {{date_to}}</h2>
-    <section class="canvases">
+<h2>Štatistiky za obdobie {{ date_from }} - {{ date_to }}</h2>
+<section class="canvases">
+    <div class="row">
         <canvas id="Poradie_na_preteku" class="canvas"></canvas>
         <canvas id="Klzavy_median" class="canvas"></canvas>
+    </div>
+    <div class="row">
         <canvas id="Ucasti" class="canvas"></canvas>
         <canvas id="Vitazstva" class="canvas"></canvas>
+    </div>
+    <div class="row">
         <canvas id="Casy" class="canvas"></canvas>
-    </section>
+    </div>
+</section>
 
-    <script>
-    var colors = ["blue", "orange", "green", "purple", "yellow", "cyan", "red"];
-    var dataPlacements = [];
-    var dataMedians = [];
-    var dataParticipations = [];
-    var dataWins = [];
-    var dataTimes = [];
-    for (var i = 0; i < {{racers_count}}; i++) {
-        dataPlacements.push({label: {{names|safe}}[i], borderColor: colors[i % 7], backgroundColor: "white", data: {{placements|safe}}[i], lineTension: 0});
-        dataMedians.push({label: {{names|safe}}[i], borderColor: colors[i % 7], backgroundColor: "white", data: {{sliding_medians|safe}}[i], lineTension: 0});
-        dataParticipations.push({label: {{names|safe}}[i], backgroundColor: colors[i % 7], data: {{attendances|safe}}[i]});
+<script>
+    const colors = ["blue", "orange", "green", "purple", "yellow", "cyan", "red"];
+    const dataPlacements = [];
+    const dataMedians = [];
+    const dataParticipations = [];
+    const dataWins = [];
+    const dataTimes = [];
+    for (let i = 0; i < {{racers_count}}; i++) {
+        dataPlacements.push({
+            label: {{names|safe}}[i],
+            borderColor: colors[i % 7],
+            backgroundColor: "white",
+            data: {{placements|safe}}[i],
+            lineTension: 0
+        });
+        dataMedians.push({
+            label: {{names|safe}}[i],
+            borderColor: colors[i % 7],
+            backgroundColor: "white",
+            data: {{sliding_medians|safe}}[i],
+            lineTension: 0
+        });
+        dataParticipations.push({
+            label: {{names|safe}}[i],
+            backgroundColor: colors[i % 7],
+            data: {{attendances|safe}}[i]
+        });
         dataWins.push({label: {{names|safe}}[i], backgroundColor: colors[i % 7], data: {{victories|safe}}[i]});
-        dataTimes.push({label: {{names|safe}}[i], borderColor: colors[i % 7], backgroundColor: "white", data: {{times|safe}}[i], lineTension: 0});
+        dataTimes.push({
+            label: {{names|safe}}[i],
+            borderColor: colors[i % 7],
+            backgroundColor: "white",
+            data: {{times|safe}}[i],
+            lineTension: 0
+        });
     }
 
     new Chart("Poradie_na_preteku", {
@@ -114,16 +106,16 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
                 }
             },
             scales: {
-                 x: {
+                x: {
                     grid: {
-                        display:false
+                        display: false
                     }
                 },
                 y: {
                     reverse: true,
                     max: {{worst_placement}},
                     grid: {
-                        display:false
+                        display: false
                     },
                 }
             }
@@ -145,16 +137,16 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
                 }
             },
             scales: {
-                 x: {
+                x: {
                     grid: {
-                        display:false
+                        display: false
                     }
                 },
                 y: {
                     reverse: true,
                     max: {{worst_placement}},
                     grid: {
-                        display:false
+                        display: false
                     },
                 }
             }
@@ -228,16 +220,16 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
                 }
             },
             scales: {
-                 x: {
+                x: {
                     grid: {
-                        display:false
+                        display: false
                     }
                 },
                 y: {
                     reverse: true,
                     max: {{worst_time}},
                     grid: {
-                        display:false
+                        display: false
                     },
                 }
             }
@@ -247,6 +239,6 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
     function responsiveFont() {
         Chart.defaults.font.size = Math.max(Math.floor(window.outerWidth / 100), 3);
     }
-    </script>
+</script>
 </body>
 </html>

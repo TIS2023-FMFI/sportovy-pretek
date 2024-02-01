@@ -1,84 +1,51 @@
 <!DOCTYPE html>
 <html lang="sk">
-<script
-src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
-</script>
 <head>
+    <title>Štatistiky pretekára {{ name }}</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Štatistiky pretekára {{name}}</title>
-    <style>
-        body {
-            min-width: 750px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-        h2 {
-            text-align: center;
-        }
-        table {
-            margin-left: auto;
-            margin-right: auto;
-        }
-        td, th {
-            border: 1px solid black;
-            width: 200px;
-            height: 50px;
-            text-align: center;
-        }
-        th {
-            background-color: #D6EEEE;
-        }
-
-        .canvases {
-            display: flex;
-            flex-flow: row wrap;
-            gap: 0.5rem;
-        }
-
-        .canvas {
-            max-width: 45%;
-            min-width: 500px;
-            min-height: 500px;
-            box-sizing: border-box;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>{% include 'css/style.css' %}</style>
+    <script>{% include 'js/chart.min.js' %}</script>
 </head>
 
 <body onresize="responsiveFont()">
-    <h1>Štatistiky pretekára {{name}}</h1>
-	<h2><u>Prehľad:</u></h2>
+<div style="display: flex; flex-direction: column">
+    <h1>Štatistiky pretekára {{ name }}</h1>
+    <h2><u>Prehľad:</u></h2>
     <table>
         <tr>
             <th>Účasti na pretekoch:</th>
             <th>Víťazstvá:</th>
         </tr>
         <tr>
-            <td>{{participations}}</td>
-            <td>{{wins}}</td>
+            <td>{{ participations }}</td>
+            <td>{{ wins }}</td>
         </tr>
     </table>
+</div>
 
-	<h2>Štatistiky za obdobie {{date_from}} - {{date_to}}</h2>
-
-    <section class="canvases">
+<h2>Štatistiky za obdobie {{ date_from }} - {{ date_to }}</h2>
+<section class="canvases">
+    <div class="row">
         <canvas id="Poradie_na_preteku" class="canvas"></canvas>
         <canvas id="Klzavy_median" class="canvas"></canvas>
+    </div>
+    <div class="row">
         <canvas id="Ucasti" class="canvas"></canvas>
         <canvas id="Vitazstva" class="canvas"></canvas>
+    </div>
+    <div class="row">
         <canvas id="Casy" class="canvas"></canvas>
-    </section>
+    </div>
+</section>
 
-    <script>
-    {% set my_string = "'" ~ name ~ "'"%}
+<script>
     new Chart("Poradie_na_preteku", {
         type: "line",
         data: {
             labels: {{race_names|safe}},
             datasets: [{
-                label: {{my_string|safe}},
+                label: "{{ name }}",
                 borderColor: "purple",
                 backgroundColor: "white",
                 data: {{placements|safe}},
@@ -94,16 +61,16 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
                 }
             },
             scales: {
-                 x: {
+                x: {
                     grid: {
-                        display:false
+                        display: false
                     }
                 },
                 y: {
                     reverse: true,
                     max: {{worst_placement}},
                     grid: {
-                        display:false
+                        display: false
                     },
                 }
             }
@@ -127,19 +94,20 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
             plugins: {
                 title: {
                     display: true,
-                    text: "Kĺzavý medián poradia za posledných 5 pretekov"}
+                    text: "Kĺzavý medián poradia za posledných 5 pretekov"
+                }
             },
             scales: {
                 x: {
                     grid: {
-                        display:false
+                        display: false
                     }
                 },
                 y: {
                     reverse: true,
                     max: {{worst_placement}},
                     grid: {
-                        display:false
+                        display: false
                     },
                 }
             }
@@ -161,7 +129,8 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
             plugins: {
                 title: {
                     display: true,
-                    text: "Účasti na pretekoch"}
+                    text: "Účasti na pretekoch"
+                }
             },
             scales: {
                 y: {
@@ -208,6 +177,6 @@ src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js">
     function responsiveFont() {
         Chart.defaults.font.size = Math.max(Math.floor(window.outerWidth / 100), 3);
     }
-    </script>
+</script>
 </body>
 </html>

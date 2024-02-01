@@ -63,11 +63,11 @@ class Generator:
             autoescape=select_autoescape()
         )
         if len(racer_names_list) == 1:
-            self.template = env.get_template("1racer.html")
+            self.template = env.get_template("one_racer.html")
             return self.render_one(stats, racer_names_list[0])
 
         else:
-            self.template = env.get_template("multipleRacers.html")
+            self.template = env.get_template("multiple_racers.html")
             return self.render_multiple(stats, racer_names_list)
 
     def render_one(self, stats, racer_name_tuple):
@@ -187,10 +187,10 @@ class Generator:
 if __name__ == '__main__':
     g = Generator()
     with open('output.html', 'w', encoding='UTF-8') as html:
-        # html.write(g.render([("Andrea", "Papugová")], since=YEAR_AGO))
-        html.write(g.render([("Andrea", "Papugová"),
-                             ("Karol", "Janšo"),
-                             ("Peter", "Kotuliak"),
-                             ("Andrej", "Mikloš"),
-                             ("Maria", "Dubynets"),
-                             ("Iveta", "Putnovská")], since=YEAR_AGO))
+        html.write(g.render([("Andrea", "Papugová")], since=YEAR_AGO))
+        # html.write(g.render([("Andrea", "Papugová"),
+        #                      ("Karol", "Janšo"),
+        #                      ("Peter", "Kotuliak"),
+        #                      ("Andrej", "Mikloš"),
+        #                      ("Maria", "Dubynets"),
+        #                      ("Iveta", "Putnovská")], since=YEAR_AGO))

@@ -8,7 +8,7 @@
     <script>{% include 'js/chart.min.js' %}</script>
 </head>
 
-<body onresize="responsiveFont()">
+<body>
 <div style="display: flex; flex-direction: column">
     <h1>Porovnanie pretekárov</h1>
     <h2><u>Prehľad:</u></h2>
@@ -42,15 +42,25 @@
 <h2>Štatistiky za obdobie {{ date_from }} - {{ date_to }}</h2>
 <section class="canvases">
     <div class="row">
-        <canvas id="Poradie_na_preteku" class="canvas"></canvas>
-        <canvas id="Klzavy_median" class="canvas"></canvas>
+        <div class="chart-container">
+            <canvas id="Poradie_na_preteku" class="canvas"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="Klzavy_median" class="canvas"></canvas>
+        </div>
     </div>
     <div class="row">
-        <canvas id="Ucasti" class="canvas"></canvas>
-        <canvas id="Vitazstva" class="canvas"></canvas>
+        <div class="chart-container">
+            <canvas id="Ucasti" class="canvas"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="Vitazstva" class="canvas"></canvas>
+        </div>
     </div>
     <div class="row">
-        <canvas id="Casy" class="canvas"></canvas>
+        <div class="chart-container">
+            <canvas id="Casy" class="canvas"></canvas>
+        </div>
     </div>
 </section>
 
@@ -98,6 +108,7 @@
             datasets: dataPlacements
         },
         options: {
+            maintainAspectRatio: false,
             legend: {display: true},
             plugins: {
                 title: {
@@ -129,6 +140,7 @@
             datasets: dataMedians
         },
         options: {
+            maintainAspectRatio: false,
             legend: {display: true},
             plugins: {
                 title: {
@@ -156,6 +168,7 @@
     new Chart("Ucasti", {
         type: "bar",
         data: {
+            maintainAspectRatio: false,
             labels: {{months|safe}},
             datasets: dataParticipations
         },
@@ -186,6 +199,7 @@
             datasets: dataWins
         },
         options: {
+            maintainAspectRatio: false,
             legend: {display: true},
             plugins: {
                 title: {
@@ -212,6 +226,7 @@
             datasets: dataTimes
         },
         options: {
+            maintainAspectRatio: false,
             legend: {display: true},
             plugins: {
                 title: {
@@ -235,10 +250,6 @@
             }
         }
     });
-
-    function responsiveFont() {
-        Chart.defaults.font.size = Math.max(Math.floor(window.outerWidth / 100), 3);
-    }
 </script>
 </body>
 </html>

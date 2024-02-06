@@ -195,7 +195,6 @@ class Menu:
                                    multi_select=True, accept_keys=("enter", "q"))
         selected_racers = racers_menu.show()
         if racers_menu.chosen_accept_key == 'q':
-            Menu.signup_menu()
             return
 
         filename = "orienter_" + ''.join(random.choice(string.ascii_lowercase) for _ in range(6)) + ".html"

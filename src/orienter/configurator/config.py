@@ -1,7 +1,9 @@
 import sys
 from dataclasses import dataclass, asdict, field, fields
 
-import toml
+import tomllib
+
+import tomli_w
 
 from .constants import CONFIG_FILE_PATH
 
@@ -28,8 +30,8 @@ class Config:
     def _load_config(self):
         if not CONFIG_FILE_PATH.is_file():
             self._create_example_config()
-        with open(CONFIG_FILE_PATH, 'r', encoding='UTF-8') as f:
-            config_dict = toml.load(f)
+        with open(CONFIG_FILE_PATH, 'rb', encoding='UTF-8') as f:
+            config_dict = tomllib.load(f)
             for fld in fields(self):
                 try:
                     setattr(self, fld.name, config_dict[fld.name])
@@ -37,8 +39,8 @@ class Config:
                     sys.exit(f"Nepodarilo sa prečítať konfiguráciu, požadovaný kľúč sa nenašiel: {fld.name}")
 
     def _save_config(self):
-        with open(CONFIG_FILE_PATH, 'w', encoding='UTF-8') as f:
-            toml.dump(asdict(self), f)
+        with open(CONFIG_FILE_PATH, 'wb', encoding='UTF-8') as f:
+            tomli_w.dump(asdict(self), f)
 
 
 configuration = Config()

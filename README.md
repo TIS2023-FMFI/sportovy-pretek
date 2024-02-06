@@ -7,7 +7,7 @@ Projekt na Tvorbu informačných systémov 2023 - aplikácia pre prácu so syst�
 Aplikácia vyžaduje operačný systém Linux, prípadne WSL. Iný operačný systém nie je podporovaný.
 
 1. poskladanie balíčka príkazom `make build`
-2. inštalácia balíčka je možná príkazom `pip install dist/orienter-0.0.1-py3-none-any.whl`
+2. inštalácia balíčka je možná príkazom `pip install dist/orienter-0.0.2-py3-none-any.whl`
 
 # Spustenie
 - program možno spustiť pomocou príkazu `python -m orienter`

@@ -10,12 +10,12 @@ from sqlalchemy import select, insert
 
 from .utils import MONTHS_FULL, DATE_FORMAT
 from .utils import get_races_in_month, get_clubs, encode_competition_id, decode_competition_id
+from ..communicator.api import API
+from ..configurator import configuration
 from ..databasor import models
 from ..databasor import pehapezor, schemas
 from ..databasor.session import Session
 from ..statista import statistics
-from ..configurator import configuration
-from ..communicator.api import API
 
 
 class Menu:
@@ -131,17 +131,23 @@ class Menu:
                 print("Nenašli sa žiadni pretekári")
                 return
 
-            racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
-                                                            "Meno a priezvisko, klubové id, poznámka\n"
-                                                            "(návrat pomocou klávesu q)",
-                                       multi_select=True, accept_keys=("enter", "q"))
-            selected_racers = racers_menu.show()
-            if racers_menu.chosen_accept_key == 'q':
-                Menu.signup_menu()
-                return
+            preselected_entries = []
+            while True:
+                racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
+                                                                "Meno a priezvisko, klubové id, poznámka\n"
+                                                                "(invertovať výber pomocou klávesu i, návrat pomocou q)",
+                                           multi_select=True, accept_keys=('enter', 'q', 'i'),
+                                           preselected_entries=preselected_entries)
+                selected_racers = racers_menu.show()
+                if racers_menu.chosen_accept_key == 'q':
+                    Menu.signup_menu()
+                    return
+                elif racers_menu.chosen_accept_key == 'i':
+                    preselected_entries = set(range(len(joined_racers))) - set(selected_racers)
+                else:
+                    break
 
             comp_id, event_id = decode_competition_id(selected_race.competition_id)
-
             for selected_racer_num in selected_racers:
                 selected_racer: models.User = racers_raw[selected_racer_num]
                 stmt = session.query(models.Signup, models.CompetitionCategory) \
@@ -197,7 +203,8 @@ class Menu:
         chosen_path = input(f"Zadajte názov súboru aj s cestou [{path}]: ")
         path = chosen_path or path
 
-        user_names = [(racers_raw[racer_col_num].first_name, racers_raw[racer_col_num].last_name) for racer_col_num in selected_racers]
+        user_names = [(racers_raw[racer_col_num].first_name, racers_raw[racer_col_num].last_name) for racer_col_num in
+                      selected_racers]
         generator = statistics.Generator()
         with open(path, 'w', encoding='UTF-8') as html:
             html.write(generator.render(user_names, datetime.now() - timedelta(days=365)))

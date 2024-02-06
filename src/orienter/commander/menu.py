@@ -136,15 +136,16 @@ class Menu:
                 racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
                                                                 "Meno a priezvisko, klubové id, poznámka\n"
                                                                 "(invertovať výber pomocou klávesu i, návrat pomocou q)",
-                                           multi_select=True, accept_keys=('enter', 'q', 'i'),
+                                           multi_select=True, multi_select_select_on_accept=False,
+                                           multi_select_empty_ok=True, accept_keys=('enter', 'q', 'i'),
                                            preselected_entries=preselected_entries)
                 selected_racers = racers_menu.show()
                 if racers_menu.chosen_accept_key == 'q':
                     Menu.signup_menu()
                     return
                 elif racers_menu.chosen_accept_key == 'i':
-                    preselected_entries = set(range(len(joined_racers))) - set(selected_racers)
-                else:
+                    preselected_entries = set(range(len(joined_racers))) - set(selected_racers or {})
+                elif selected_racers:
                     break
 
             comp_id, event_id = decode_competition_id(selected_race.competition_id)

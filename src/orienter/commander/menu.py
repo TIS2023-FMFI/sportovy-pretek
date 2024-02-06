@@ -155,7 +155,8 @@ class Menu:
                           (models.Signup.category_id == models.CompetitionCategory.category_id)) \
                     .where(models.Signup.competition_id == selected_race.competition_id) \
                     .where(models.Signup.user_id == selected_racer['id'])
-                result = pehapezor.exec_select(stmt.statement)[0]
+                query_result = pehapezor.exec_select(stmt.statement)
+                result = query_result[0] if query_result else None
                 input_mapping = {
                     "registration_id": "0",
                     "first_name": selected_racer['meno'],
@@ -168,7 +169,7 @@ class Menu:
                             "competition_event_id": event_id,
                             "competition_category_id": result['api_comp_cat_id']
                         }
-                    ]
+                    ] if result else []
                 }
                 api = API(configuration.API_KEY, configuration.API_ENDPOINT)
                 response = api.create_registration(comp_id, input_mapping)

@@ -7,7 +7,7 @@ from sqlalchemy.dialects import sqlite
 from orienter.databasor.schemas import UserSchema
 from . import models
 from .session import Session
-from ..configurator import configuration
+from ..configurator.config import configuration
 
 
 def exec_select(query: Select) -> Sequence:

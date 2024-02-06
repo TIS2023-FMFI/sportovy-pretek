@@ -2,7 +2,7 @@ import unittest
 
 from ..commander.utils import get_clubs, get_races_in_month
 from ..communicator.api import API
-from ..configurator import configuration
+from ..configurator.config import configuration
 
 
 class ApiTestCase(unittest.TestCase):

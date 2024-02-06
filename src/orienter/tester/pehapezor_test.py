@@ -5,7 +5,7 @@ from unittest import SkipTest
 
 from sqlalchemy import select
 
-from ..configurator import configuration
+from ..configurator.config import configuration
 from ..databasor import models
 from ..databasor import pehapezor, schemas
 from ..databasor.session import Session

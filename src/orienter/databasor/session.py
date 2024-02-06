@@ -2,10 +2,11 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
 from . import models
-from ..configurator import configuration
+from .models import Base
 
-engine = create_engine(f"sqlite:///{configuration.DATABASE_PATH}")
+engine = create_engine(f"sqlite://")
 Session = sessionmaker(bind=engine)
+Base.metadata.create_all(engine)
 
 if __name__ == "__main__":
     with Session.begin() as session:

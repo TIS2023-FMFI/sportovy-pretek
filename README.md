@@ -21,5 +21,4 @@ Aplikácia vyžaduje operačný systém Linux, prípadne WSL. Iný operačný sy
 - `API_KEY` - API kľúč pre systém SZOS
 - `API_ENDPOINT` - URL pre koncový bod API
 - `API_CLUB_ID` - čislo klubu v systéme SZOS
-- `DATABASE_PATH` - nepotrebné a možné nechať prázdne, cesta k súboru s databázou
 - `WEB_APP_URL` - URL klubovej aplikácie pre prístup k databáze

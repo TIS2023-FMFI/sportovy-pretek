@@ -11,7 +11,7 @@ from sqlalchemy import select, insert
 from .utils import MONTHS_FULL, DATE_FORMAT
 from .utils import get_races_in_month, get_clubs, encode_competition_id, decode_competition_id
 from ..communicator.api import API
-from ..configurator import configuration
+from ..configurator.config import configuration
 from ..databasor import models
 from ..databasor import pehapezor, schemas
 from ..databasor.session import Session
@@ -99,7 +99,7 @@ class Menu:
 
     @staticmethod
     def signup_menu():
-        with (Session.begin() as session):
+        with Session.begin() as session:
             stmt = select(models.Competition).where(models.Competition.date > datetime.now()).where(
                 models.Competition.is_active == 1)
             competition_schema = schemas.CompetitionSchema()
@@ -181,8 +181,9 @@ class Menu:
     @staticmethod
     def statistics_menu():
         with Session.begin() as session:
-            stmt = select(models.User)
-            racers_raw = session.session.scalars(stmt).all()
+            stmt = select(models.User).order_by(models.User.last_name)
+            racer_schema = schemas.UserSchema()
+            racers_raw = [racer_schema.load(obj, session=session) for obj in pehapezor.exec_select(stmt)]
 
         joined_racers = [f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20]}" for racer
                          in racers_raw]

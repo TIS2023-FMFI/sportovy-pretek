@@ -3,14 +3,14 @@ import subprocess
 
 import click
 
-from .menu import Menu
-from ..configurator import CONFIG_FILE_PATH
+from ..configurator.constants import CONFIG_FILE_PATH
 
 
 @click.group(invoke_without_command=True)
 @click.pass_context
 def cli(ctx):
     if ctx.invoked_subcommand is None:
+        from .menu import Menu
         Menu.main_menu()
         return
 

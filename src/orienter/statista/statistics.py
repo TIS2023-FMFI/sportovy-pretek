@@ -7,7 +7,7 @@ from numpy import median
 
 from ..commander.utils import API
 from ..commander.utils import DATE_FORMAT, MONTHS_FULL
-from ..configurator import configuration
+from ..configurator.config import configuration
 
 NOW = datetime.now()
 YEAR_AGO = NOW - timedelta(days=365)

@@ -4,7 +4,7 @@ from dataclasses import fields
 
 import toml
 
-from ..configurator import Config
+from ..configurator.config import Config
 from ..configurator.constants import *
 
 

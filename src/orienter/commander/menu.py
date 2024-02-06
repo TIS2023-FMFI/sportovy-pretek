@@ -65,36 +65,34 @@ class Menu:
         if races_menu.chosen_accept_key == 'q':
             Menu.add_race_menu()
             return
-        with Session.begin() as session:
-            for selected_race in selected_races:
-                race = races[races_list[selected_race][0]]
-                event = race.events[races_list[selected_race][1]]
-                competition_id = encode_competition_id(int(race.id), int(event.id))
-                stmt = select(models.Competition).where(models.Competition.competition_id == competition_id)
+        for selected_race in selected_races:
+            race = races[races_list[selected_race][0]]
+            event = race.events[races_list[selected_race][1]]
+            competition_id = encode_competition_id(int(race.id), int(event.id))
+            stmt = select(models.Competition).where(models.Competition.competition_id == competition_id)
+            existing = pehapezor.exec_select(stmt)
+            if existing:
+                print("Tieto preteky už existujú:", choices[selected_race])
+                continue
+            three_days = timedelta(days=3)
+            stmt = insert(models.Competition).values(competition_id=competition_id, name=event.title_sk,
+                                                     date=event.date, is_active=1, comment="",
+                                                     signup_deadline=event.date - three_days)
+            pehapezor.exec_query(stmt)
+            race_details = api.competition_details(race.id)
+            categories = api.get_category_list()
+            for race_category in race_details.categories:
+                category_id = int(race_category.category_id) * 1_000_000
+                category_name = categories[race_category.category_id].name
+                stmt = select(models.Category).where(models.Category.category_id == category_id)
                 existing = pehapezor.exec_select(stmt)
-                if existing:
-                    print("Tieto preteky už existujú:", choices[selected_race])
-                    continue
-                three_days = timedelta(days=3)
-                stmt = insert(models.Competition).values(competition_id=competition_id, name=event.title_sk,
-                                                         date=event.date, is_active=1, comment="",
-                                                         signup_deadline=event.date - three_days)
-                pehapezor.exec_query(stmt)
-                race_details = api.competition_details(race.id)
-                categories = api.get_category_list()
-                for race_category in race_details.categories:
-                    category_id = int(race_category.category_id) * 1_000_000
-                    category_name = categories[race_category.category_id].name
-                    stmt = select(models.Category).where(models.Category.category_id == category_id)
-                    existing = pehapezor.exec_select(stmt)
-                    if not existing:
-                        stmt = insert(models.Category).values(category_id=category_id, name=category_name)
-                        pehapezor.exec_query(stmt)
-                    stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
-                                                                     category_id=category_id,
-                                                                     api_category_id=race_category.id)
+                if not existing:
+                    stmt = insert(models.Category).values(category_id=category_id, name=category_name)
                     pehapezor.exec_query(stmt)
-            session.commit()
+                stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
+                                                                 category_id=category_id,
+                                                                 api_category_id=race_category.id)
+                pehapezor.exec_query(stmt)
         print("Preteky sa úspešne uložili.")
 
     @staticmethod

@@ -3,6 +3,8 @@ import calendar
 from ..communicator.api import API
 from ..communicator.objects import *
 
+from collections.abc import Sequence, Mapping
+
 DATE_FORMAT = '%A, %d.%m.%Y'
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
 MONTHS_FULL = ["Január", "Február", "Marec", "Apríl", "Máj", "Jún",
@@ -42,16 +44,16 @@ def decode_competition_id(competition_id: int) -> (int, int):
     return divmod(competition_id, 100_000_000)
 
 
-def get_clubs(api: API):
+def get_clubs(api: API) -> Mapping[int, Club]:
     response_obj = api.clubs()
     return {int(obj['id']): Club.from_obj(obj) for obj in response_obj}
 
 
-def get_races_in_month(api: API, month: int):
+def get_races_in_month(api: API, month: int) -> Sequence[Competition]:
     now = datetime.now()
     date_from = now.replace(year=now.year + 1 if month < now.month else now.year, month=month, day=1)
     date_to = date_from.replace(day=calendar.monthrange(date_from.year, month)[1])
     response_obj = api.competitions(date_from=date_from.strftime('%Y-%m-%d'),
                                     date_to=date_to.strftime('%Y-%m-%d'))
-    result: List[Competition] = [Competition.from_obj(obj) for obj in response_obj]
+    result = [Competition.from_obj(obj) for obj in response_obj]
     return result

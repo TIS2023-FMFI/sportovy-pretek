@@ -53,9 +53,11 @@ class Menu:
         races_list = list()
         for i, race in enumerate(races):
             for j, event in enumerate(race.events):
-                races_list.append(
-                    [i, j, event.date.strftime(DATE_FORMAT), event.title_sk, race.place,
-                     clubs[race.organizers[0]].name])
+                race_strings = [i, j, event.date.strftime(DATE_FORMAT), event.title_sk, race.place,
+                                clubs[race.organizers[0]].name]
+                if race.entries_open:
+                    race_strings.append("POZOR: PRIHLASOVANIE ZATVORENÉ!")
+                races_list.append(race_strings)
         choices = [", ".join(race[2:]) for race in races_list]
         races_menu = TerminalMenu(choices, title="Vyberte preteky.\n"
                                                  "dátum konania, názov, miesto konania, organizátor\n"

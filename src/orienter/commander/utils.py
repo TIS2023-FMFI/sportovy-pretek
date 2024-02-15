@@ -1,14 +1,12 @@
 import calendar
+from collections.abc import Sequence, Mapping
 from datetime import timedelta
 
-from orienter.databasor import models, schemas, pehapezor
 from sqlalchemy import select, insert
 
+from orienter.databasor import models, schemas, pehapezor
 from ..communicator.api import API
 from ..communicator.objects import *
-
-from collections.abc import Sequence, Mapping
-
 from ..databasor.session import Session
 
 DATE_FORMAT = '%A, %d.%m.%Y'
@@ -93,7 +91,7 @@ def add_race(api: API, race: Competition, event: Event):
         stmt = select(models.Category).where(models.Category.category_id == category_id)
         existing = pehapezor.exec_select(stmt)
         if not existing:
-            stmt = insert(models.Category).values(category_id=category_id, name=category_name)
+            stmt = insert(models.Category).values(category_id=category_id, name='*' + category_name)
             pehapezor.exec_query(stmt)
         stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
                                                          category_id=category_id,

@@ -35,6 +35,8 @@ class Config:
             for fld in fields(self):
                 try:
                     setattr(self, fld.name, config_dict[fld.name])
+                    if not config_dict[fld.name]:
+                        print(f"POZOR: hodnota pre kľúč {fld.name} v konfigurácii je zrejme nevyplnená!")
                 except KeyError:
                     sys.exit(f"Nepodarilo sa prečítať konfiguráciu, požadovaný kľúč sa nenašiel: {fld.name}")
 

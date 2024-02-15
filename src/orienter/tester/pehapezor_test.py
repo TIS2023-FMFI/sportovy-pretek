@@ -10,7 +10,6 @@ from ..configurator.config import configuration
 from ..databasor import models
 from ..databasor import pehapezor, schemas
 from ..databasor.session import Session
-from ..communicator import objects
 
 
 class PehapezorTestCase(unittest.TestCase):
@@ -41,3 +40,10 @@ class PehapezorTestCase(unittest.TestCase):
     def test_get_active_races(self):
         active_races = get_active_races()
         self.assertTrue(active_races, "This failure is expected if there are no active races in the database.")
+
+    def test_get_racers(self):
+        with Session.begin() as session:
+            stmt = select(models.User).order_by(models.User.last_name)
+            racer_schema = schemas.UserSchema()
+            racers_raw = [racer_schema.load(obj, session=session) for obj in pehapezor.exec_select(stmt)]
+            self.assertTrue(racers_raw)

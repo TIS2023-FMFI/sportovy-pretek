@@ -8,7 +8,7 @@ from pathlib import Path
 from simple_term_menu import TerminalMenu
 from sqlalchemy import select, insert
 
-from .utils import MONTHS_FULL, DATE_FORMAT
+from .utils import MONTHS_FULL, DATE_FORMAT, get_active_races, add_race
 from .utils import get_races_in_month, get_clubs, encode_competition_id, decode_competition_id
 from ..communicator.api import API
 from ..configurator.config import configuration
@@ -51,17 +51,17 @@ class Menu:
             return
         clubs = get_clubs(api)
         races_list = list()
+        menu_choices = list()
         for i, race in enumerate(races):
             for j, event in enumerate(race.events):
-                race_strings = [i, j, event.date.strftime(DATE_FORMAT), event.title_sk, race.place,
-                                clubs[race.organizers[0]].name]
-                if race.entries_open:
-                    race_strings.append("POZOR: PRIHLASOVANIE ZATVORENÉ!")
-                races_list.append(race_strings)
-        choices = [", ".join(race[2:]) for race in races_list]
-        races_menu = TerminalMenu(choices, title="Vyberte preteky.\n"
-                                                 "dátum konania, názov, miesto konania, organizátor\n"
-                                                 "(návrat pomocou klávesu q)",
+                race_data = [i, j, event.date.strftime(DATE_FORMAT), event.title_sk, race.place,
+                             clubs[race.organizers[0]].name]
+                races_list.append(race_data)
+                menu_choices.append(", ".join(race_data[2:] +
+                                              (["POZOR: PRIHLASOVANIE ZATVORENÉ!"] if not race.entries_open else [])))
+        races_menu = TerminalMenu(menu_choices, title="Vyberte preteky.\n"
+                                                      "dátum konania, názov, miesto konania, organizátor\n"
+                                                      "(návrat pomocou klávesu q)",
                                   multi_select=True, accept_keys=("enter", "q"))
         selected_races = races_menu.show()
         if races_menu.chosen_accept_key == 'q':
@@ -70,54 +70,26 @@ class Menu:
         for selected_race in selected_races:
             race = races[races_list[selected_race][0]]
             event = race.events[races_list[selected_race][1]]
-            competition_id = encode_competition_id(int(race.id), int(event.id))
-            stmt = select(models.Competition).where(models.Competition.competition_id == competition_id)
-            existing = pehapezor.exec_select(stmt)
-            if existing:
-                print("Tieto preteky už existujú:", choices[selected_race])
-                continue
-            three_days = timedelta(days=3)
-            stmt = insert(models.Competition).values(competition_id=competition_id, name=event.title_sk,
-                                                     date=event.date, is_active=1, comment="",
-                                                     signup_deadline=event.date - three_days)
-            pehapezor.exec_query(stmt)
-            race_details = api.competition_details(race.id)
-            categories = api.get_category_list()
-            for race_category in race_details.categories:
-                category_id = int(race_category.category_id) * 1_000_000
-                category_name = categories[race_category.category_id].name
-                stmt = select(models.Category).where(models.Category.category_id == category_id)
-                existing = pehapezor.exec_select(stmt)
-                if not existing:
-                    stmt = insert(models.Category).values(category_id=category_id, name=category_name)
-                    pehapezor.exec_query(stmt)
-                stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
-                                                                 category_id=category_id,
-                                                                 api_category_id=race_category.id)
-                pehapezor.exec_query(stmt)
+            add_race(api, race, event)
         print("Preteky sa úspešne uložili.")
 
     @staticmethod
     def signup_menu():
+        active_races_raw = get_active_races()
+        menu_choices = [f"{race.date.strftime(DATE_FORMAT)}, {race.name}" for race in active_races_raw]
+        if len(menu_choices) == 0:
+            print("Nenašli sa žiadne aktívne preteky.")
+            return
+
+        races_menu = TerminalMenu(menu_choices, title="Vyberte preteky.\n"
+                                                      "dátum konania, názov\n"
+                                                      "(návrat pomocou klávesu q)",
+                                  multi_select=False, accept_keys=("enter", "q"))
+        selected_race_number = races_menu.show()
+        if races_menu.chosen_accept_key == 'q':
+            return
+        selected_race: models.Competition = active_races_raw[selected_race_number]
         with Session.begin() as session:
-            stmt = select(models.Competition).where(models.Competition.date > datetime.now()).where(
-                models.Competition.is_active == 1)
-            competition_schema = schemas.CompetitionSchema()
-            active_races_raw = [competition_schema.load(obj, session=session) for obj in pehapezor.exec_select(stmt)]
-
-            choices = [f"{race.date.strftime(DATE_FORMAT)}, {race.name}" for race in active_races_raw]
-            if len(choices) == 0:
-                print("Nenašli sa žiadne preteky")
-                return
-
-            races_menu = TerminalMenu(choices, title="Vyberte preteky.\n"
-                                                     "dátum konania, názov\n"
-                                                     "(návrat pomocou klávesu q)",
-                                      multi_select=False, accept_keys=("enter", "q"))
-            selected_race_number = races_menu.show()
-            if races_menu.chosen_accept_key == 'q':
-                return
-            selected_race: models.Competition = active_races_raw[selected_race_number]
             stmt = session.query(models.User, models.Signup) \
                 .join(models.Signup, models.Signup.user_id == models.User.user_id) \
                 .where(models.Signup.competition_id == selected_race.competition_id)
@@ -128,7 +100,7 @@ class Menu:
                 for row in racers_raw
             ]
             if len(joined_racers) == 0:
-                print("Nenašli sa žiadni pretekári")
+                print("Nenašli sa žiadni pretekári prihlásení na tieto preteky.")
                 return
 
             preselected_entries = []
@@ -176,7 +148,7 @@ class Menu:
                 api = API(configuration.API_KEY, configuration.API_ENDPOINT)
                 response = api.create_registration(comp_id, input_mapping)
                 out = f"OK - {selected_racer.first_name} {selected_racer.last_name}, entry_id: {response['entry_id']}" \
-                      + ", entry_runner_id: {response['entry_runner_id']}"
+                      + f", entry_runner_id: {response['entry_runner_id']}"
                 print(out)
 
     @staticmethod

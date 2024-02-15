@@ -1,9 +1,15 @@
 import calendar
+from datetime import timedelta
+
+from orienter.databasor import models, schemas, pehapezor
+from sqlalchemy import select, insert
 
 from ..communicator.api import API
 from ..communicator.objects import *
 
 from collections.abc import Sequence, Mapping
+
+from ..databasor.session import Session
 
 DATE_FORMAT = '%A, %d.%m.%Y'
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
@@ -57,3 +63,39 @@ def get_races_in_month(api: API, month: int) -> Sequence[Competition]:
                                     date_to=date_to.strftime('%Y-%m-%d'))
     result = [Competition.from_obj(obj) for obj in response_obj]
     return result
+
+
+def get_active_races() -> Sequence[models.Competition]:
+    with Session.begin() as session:
+        stmt = select(models.Competition).where(models.Competition.date > datetime.now()).where(
+            models.Competition.is_active == 1)
+        competition_schema = schemas.CompetitionSchema()
+        return [competition_schema.load(obj, session=session) for obj in pehapezor.exec_select(stmt)]
+
+
+def add_race(api: API, race: Competition, event: Event):
+    competition_id = encode_competition_id(int(race.id), int(event.id))
+    stmt = select(models.Competition).where(models.Competition.competition_id == competition_id)
+    existing = pehapezor.exec_select(stmt)
+    if existing:
+        print("Tieto preteky už existujú:", event.date.strftime(DATE_FORMAT), event.title_sk, race.place)
+        return
+    three_days = timedelta(days=3)
+    stmt = insert(models.Competition).values(competition_id=competition_id, name=event.title_sk,
+                                             date=event.date, is_active=1, comment="",
+                                             signup_deadline=event.date - three_days)
+    pehapezor.exec_query(stmt)
+    race_details = api.competition_details(race.id)
+    categories = api.get_category_list()
+    for race_category in race_details.categories:
+        category_id = int(race_category.category_id) * 1_000_000
+        category_name = categories[race_category.category_id].name
+        stmt = select(models.Category).where(models.Category.category_id == category_id)
+        existing = pehapezor.exec_select(stmt)
+        if not existing:
+            stmt = insert(models.Category).values(category_id=category_id, name=category_name)
+            pehapezor.exec_query(stmt)
+        stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
+                                                         category_id=category_id,
+                                                         api_category_id=race_category.id)
+        pehapezor.exec_query(stmt)

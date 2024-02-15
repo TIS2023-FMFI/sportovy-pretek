@@ -5,10 +5,12 @@ from unittest import SkipTest
 
 from sqlalchemy import select
 
+from ..commander.utils import get_active_races
 from ..configurator.config import configuration
 from ..databasor import models
 from ..databasor import pehapezor, schemas
 from ..databasor.session import Session
+from ..communicator import objects
 
 
 class PehapezorTestCase(unittest.TestCase):
@@ -35,3 +37,7 @@ class PehapezorTestCase(unittest.TestCase):
             competition_schema = schemas.CompetitionSchema()
             competitions = [competition_schema.load(obj, session=session) for obj in competitions_objs]
             self.assertTrue(competitions)
+
+    def test_get_active_races(self):
+        active_races = get_active_races()
+        self.assertTrue(active_races, "This failure is expected if there are no active races in the database.")

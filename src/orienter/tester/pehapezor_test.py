@@ -13,11 +13,12 @@ from ..databasor.session import Session
 
 class PehapezorTestCase(unittest.TestCase):
     def setUp(self):
-        p = re.compile(r"^(?:https?://)?(?:[^@/]+@)?([^:/]+)(?::([0-9]+))?.*$", re.I | re.M)
+        p = re.compile(r"^(https?://)?(?:[^@/]+@)?([^:/]+)(?::([0-9]+))?.*$", re.I | re.M)
         m = p.match(configuration.WEB_APP_URL)
         self.assertIsNotNone(m, 'invalid WEB_APP_URL in configuration')
 
-        hostname, port = m.groups()[0], int(m.groups()[1])
+        hostname = m.groups()[1]
+        port = int(m.groups()[2] if m.groups()[2] else 443 if m.groups()[0] == "https://" else 80)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             s.connect((hostname, port))

@@ -10,7 +10,7 @@ Aplikácia vyžaduje operačný systém Linux, prípadne WSL. Iný operačný sy
 git clone https://github.com/TIS2023-FMFI/sportovy-pretek.git
 cd sportovy-pretek
 make build
-pip install dist/orienter-0.0.3-py3-none-any.whl
+make install
 python -m orienter configure
 ```
 

@@ -22,9 +22,9 @@ class Config:
         if not CONFIG_FILE_PATH.is_file():
             CONFIG_FILE_PATH.touch(mode=0o640, exist_ok=True)
         self._save_config()
-        exit_msg = f"Konfigurácia sa nenašla. Prázdna konfigurácia bola vytvorená v {CONFIG_FILE_PATH}." + \
-                   "Nakonfigurujte si aplikáciu príkazom:" + \
-                   "python -m orienter configure"
+        exit_msg = (f"Konfigurácia sa nenašla. Prázdna konfigurácia bola vytvorená v {CONFIG_FILE_PATH}. "
+                    "Nakonfigurujte si aplikáciu príkazom:"
+                    "python -m orienter configure")
         sys.exit(exit_msg)
 
     def _load_config(self):

@@ -71,7 +71,7 @@ class Menu:
             race = races[races_list[selected_race][0]]
             event = race.events[races_list[selected_race][1]]
             add_race(api, race, event)
-        print("Preteky sa úspešne uložili.")
+            print("Preteky sa úspešne uložili: ", event.date.strftime(DATE_FORMAT), event.title_sk, race.place)
 
     @staticmethod
     def signup_menu():

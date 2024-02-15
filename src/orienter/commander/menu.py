@@ -6,10 +6,10 @@ from os import environ
 from pathlib import Path
 
 from simple_term_menu import TerminalMenu
-from sqlalchemy import select, insert
+from sqlalchemy import select
 
 from .utils import MONTHS_FULL, DATE_FORMAT, get_active_races, add_race
-from .utils import get_races_in_month, get_clubs, encode_competition_id, decode_competition_id
+from .utils import get_races_in_month, get_clubs, decode_competition_id
 from ..communicator.api import API
 from ..configurator.config import configuration
 from ..databasor import models

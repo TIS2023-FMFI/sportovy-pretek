@@ -1,7 +1,7 @@
 import sys
 from dataclasses import dataclass, asdict, field, fields
 
-import tomllib
+import tomli
 
 import tomli_w
 
@@ -31,7 +31,7 @@ class Config:
         if not CONFIG_FILE_PATH.is_file():
             self._create_example_config()
         with open(CONFIG_FILE_PATH, 'rb') as f:
-            config_dict = tomllib.load(f)
+            config_dict = tomli.load(f)
             for fld in fields(self):
                 try:
                     setattr(self, fld.name, config_dict[fld.name])

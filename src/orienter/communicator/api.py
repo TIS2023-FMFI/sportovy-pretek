@@ -1,5 +1,4 @@
-from collections.abc import Mapping, Sequence
-from typing import Dict
+from typing import Mapping, Sequence
 
 from .objects import *
 
@@ -139,7 +138,7 @@ class API:
         self._handle_response(response)
         return response.json()
 
-    def get_category_list(self) -> Dict:
+    def get_category_list(self) -> Mapping:
         """
         Returns the list of data from the selected directory.
         """

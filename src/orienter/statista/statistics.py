@@ -1,4 +1,6 @@
-from collections.abc import Sequence, MutableSequence
+from __future__ import annotations
+
+from typing import Sequence, MutableSequence
 from datetime import datetime, timedelta
 from html import unescape
 

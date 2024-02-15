@@ -1,5 +1,5 @@
 import calendar
-from collections.abc import Sequence, Mapping
+from typing import Sequence, Mapping
 from datetime import timedelta
 
 from sqlalchemy import select, insert

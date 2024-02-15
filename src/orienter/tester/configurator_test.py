@@ -2,7 +2,7 @@ import os
 import unittest
 from dataclasses import fields
 
-import toml
+import tomli
 
 from ..configurator.config import Config
 from ..configurator.constants import *
@@ -21,8 +21,8 @@ class ConfigTestCase(unittest.TestCase):
             _ = Config()
         except SystemExit:
             config = Config()
-            with open(CONFIG_FILE_PATH, 'r', encoding='UTF-8') as f:
-                config_dict = toml.load(f)
+            with open(CONFIG_FILE_PATH, 'rb') as f:
+                config_dict = tomli.load(f)
                 for fld in fields(Config):
                     self.assertEqual(getattr(config, fld.name), config_dict[fld.name],
                                      'unexpected value of config file item')

@@ -5,6 +5,7 @@ Projekt na Tvorbu informačných systémov 2023 - aplikácia pre prácu so syst�
 # Inštalácia
 
 Aplikácia vyžaduje operačný systém Linux, prípadne WSL. Iný operačný systém nie je podporovaný.
+Taktiež sa vyžaduje mať nainštalované balíky python, pip. Voliteľné ale odporúčané je použiť je Python balík venv.
 
 ```shell
 git clone https://github.com/TIS2023-FMFI/sportovy-pretek.git

@@ -12,16 +12,15 @@ git clone https://github.com/TIS2023-FMFI/sportovy-pretek.git
 cd sportovy-pretek
 make build
 make install
-python -m orienter configure
 ```
-
-# Spustenie
-- program možno spustiť pomocou príkazu `python -m orienter`
-- konfiguráciu je možné upraviť pomocou príkazu `python -m orienter configure`
 
 # Konfigurácia
 - v prípade, že sa nenašiel konfiguračný súbor, vygeneruje sa prázdny
 - pred používaním je potrebné konfiguráciu doplniť
+
+# Spustenie
+- program možno spustiť pomocou príkazu `python -m orienter`
+- konfiguráciu je možné upraviť pomocou príkazu `python -m orienter configure`
 
 ## Položky konfigurácie
 - `API_KEY` - API kľúč pre systém SZOS

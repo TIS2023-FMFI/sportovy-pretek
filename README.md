@@ -6,8 +6,13 @@ Projekt na Tvorbu informačných systémov 2023 - aplikácia pre prácu so syst�
 
 Aplikácia vyžaduje operačný systém Linux, prípadne WSL. Iný operačný systém nie je podporovaný.
 
-1. poskladanie balíčka príkazom `make build`
-2. inštalácia balíčka je možná príkazom `pip install dist/orienter-0.0.2-py3-none-any.whl`
+```shell
+git clone https://github.com/TIS2023-FMFI/sportovy-pretek.git
+cd sportovy-pretek
+make build
+pip install dist/orienter-0.0.3-py3-none-any.whl
+python -m orienter configure
+```
 
 # Spustenie
 - program možno spustiť pomocou príkazu `python -m orienter`

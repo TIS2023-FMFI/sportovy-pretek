@@ -18,9 +18,9 @@ class ConfigTestCase(unittest.TestCase):
         if CONFIG_FILE_PATH.is_file():
             os.rename(CONFIG_FILE_PATH, original_config_file_path)
         try:
-            _ = Config()
+            _ = Config(output=False)
         except SystemExit:
-            config = Config()
+            config = Config(output=False)
             with open(CONFIG_FILE_PATH, 'rb') as f:
                 config_dict = tomli.load(f)
                 for fld in fields(Config):

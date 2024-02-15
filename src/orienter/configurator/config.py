@@ -2,20 +2,20 @@ import sys
 from dataclasses import dataclass, asdict, field, fields
 
 import tomli
-
 import tomli_w
 
 from .constants import CONFIG_FILE_PATH
 
 
-@dataclass
+@dataclass(init=False)
 class Config:
-    API_KEY: str = field(init=False, repr=False, default="")
-    API_ENDPOINT: str = field(init=False, default="https://is.orienteering.sk/api")
-    API_CLUB_ID: int = field(init=False, default=46)
-    WEB_APP_URL: str = field(init=False, default="http://localhost:8080/pehapezor.php")
+    API_KEY: str = field(repr=False, default="")
+    API_ENDPOINT: str = field(default="https://is.orienteering.sk/api")
+    API_CLUB_ID: int = field(repr=False, default=46)
+    WEB_APP_URL: str = field(default="http://localhost:8080/pehapezor.php")
 
-    def __post_init__(self):
+    def __init__(self, output=True):
+        self.output = output
         self._load_config()
 
     def _create_example_config(self):
@@ -35,7 +35,7 @@ class Config:
             for fld in fields(self):
                 try:
                     setattr(self, fld.name, config_dict[fld.name])
-                    if not config_dict[fld.name]:
+                    if not config_dict[fld.name] and self.output:
                         print(f"POZOR: hodnota pre kľúč {fld.name} v konfigurácii je zrejme nevyplnená!")
                 except KeyError:
                     sys.exit(f"Nepodarilo sa prečítať konfiguráciu, požadovaný kľúč sa nenašiel: {fld.name}")

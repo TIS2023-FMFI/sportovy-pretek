@@ -18,6 +18,9 @@ def cli(ctx):
 @cli.command()
 def configure():
     editor = os.environ.get('EDITOR')
+    if not editor:
+        editor = 'vi'
+        print("Premenná prostredia $EDITOR nie je nastavená! Pokúsim sa použiť vi.")
     subprocess.call((editor, CONFIG_FILE_PATH))
 
 

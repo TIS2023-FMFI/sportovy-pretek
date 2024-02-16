@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from typing import Sequence, MutableSequence
 from datetime import datetime, timedelta
 from html import unescape
+from typing import Sequence, MutableSequence
 
 from jinja2 import Environment, PackageLoader, select_autoescape, Template
 from numpy import median
 
 from ..commander.utils import API
-from ..commander.utils import DATE_FORMAT, MONTHS_FULL
+from ..commander.utils import DATE_FORMAT_WITH_DAY, DATE_FORMAT, MONTHS_FULL
 from ..configurator.config import configuration
 
 NOW = datetime.now()
@@ -109,8 +109,8 @@ class Generator:
         return self.template.render(name=f"{racer_name_tuple[0]} {racer_name_tuple[1]}",
                                     participations=participations,
                                     wins=wins,
-                                    date_from=self.since.strftime(DATE_FORMAT),
-                                    date_to=NOW.strftime(DATE_FORMAT),
+                                    date_from=self.since.strftime(DATE_FORMAT_WITH_DAY),
+                                    date_to=NOW.strftime(DATE_FORMAT_WITH_DAY),
                                     race_names=race_names,
                                     months=months,
                                     placements=placements,

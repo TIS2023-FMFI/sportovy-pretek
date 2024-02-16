@@ -8,7 +8,7 @@ from pathlib import Path
 from simple_term_menu import TerminalMenu
 from sqlalchemy import select
 
-from .utils import MONTHS_FULL, DATE_FORMAT, get_active_races, add_race
+from .utils import MONTHS_FULL, DATE_FORMAT_WITH_DAY, get_active_races, add_race
 from .utils import get_races_in_month, get_clubs, decode_competition_id
 from ..communicator.api import API
 from ..configurator.config import configuration
@@ -54,7 +54,7 @@ class Menu:
         menu_choices = list()
         for i, race in enumerate(races):
             for j, event in enumerate(race.events):
-                race_data = [i, j, event.date.strftime(DATE_FORMAT), event.title_sk, race.place,
+                race_data = [i, j, event.date.strftime(DATE_FORMAT_WITH_DAY), event.title_sk, race.place,
                              clubs[race.organizers[0]].name]
                 races_list.append(race_data)
                 menu_choices.append(", ".join(race_data[2:] +
@@ -71,12 +71,12 @@ class Menu:
             race = races[races_list[selected_race][0]]
             event = race.events[races_list[selected_race][1]]
             add_race(api, race, event)
-            print("Preteky sa úspešne uložili: ", event.date.strftime(DATE_FORMAT), event.title_sk, race.place)
+            print("Preteky sa úspešne uložili: ", event.date.strftime(DATE_FORMAT_WITH_DAY), event.title_sk, race.place)
 
     @staticmethod
     def signup_menu():
         active_races_raw = get_active_races()
-        menu_choices = [f"{race.date.strftime(DATE_FORMAT)}, {race.name}" for race in active_races_raw]
+        menu_choices = [f"{race.date.strftime(DATE_FORMAT_WITH_DAY)}, {race.name}" for race in active_races_raw]
         if len(menu_choices) == 0:
             print("Nenašli sa žiadne aktívne preteky.")
             return

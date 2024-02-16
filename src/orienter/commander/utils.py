@@ -9,7 +9,8 @@ from ..communicator.api import API
 from ..communicator.objects import *
 from ..databasor.session import Session
 
-DATE_FORMAT = '%A, %d.%m.%Y'
+DATE_FORMAT_WITH_DAY = '%A, %d.%m.%Y'
+DATE_FORMAT = "%d.%m.%Y"
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
 MONTHS_FULL = ["Január", "Február", "Marec", "Apríl", "Máj", "Jún",
                "Júl", "August", "September", "Október", "November", "December"]
@@ -76,7 +77,7 @@ def add_race(api: API, race: Competition, event: Event):
     stmt = select(models.Competition).where(models.Competition.competition_id == competition_id)
     existing = pehapezor.exec_select(stmt)
     if existing:
-        print("Tieto preteky už existujú:", event.date.strftime(DATE_FORMAT), event.title_sk, race.place)
+        print("Tieto preteky už existujú:", event.date.strftime(DATE_FORMAT_WITH_DAY), event.title_sk, race.place)
         return
     three_days = timedelta(days=3)
     stmt = insert(models.Competition).values(competition_id=competition_id, name=event.title_sk,

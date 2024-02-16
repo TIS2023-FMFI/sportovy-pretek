@@ -122,7 +122,7 @@ class Menu:
 
             comp_id, event_id = decode_competition_id(selected_race.competition_id)
             for selected_racer_num in selected_racers:
-                selected_racer: models.User = racers_raw[selected_racer_num]
+                selected_racer = racers_raw[selected_racer_num]
                 stmt = session.query(models.Signup, models.CompetitionCategory) \
                     .join(models.CompetitionCategory,
                           (models.Signup.competition_id == models.CompetitionCategory.competition_id) &
@@ -147,8 +147,8 @@ class Menu:
                 }
                 api = API(configuration.API_KEY, configuration.API_ENDPOINT)
                 response = api.create_registration(comp_id, input_mapping)
-                out = f"OK - {selected_racer.first_name} {selected_racer.last_name}, entry_id: {response['entry_id']}" \
-                      + f", entry_runner_id: {response['entry_runner_id']}"
+                out = (f"OK - {selected_racer['meno']} {selected_racer['priezvisko']}, entry_id: {response['entry_id']}"
+                       + f", entry_runner_id: {response['entry_runner_id']}")
                 print(out)
 
     @staticmethod

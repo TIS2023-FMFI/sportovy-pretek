@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 from html import unescape
-from typing import Sequence, MutableSequence
+from typing import Sequence
 
 from jinja2 import Environment, PackageLoader, select_autoescape, Template
 from numpy import median
@@ -16,14 +16,21 @@ YEAR_AGO = NOW - timedelta(days=365)
 
 
 class Loader:
-    def __init__(self, racer_names_list: MutableSequence[Sequence[str]], since: datetime):
+    def __init__(self, racer_names_list: Sequence[Sequence[str]], since: datetime):
         self.stats = dict()
         self.since = since
         self.api = API(configuration.API_KEY, configuration.API_ENDPOINT)
 
         temp_racers_that_participated = dict()
 
-        all_races = self.api.competitions(YEAR_AGO, NOW)
+        all_races = []
+        date_from = YEAR_AGO
+        while True:
+            page = self.api.competitions(date_from, NOW, count=50)
+            if len(page) < 50:
+                break
+            date_from = page[-1]["date_to"]
+            all_races.extend(page)
         for race in all_races:
             self.stats[race["id"]] = dict()
             self.stats[race["id"]]["race_name"] = unescape(race["title_sk"])
@@ -33,10 +40,8 @@ class Loader:
                 for performance in race_results:
                     racer_name_tuple = (performance["first_name"], performance["surname"])
 
-                    if racer_name_tuple in temp_racers_that_participated:
-                        temp_racers_that_participated[racer_name_tuple] += 1
-                    else:
-                        temp_racers_that_participated[racer_name_tuple] = 1
+                    temp_racers_that_participated[racer_name_tuple] = \
+                        temp_racers_that_participated.get(racer_name_tuple, 0) + 1
 
                     if racer_name_tuple in racer_names_list and performance["place"] is not None:
                         self.stats[race["id"]][racer_name_tuple] = performance
@@ -45,10 +50,10 @@ class Loader:
                 if racer_name_t not in self.stats[race["id"]]:
                     self.stats[race["id"]][racer_name_t] = None
 
-        # temp_most_participating_racers = dict(sorted(temp_racers_that_participated.items(), key=lambda item: item[1]))
-        #
-        # for key, value in temp_most_participating_racers.items():
-        #     print(f"{key}: {value}")  # printed reversed so that top values are seen at the bottom of the console
+        temp_most_participating_racers = dict(sorted(temp_racers_that_participated.items(), key=lambda item: item[1]))
+
+        for key, value in temp_most_participating_racers.items():
+            print(f"{key}: {value}")  # printed reversed so that top values are seen at the bottom of the console
 
 
 class Generator:
@@ -56,7 +61,7 @@ class Generator:
         self.template: Template | None = None
         self.since: datetime | None = None
 
-    def render(self, racer_names_list: MutableSequence[Sequence[str]], since: datetime):
+    def render(self, racer_names_list: Sequence[Sequence[str]], since: datetime):
         self.since = since
         loader = Loader(racer_names_list, since)
         stats = loader.stats
@@ -189,7 +194,7 @@ class Generator:
 if __name__ == '__main__':
     g = Generator()
     with open('output.html', 'w', encoding='UTF-8') as html:
-        html.write(g.render([("Andrea", "Papugová")], since=YEAR_AGO))
+        html.write(g.render([("Richard", "Balogh")], since=YEAR_AGO))
         # html.write(g.render([("Andrea", "Papugová"),
         #                      ("Karol", "Janšo"),
         #                      ("Peter", "Kotuliak"),

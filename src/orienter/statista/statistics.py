@@ -87,9 +87,10 @@ class Generator:
                                                                            range(NOW.month)]
         month_counts = [0] * 12
         month_wins = [0] * 12
-        for order, race in enumerate(stats):
-            race_names.append(stats[race]["race_name"])
-            performance = stats[race][racer_name_tuple]
+        for order, race in enumerate(stats.values()):
+            race["month"] -= 1
+            race_names.append(race["race_name"])
+            performance = race[racer_name_tuple]
             if performance is None:
                 placements.append(0)  # value for no bar in chart
             else:
@@ -97,9 +98,9 @@ class Generator:
                 place = int(performance["place"])
                 if place == 1:
                     wins += 1
-                    month_wins[stats[race]["month"]] += 1
+                    month_wins[race["month"]] += 1
                 placements.append(place)
-                month_counts[stats[race]["month"]] += 1
+                month_counts[race["month"]] += 1
             sliding_medians.append(median(placements[max(0, order - 4):]))
 
         worst_placement = max(placements)
@@ -108,14 +109,14 @@ class Generator:
                 placements[i] = worst_placement * 2
             if sliding_medians[i] == 0:
                 sliding_medians[i] = worst_placement * 2
-        attendances = month_counts[NOW.month + 1:] + month_counts[:NOW.month + 1]
-        victories = month_wins[NOW.month + 1:] + month_wins[:NOW.month + 1]
+        attendances = month_counts[NOW.month:] + month_counts[:NOW.month]
+        victories = month_wins[NOW.month:] + month_wins[:NOW.month]
 
         return self.template.render(name=f"{racer_name_tuple[0]} {racer_name_tuple[1]}",
                                     participations=participations,
                                     wins=wins,
-                                    date_from=self.since.strftime(DATE_FORMAT_WITH_DAY),
-                                    date_to=NOW.strftime(DATE_FORMAT_WITH_DAY),
+                                    date_from=self.since.strftime(DATE_FORMAT),
+                                    date_to=NOW.strftime(DATE_FORMAT),
                                     race_names=race_names,
                                     months=months,
                                     placements=placements,
@@ -136,12 +137,13 @@ class Generator:
                                                                            range(NOW.month)]
         month_counts = [[0] * 12 for _ in range(racers_count)]
         month_wins = [[0] * 12 for _ in range(racers_count)]
-        for race in stats:
-            race_names.append(stats[race]["race_name"])
+        for race in stats.values():
+            race["month"] -= 1
+            race_names.append(race["race_name"])
 
         for racer_order, racer_name_tuple in enumerate(racer_name_tuples):
-            for order, race in enumerate(stats):
-                performance = stats[race][racer_name_tuple]
+            for order, race in enumerate(stats.values()):
+                performance = race[racer_name_tuple]
                 if performance is None:
                     placements[racer_order].append(0)  # value for no bar in chart
                     times[racer_order].append(0)
@@ -150,9 +152,9 @@ class Generator:
                     place = int(performance["place"])
                     if place == 1:
                         wins[racer_order] += 1
-                        month_wins[racer_order][stats[race]["month"]] += 1
+                        month_wins[racer_order][race["month"]] += 1
                     placements[racer_order].append(place)
-                    month_counts[racer_order][stats[race]["month"]] += 1
+                    month_counts[racer_order][race["month"]] += 1
                     times[racer_order].append(
                         round(int(performance["time_min"]) + int(performance["time_sec"]) / 60, 2))
                 sliding_medians[racer_order].append(median(placements[racer_order][max(0, order - 4):]))
@@ -169,8 +171,8 @@ class Generator:
                     times[racer_order][i] = worst_time * 2
                 if sliding_medians[racer_order][i] == 0:
                     sliding_medians[racer_order][i] = worst_placement * 2
-            attendances.append(month_counts[racer_order][NOW.month + 1:] + month_counts[racer_order][:NOW.month + 1])
-            victories.append(month_wins[racer_order][NOW.month + 1:] + month_wins[racer_order][:NOW.month + 1])
+            attendances.append(month_counts[racer_order][NOW.month:] + month_counts[racer_order][:NOW.month])
+            victories.append(month_wins[racer_order][NOW.month:] + month_wins[racer_order][:NOW.month])
 
         # print(victories)
 
@@ -194,10 +196,7 @@ class Generator:
 if __name__ == '__main__':
     g = Generator()
     with open('output.html', 'w', encoding='UTF-8') as html:
-        html.write(g.render([("Richard", "Balogh")], since=YEAR_AGO))
-        # html.write(g.render([("Andrea", "Papugová"),
-        #                      ("Karol", "Janšo"),
-        #                      ("Peter", "Kotuliak"),
-        #                      ("Andrej", "Mikloš"),
-        #                      ("Maria", "Dubynets"),
-        #                      ("Iveta", "Putnovská")], since=YEAR_AGO))
+        html.write(g.render([("Ján", "Dokupil")], since=YEAR_AGO))
+        # html.write(g.render([("Ján", "Dokupil"),
+        #                      ("Michal", "Domonkoš"),
+        #                      ("Maria", "Dubinets")], since=YEAR_AGO))

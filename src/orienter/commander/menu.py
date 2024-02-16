@@ -171,7 +171,7 @@ class Menu:
         selected_racers = racers_menu.show()
         if racers_menu.chosen_accept_key == 'q':
             return
-
+        print("Počkajte, prosím…", end=' ')
         filename = "orienter_" + ''.join(random.choice(string.ascii_lowercase) for _ in range(6)) + ".html"
         path = Path(environ["HOME"]) / filename
         chosen_path = input(f"Zadajte názov súboru aj s cestou [{path}]: ")
@@ -180,8 +180,10 @@ class Menu:
         user_names = [(racers_raw[racer_col_num].first_name, racers_raw[racer_col_num].last_name) for racer_col_num in
                       selected_racers]
         generator = statistics.Generator()
-        with open(path, 'w', encoding='UTF-8') as html:
-            html.write(generator.render(user_names, datetime.now() - timedelta(days=365)))
+        html = generator.render(user_names, datetime.now() - timedelta(days=365))
+        with open(path, 'w', encoding='UTF-8') as f:
+            f.write(html)
+        print("hotovo")
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ from ..configurator.constants import *
 
 class ConfigTestCase(unittest.TestCase):
     def test_config_file_path_permissions(self):
-        self.assertTrue(os.access(CONFIG_FILE_PATH, os.R_OK | os.R_OK, effective_ids=True),
+        self.assertTrue(os.access(CONFIG_FILE_PATH, os.R_OK | os.W_OK, effective_ids=True),
                         'missing read or write permission for config file')
 
     def test_config_file(self):

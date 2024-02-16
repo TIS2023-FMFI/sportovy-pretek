@@ -52,8 +52,8 @@ class Loader:
 
         temp_most_participating_racers = dict(sorted(temp_racers_that_participated.items(), key=lambda item: item[1]))
 
-        for key, value in temp_most_participating_racers.items():
-            print(f"{key}: {value}")  # printed reversed so that top values are seen at the bottom of the console
+        # for key, value in temp_most_participating_racers.items():
+        #     print(f"{key}: {value}")  # printed reversed so that top values are seen at the bottom of the console
 
 
 class Generator:

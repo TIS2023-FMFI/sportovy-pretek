@@ -171,6 +171,15 @@ class Menu:
         selected_racers = racers_menu.show()
         if racers_menu.chosen_accept_key == 'q':
             return
+        year_ago = datetime.now() - timedelta(days=365)
+        start_date = input(
+            f"Zadajte dátum začiatku štatistík (YYYY-MM-DD) [{year_ago.date().isoformat()}]: "
+        )
+        try:
+            start_date = year_ago if not start_date else datetime.strptime(start_date, "%Y-%m-%d")
+        except ValueError:
+            print("Neplatný formát dátumu.")
+            return
         print("Počkajte, prosím…", end=' ')
         filename = "orienter_" + ''.join(random.choice(string.ascii_lowercase) for _ in range(6)) + ".html"
         path = Path(environ["HOME"]) / filename
@@ -180,7 +189,7 @@ class Menu:
         user_names = [(racers_raw[racer_col_num].first_name, racers_raw[racer_col_num].last_name) for racer_col_num in
                       selected_racers]
         generator = statistics.Generator()
-        html = generator.render(user_names, datetime.now() - timedelta(days=365))
+        html = generator.render(user_names, start_date)
         with open(path, 'w', encoding='UTF-8') as f:
             f.write(html)
         print("hotovo")

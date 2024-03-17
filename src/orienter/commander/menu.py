@@ -131,6 +131,10 @@ class Menu:
                     .where(models.Signup.user_id == selected_racer['id'])
                 query_result = pehapezor.exec_select(stmt.statement)
                 result = query_result[0] if query_result else None
+                if isinstance(result['api_comp_cat_id'], str):
+                    if not result['api_comp_cat_id'].isnumeric():
+                        print(f"CHYBA: id kategórie musí byť číslo, ale bolo: {result['api_comp_cat_id']}")
+                        return
                 input_mapping = {
                     "registration_id": "0",
                     "first_name": selected_racer['meno'],
@@ -146,7 +150,11 @@ class Menu:
                     ] if result else []
                 }
                 api = API(configuration.API_KEY, configuration.API_ENDPOINT)
-                response = api.create_registration(comp_id, input_mapping)
+                try:
+                    response = api.create_registration(comp_id, input_mapping)
+                except RuntimeError:
+                    print("CHYBA: API vrátilo chybový kód.")
+                    print("dáta poslané do API boli:", input_mapping)
                 out = (f"OK - {selected_racer['meno']} {selected_racer['priezvisko']}, entry_id: {response['entry_id']}"
                        + f", entry_runner_id: {response['entry_runner_id']}")
                 print(out)

@@ -92,7 +92,7 @@ def add_race(api: API, race: Competition, event: Event):
         stmt = select(models.Category).where(models.Category.category_id == category_id)
         existing = pehapezor.exec_select(stmt)
         if not existing:
-            stmt = insert(models.Category).values(category_id=category_id, name='*' + category_name)
+            stmt = insert(models.Category).values(category_id=category_id, name=category_name)
             pehapezor.exec_query(stmt)
         stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
                                                          category_id=category_id,

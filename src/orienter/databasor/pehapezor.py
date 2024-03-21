@@ -13,7 +13,7 @@ from ..configurator.config import configuration
 def exec_select(query: Select) -> Sequence:
     response = requests.post(configuration.WEB_APP_URL, json={
         'query': str(query.compile(dialect=sqlite.dialect(), compile_kwargs={"literal_binds": True}))})
-    if 200 <= response.status_code < 300:
+    if response.ok:
         return response.json()
     raise RuntimeError(f"pehapezor.php returned a {response.status_code} status code. Content: {response.text}")
 
@@ -21,7 +21,7 @@ def exec_select(query: Select) -> Sequence:
 def exec_query(query) -> bool:
     response = requests.post(configuration.WEB_APP_URL, json={
         'query': str(query.compile(dialect=sqlite.dialect(), compile_kwargs={"literal_binds": True}))})
-    if 200 <= response.status_code < 300:
+    if response.ok:
         return response.json()['success']
     raise RuntimeError(f"pehapezor.php returned a {response.status_code} status code. Content: {response.text}")
 

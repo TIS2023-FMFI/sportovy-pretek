@@ -10,7 +10,7 @@ from .session import Session
 from ..configurator.config import configuration
 
 
-def exec_select(query: Select) -> Sequence:
+def do_query_or_raise(query):
     response = requests.post(
         configuration.WEB_APP_URL,
         json={"query": str(query.compile(dialect=sqlite.dialect(), compile_kwargs={"literal_binds": True}))},
@@ -20,14 +20,12 @@ def exec_select(query: Select) -> Sequence:
     raise RuntimeError(f"pehapezor.php returned a {response.status_code} status code. Content: {response.text}")
 
 
+def exec_select(query: Select) -> Sequence:
+    return do_query_or_raise(query)
+
+
 def exec_query(query) -> bool:
-    response = requests.post(
-        configuration.WEB_APP_URL,
-        json={"query": str(query.compile(dialect=sqlite.dialect(), compile_kwargs={"literal_binds": True}))},
-    )
-    if response.ok:
-        return response.json()["success"]
-    raise RuntimeError(f"pehapezor.php returned a {response.status_code} status code. Content: {response.text}")
+    return do_query_or_raise(query)["success"]
 
 
 if __name__ == "__main__":

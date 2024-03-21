@@ -165,7 +165,7 @@ class Menu:
                     if not result["api_comp_cat_id"].isnumeric():
                         print(f"CHYBA: id kategórie musí byť číslo, ale bolo: {result['api_comp_cat_id']}")
                         return
-                input_mapping = {
+                request_body = {
                     "registration_id": "0",
                     "first_name": selected_racer["meno"],
                     "surname": selected_racer["priezvisko"],
@@ -185,10 +185,10 @@ class Menu:
                 }
                 api = API(configuration.API_KEY, configuration.API_ENDPOINT)
                 try:
-                    response = api.create_registration(comp_id, input_mapping)
+                    response = api.create_registration(comp_id, request_body)
                 except RuntimeError:
                     print("CHYBA: API vrátilo chybový kód.")
-                    print("dáta poslané do API boli:", input_mapping)
+                    print("dáta poslané do API boli:", request_body)
                 out = (
                     f"OK - {selected_racer['meno']} {selected_racer['priezvisko']}, entry_id: {response['entry_id']}"
                     + f", entry_runner_id: {response['entry_runner_id']}"

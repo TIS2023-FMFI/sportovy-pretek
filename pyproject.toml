@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "orienter"
-version = "0.0.9"
+version = "0.1.0"
 authors = [
   { name="David Krchňavý", email="david.krchnavy@dakrc.mailer.me" },
   { name="Ondrej Bublavý", email="bublavy3@uniba.sk" },

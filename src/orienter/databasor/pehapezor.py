@@ -11,18 +11,22 @@ from ..configurator.config import configuration
 
 
 def exec_select(query: Select) -> Sequence:
-    response = requests.post(configuration.WEB_APP_URL, json={
-        'query': str(query.compile(dialect=sqlite.dialect(), compile_kwargs={"literal_binds": True}))})
+    response = requests.post(
+        configuration.WEB_APP_URL,
+        json={"query": str(query.compile(dialect=sqlite.dialect(), compile_kwargs={"literal_binds": True}))},
+    )
     if response.ok:
         return response.json()
     raise RuntimeError(f"pehapezor.php returned a {response.status_code} status code. Content: {response.text}")
 
 
 def exec_query(query) -> bool:
-    response = requests.post(configuration.WEB_APP_URL, json={
-        'query': str(query.compile(dialect=sqlite.dialect(), compile_kwargs={"literal_binds": True}))})
+    response = requests.post(
+        configuration.WEB_APP_URL,
+        json={"query": str(query.compile(dialect=sqlite.dialect(), compile_kwargs={"literal_binds": True}))},
+    )
     if response.ok:
-        return response.json()['success']
+        return response.json()["success"]
     raise RuntimeError(f"pehapezor.php returned a {response.status_code} status code. Content: {response.text}")
 
 
@@ -37,4 +41,4 @@ if __name__ == "__main__":
 
         q = delete(models.User).where(models.User.user_id == 170)
         success = exec_query(q)
-        print('success', success)
+        print("success", success)

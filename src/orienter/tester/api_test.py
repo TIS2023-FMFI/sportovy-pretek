@@ -16,7 +16,7 @@ class ApiTestCase(unittest.TestCase):
 
     def test_get_clubs(self):
         clubs = get_clubs(self.api)
-        self.assertTrue(clubs, 'failed to retrieve any clubs')
+        self.assertTrue(clubs, "failed to retrieve any clubs")
 
     def test_get_races_in_month(self):
         for month in range(1, 13):
@@ -24,4 +24,4 @@ class ApiTestCase(unittest.TestCase):
             if races:
                 break
         else:
-            self.assertTrue(False, 'failed to retrieve any races for the next twelve months')
+            self.assertTrue(False, "failed to retrieve any races for the next twelve months")

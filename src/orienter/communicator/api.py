@@ -57,8 +57,11 @@ class API:
         :param competition_id:
         :param club_id:
         """
-        response = requests.get(f"{self.api_endpoint}/competitions/{competition_id}/entries",
-                                params={"club_id": club_id}, headers=self._get_auth_headers())
+        response = requests.get(
+            f"{self.api_endpoint}/competitions/{competition_id}/entries",
+            params={"club_id": club_id},
+            headers=self._get_auth_headers(),
+        )
         self._handle_response(response)
         return response.json()
 
@@ -68,8 +71,11 @@ class API:
         :param competition_id:
         :param request_body:
         """
-        response = requests.post(f"{self.api_endpoint}/competitions/{competition_id}/entries/save",
-                                 json=request_body, headers=self._get_auth_headers())
+        response = requests.post(
+            f"{self.api_endpoint}/competitions/{competition_id}/entries/save",
+            json=request_body,
+            headers=self._get_auth_headers(),
+        )
         self._handle_response(response)
         return response.json()
 
@@ -79,8 +85,11 @@ class API:
         :param competition_id:
         :param request_body:
         """
-        response = requests.post(f"{self.api_endpoint}/competitions/{competition_id}/entries/delete",
-                                 json=request_body, headers=self._get_auth_headers())
+        response = requests.post(
+            f"{self.api_endpoint}/competitions/{competition_id}/entries/delete",
+            json=request_body,
+            headers=self._get_auth_headers(),
+        )
         self._handle_response(response)
 
     def event_results(self, competition_id, event_id) -> Sequence:
@@ -90,8 +99,9 @@ class API:
         :param event_id:
         :return:
         """
-        response = requests.get(f"{self.api_endpoint}/competitions/{competition_id}/results/{event_id}",
-                                headers=self._get_auth_headers())
+        response = requests.get(
+            f"{self.api_endpoint}/competitions/{competition_id}/results/{event_id}", headers=self._get_auth_headers()
+        )
         self._handle_response(response)
         return response.json()
 
@@ -100,8 +110,7 @@ class API:
         Returns details about the specified runner.
         :param runner_id:
         """
-        response = requests.get(f"{self.api_endpoint}/runners/{runner_id}",
-                                headers=self._get_auth_headers())
+        response = requests.get(f"{self.api_endpoint}/runners/{runner_id}", headers=self._get_auth_headers())
         self._handle_response(response)
         return response.json()
 
@@ -112,8 +121,11 @@ class API:
         :param date_from:
         :param date_to:
         """
-        response = requests.get(f"{self.api_endpoint}/runners/{runner_id}/results",
-                                params={"date_from": date_from, "date_to": date_to}, headers=self._get_auth_headers())
+        response = requests.get(
+            f"{self.api_endpoint}/runners/{runner_id}/results",
+            params={"date_from": date_from, "date_to": date_to},
+            headers=self._get_auth_headers(),
+        )
         self._handle_response(response)
         return response.json()
 
@@ -122,8 +134,9 @@ class API:
         Returns detailed information about the registration.
         :param registration_id:
         """
-        response = requests.get(f"{self.api_endpoint}/registrations/{registration_id}",
-                                headers=self._get_auth_headers())
+        response = requests.get(
+            f"{self.api_endpoint}/registrations/{registration_id}", headers=self._get_auth_headers()
+        )
         self._handle_response(response)
         return response.json()
 
@@ -133,16 +146,17 @@ class API:
         :param registration_id:
         :param event_id:
         """
-        response = requests.get(f"{self.api_endpoint}/registrations/{registration_id}/categories/{event_id}",
-                                headers=self._get_auth_headers())
+        response = requests.get(
+            f"{self.api_endpoint}/registrations/{registration_id}/categories/{event_id}",
+            headers=self._get_auth_headers(),
+        )
         self._handle_response(response)
         return response.json()
 
-    def get_category_list(self) -> Mapping[int: Category]:
+    def get_category_list(self) -> Mapping[int:Category]:
         """
         Returns the list of data from the selected directory.
         """
-        response = requests.get(f"{self.api_endpoint}/lists/category",
-                                headers=self._get_auth_headers())
+        response = requests.get(f"{self.api_endpoint}/lists/category", headers=self._get_auth_headers())
         self._handle_response(response)
         return {category.id: category for category in (Category.from_obj(obj) for obj in response.json())}

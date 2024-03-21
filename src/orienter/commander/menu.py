@@ -22,16 +22,19 @@ class Menu:
     @staticmethod
     def main_menu():
         try:
-            orienter_version = version('orienter')
+            orienter_version = version("orienter")
         except PackageNotFoundError:
             orienter_version = "0.0.0"
 
         options = ["Pridanie nových pretekov", "Prihlasovanie účastníkov", "Štatistiky"]
-        menu = TerminalMenu(options, title=f"Orienter v{orienter_version} - Hlavné menu\n"
-                                           "(ukončiť pomocou klávesu q)", accept_keys=("enter", "q"))
+        menu = TerminalMenu(
+            options,
+            title=f"Orienter v{orienter_version} - Hlavné menu\n" "(ukončiť pomocou klávesu q)",
+            accept_keys=("enter", "q"),
+        )
         while True:
             selected_option_index = menu.show()
-            if menu.chosen_accept_key == 'q':
+            if menu.chosen_accept_key == "q":
                 return
 
             submenus = [Menu.add_race_menu, Menu.signup_menu, Menu.statistics_menu]
@@ -41,7 +44,7 @@ class Menu:
     def add_race_menu():
         month_menu = TerminalMenu(MONTHS_FULL, title="(návrat pomocou klávesu q)", accept_keys=("enter", "q"))
         selected_month = month_menu.show() + 1
-        if month_menu.chosen_accept_key == 'q':
+        if month_menu.chosen_accept_key == "q":
             return
 
         api = API(configuration.API_KEY, configuration.API_ENDPOINT)
@@ -54,17 +57,28 @@ class Menu:
         menu_choices = list()
         for i, race in enumerate(races):
             for j, event in enumerate(race.events):
-                race_data = [i, j, event.date.strftime(DATE_FORMAT_WITH_DAY), event.title_sk, race.place,
-                             clubs[race.organizers[0]].name]
+                race_data = [
+                    i,
+                    j,
+                    event.date.strftime(DATE_FORMAT_WITH_DAY),
+                    event.title_sk,
+                    race.place,
+                    clubs[race.organizers[0]].name,
+                ]
                 races_list.append(race_data)
-                menu_choices.append(", ".join(race_data[2:] +
-                                              (["POZOR: PRIHLASOVANIE ZATVORENÉ!"] if not race.entries_open else [])))
-        races_menu = TerminalMenu(menu_choices, title="Vyberte preteky.\n"
-                                                      "dátum konania, názov, miesto konania, organizátor\n"
-                                                      "(návrat pomocou klávesu q)",
-                                  multi_select=True, accept_keys=("enter", "q"))
+                menu_choices.append(
+                    ", ".join(race_data[2:] + (["POZOR: PRIHLASOVANIE ZATVORENÉ!"] if not race.entries_open else []))
+                )
+        races_menu = TerminalMenu(
+            menu_choices,
+            title="Vyberte preteky.\n"
+            "dátum konania, názov, miesto konania, organizátor\n"
+            "(návrat pomocou klávesu q)",
+            multi_select=True,
+            accept_keys=("enter", "q"),
+        )
         selected_races = races_menu.show()
-        if races_menu.chosen_accept_key == 'q':
+        if races_menu.chosen_accept_key == "q":
             Menu.add_race_menu()
             return
         for selected_race in selected_races:
@@ -84,18 +98,22 @@ class Menu:
             print("Nenašli sa žiadne aktívne preteky.")
             return
 
-        races_menu = TerminalMenu(menu_choices, title="Vyberte preteky.\n"
-                                                      "dátum konania, názov\n"
-                                                      "(návrat pomocou klávesu q)",
-                                  multi_select=False, accept_keys=("enter", "q"))
+        races_menu = TerminalMenu(
+            menu_choices,
+            title="Vyberte preteky.\n" "dátum konania, názov\n" "(návrat pomocou klávesu q)",
+            multi_select=False,
+            accept_keys=("enter", "q"),
+        )
         selected_race_number = races_menu.show()
-        if races_menu.chosen_accept_key == 'q':
+        if races_menu.chosen_accept_key == "q":
             return
         selected_race: models.Competition = active_races_raw[selected_race_number]
         with Session.begin() as session:
-            stmt = session.query(models.User, models.Signup) \
-                .join(models.Signup, models.Signup.user_id == models.User.user_id) \
+            stmt = (
+                session.query(models.User, models.Signup)
+                .join(models.Signup, models.Signup.user_id == models.User.user_id)
                 .where(models.Signup.competition_id == selected_race.competition_id)
+            )
             racers_raw = pehapezor.exec_select(stmt.statement)
 
             joined_racers = [
@@ -108,17 +126,22 @@ class Menu:
 
             preselected_entries = []
             while True:
-                racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
-                                                                "Meno a priezvisko, klubové id, poznámka\n"
-                                                                "(invertovať výber pomocou klávesu i, návrat pomocou q)",
-                                           multi_select=True, multi_select_select_on_accept=False,
-                                           multi_select_empty_ok=True, accept_keys=('enter', 'q', 'i'),
-                                           preselected_entries=preselected_entries)
+                racers_menu = TerminalMenu(
+                    joined_racers,
+                    title="Vyberte pretekárov.\n"
+                    "Meno a priezvisko, klubové id, poznámka\n"
+                    "(invertovať výber pomocou klávesu i, návrat pomocou q)",
+                    multi_select=True,
+                    multi_select_select_on_accept=False,
+                    multi_select_empty_ok=True,
+                    accept_keys=("enter", "q", "i"),
+                    preselected_entries=preselected_entries,
+                )
                 selected_racers = racers_menu.show()
-                if racers_menu.chosen_accept_key == 'q':
+                if racers_menu.chosen_accept_key == "q":
                     Menu.signup_menu()
                     return
-                elif racers_menu.chosen_accept_key == 'i':
+                elif racers_menu.chosen_accept_key == "i":
                     preselected_entries = set(range(len(joined_racers))) - set(selected_racers or {})
                 elif selected_racers:
                     break
@@ -126,31 +149,39 @@ class Menu:
             comp_id, event_id = decode_competition_id(selected_race.competition_id)
             for selected_racer_num in selected_racers:
                 selected_racer = racers_raw[selected_racer_num]
-                stmt = session.query(models.Signup, models.CompetitionCategory) \
-                    .join(models.CompetitionCategory,
-                          (models.Signup.competition_id == models.CompetitionCategory.competition_id) &
-                          (models.Signup.category_id == models.CompetitionCategory.category_id)) \
-                    .where(models.Signup.competition_id == selected_race.competition_id) \
-                    .where(models.Signup.user_id == selected_racer['id'])
+                stmt = (
+                    session.query(models.Signup, models.CompetitionCategory)
+                    .join(
+                        models.CompetitionCategory,
+                        (models.Signup.competition_id == models.CompetitionCategory.competition_id)
+                        & (models.Signup.category_id == models.CompetitionCategory.category_id),
+                    )
+                    .where(models.Signup.competition_id == selected_race.competition_id)
+                    .where(models.Signup.user_id == selected_racer["id"])
+                )
                 query_result = pehapezor.exec_select(stmt.statement)
                 result = query_result[0] if query_result else None
-                if isinstance(result['api_comp_cat_id'], str):
-                    if not result['api_comp_cat_id'].isnumeric():
+                if isinstance(result["api_comp_cat_id"], str):
+                    if not result["api_comp_cat_id"].isnumeric():
                         print(f"CHYBA: id kategórie musí byť číslo, ale bolo: {result['api_comp_cat_id']}")
                         return
                 input_mapping = {
                     "registration_id": "0",
-                    "first_name": selected_racer['meno'],
-                    "surname": selected_racer['priezvisko'],
-                    "reg_number": selected_racer['os_i_c'],
-                    "sportident": selected_racer['cip'],
-                    "comment": selected_racer['poznamka'],
-                    "categories": [
-                        {
-                            "competition_event_id": str(event_id),
-                            "competition_category_id": str(result['api_comp_cat_id'])
-                        }
-                    ] if result else []
+                    "first_name": selected_racer["meno"],
+                    "surname": selected_racer["priezvisko"],
+                    "reg_number": selected_racer["os_i_c"],
+                    "sportident": selected_racer["cip"],
+                    "comment": selected_racer["poznamka"],
+                    "categories": (
+                        [
+                            {
+                                "competition_event_id": str(event_id),
+                                "competition_category_id": str(result["api_comp_cat_id"]),
+                            }
+                        ]
+                        if result
+                        else []
+                    ),
                 }
                 api = API(configuration.API_KEY, configuration.API_ENDPOINT)
                 try:
@@ -158,8 +189,10 @@ class Menu:
                 except RuntimeError:
                     print("CHYBA: API vrátilo chybový kód.")
                     print("dáta poslané do API boli:", input_mapping)
-                out = (f"OK - {selected_racer['meno']} {selected_racer['priezvisko']}, entry_id: {response['entry_id']}"
-                       + f", entry_runner_id: {response['entry_runner_id']}")
+                out = (
+                    f"OK - {selected_racer['meno']} {selected_racer['priezvisko']}, entry_id: {response['entry_id']}"
+                    + f", entry_runner_id: {response['entry_runner_id']}"
+                )
                 print(out)
 
     @staticmethod
@@ -169,39 +202,42 @@ class Menu:
             racer_schema = schemas.UserSchema()
             racers_raw = [racer_schema.load(obj, session=session) for obj in pehapezor.exec_select(stmt)]
 
-        joined_racers = [f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20]}" for racer
-                         in racers_raw]
+        joined_racers = [
+            f"{racer.first_name} {racer.last_name}, {racer.user_club_id}, {racer.comment[:20]}" for racer in racers_raw
+        ]
         if len(joined_racers) == 0:
             print("Nenašli sa žiadni pretekári")
             return
 
-        racers_menu = TerminalMenu(joined_racers, title="Vyberte pretekárov.\n"
-                                                        "Meno a priezvisko, klubové id, poznámka\n"
-                                                        "(návrat pomocou klávesu q)",
-                                   multi_select=True, accept_keys=("enter", "q"))
+        racers_menu = TerminalMenu(
+            joined_racers,
+            title="Vyberte pretekárov.\n" "Meno a priezvisko, klubové id, poznámka\n" "(návrat pomocou klávesu q)",
+            multi_select=True,
+            accept_keys=("enter", "q"),
+        )
         selected_racers = racers_menu.show()
-        if racers_menu.chosen_accept_key == 'q':
+        if racers_menu.chosen_accept_key == "q":
             return
         year_ago = datetime.now() - timedelta(days=365)
-        start_date = input(
-            f"Zadajte dátum začiatku štatistík (YYYY-MM-DD) [{year_ago.date().isoformat()}]: "
-        )
+        start_date = input(f"Zadajte dátum začiatku štatistík (YYYY-MM-DD) [{year_ago.date().isoformat()}]: ")
         try:
             start_date = year_ago if not start_date else datetime.strptime(start_date, "%Y-%m-%d")
         except ValueError:
             print("Neplatný formát dátumu.")
             return
-        print("Počkajte, prosím…", end=' ')
-        filename = "orienter_" + ''.join(random.choice(string.ascii_lowercase) for _ in range(6)) + ".html"
+        print("Počkajte, prosím…", end=" ")
+        filename = "orienter_" + "".join(random.choice(string.ascii_lowercase) for _ in range(6)) + ".html"
         path = Path(environ["HOME"]) / filename
         chosen_path = input(f"Zadajte názov súboru aj s cestou [{path}]: ")
         path = chosen_path or path
 
-        user_names = [(racers_raw[racer_col_num].first_name, racers_raw[racer_col_num].last_name) for racer_col_num in
-                      selected_racers]
+        user_names = [
+            (racers_raw[racer_col_num].first_name, racers_raw[racer_col_num].last_name)
+            for racer_col_num in selected_racers
+        ]
         generator = statistics.Generator()
         html = generator.render(user_names, start_date)
-        with open(path, 'w', encoding='UTF-8') as f:
+        with open(path, "w", encoding="UTF-8") as f:
             f.write(html)
         print("hotovo")
 

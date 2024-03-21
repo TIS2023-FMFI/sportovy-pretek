@@ -22,15 +22,17 @@ class Config:
         if not CONFIG_FILE_PATH.is_file():
             CONFIG_FILE_PATH.touch(mode=0o640, exist_ok=True)
         self._save_config()
-        exit_msg = (f"Konfigurácia sa nenašla. Prázdna konfigurácia bola vytvorená v {CONFIG_FILE_PATH}. "
-                    "Nakonfigurujte si aplikáciu príkazom:"
-                    "python -m orienter configure")
+        exit_msg = (
+            f"Konfigurácia sa nenašla. Prázdna konfigurácia bola vytvorená v {CONFIG_FILE_PATH}. "
+            "Nakonfigurujte si aplikáciu príkazom:"
+            "python -m orienter configure"
+        )
         sys.exit(exit_msg)
 
     def _load_config(self):
         if not CONFIG_FILE_PATH.is_file():
             self._create_example_config()
-        with open(CONFIG_FILE_PATH, 'rb') as f:
+        with open(CONFIG_FILE_PATH, "rb") as f:
             config_dict = tomli.load(f)
             for fld in fields(self):
                 try:
@@ -41,7 +43,7 @@ class Config:
                     sys.exit(f"Nepodarilo sa prečítať konfiguráciu, požadovaný kľúč sa nenašiel: {fld.name}")
 
     def _save_config(self):
-        with open(CONFIG_FILE_PATH, 'wb') as f:
+        with open(CONFIG_FILE_PATH, "wb") as f:
             tomli_w.dump(asdict(self), f)
 
 

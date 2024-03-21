@@ -13,7 +13,7 @@ class Event:
 
     @classmethod
     def from_obj(cls, obj):
-        obj['date'] = datetime.strptime(obj['date'], '%Y-%m-%d')
+        obj["date"] = datetime.strptime(obj["date"], "%Y-%m-%d")
         return cls(**obj)
 
 
@@ -59,10 +59,10 @@ class Competition:
 
     @classmethod
     def from_obj(cls, obj):
-        obj['events'] = [Event.from_obj(event) for event in obj['events']]
-        obj['documents'] = [Document.from_obj(doc) for doc in obj['documents']]
-        obj['date_from'] = datetime.strptime(obj['date_from'], '%Y-%m-%d')
-        obj['date_to'] = datetime.strptime(obj['date_to'], '%Y-%m-%d')
+        obj["events"] = [Event.from_obj(event) for event in obj["events"]]
+        obj["documents"] = [Document.from_obj(doc) for doc in obj["documents"]]
+        obj["date_from"] = datetime.strptime(obj["date_from"], "%Y-%m-%d")
+        obj["date_to"] = datetime.strptime(obj["date_to"], "%Y-%m-%d")
         return cls(**obj)
 
 
@@ -94,8 +94,8 @@ class EntryDate:
 
     @classmethod
     def from_obj(cls, obj):
-        obj['entries_from'] = datetime.strptime(obj['entries_from'], '%Y-%m-%d')
-        obj['entries_to'] = datetime.strptime(obj['entries_to'], '%Y-%m-%d')
+        obj["entries_from"] = datetime.strptime(obj["entries_from"], "%Y-%m-%d")
+        obj["entries_to"] = datetime.strptime(obj["entries_to"], "%Y-%m-%d")
         return cls(**obj)
 
 
@@ -139,7 +139,7 @@ class CompetitionCategory:
 
     @classmethod
     def from_obj(cls, obj):
-        obj['entry_prices'] = [EntryPrice.from_obj(doc) for doc in obj['entry_prices']]
+        obj["entry_prices"] = [EntryPrice.from_obj(doc) for doc in obj["entry_prices"]]
         return cls(**obj)
 
 
@@ -155,11 +155,13 @@ class CompetitionDetails:
     def from_obj(cls, obj):
         comp_fields = {field.name for field in fields(Competition)}
         competition = Competition.from_obj({k1: obj[k1] for k1 in obj if k1 in comp_fields})
-        return cls(competition=competition,
-                   services=[Service.from_obj(service) for service in obj['services']],
-                   categories=[CompetitionCategory.from_obj(category) for category in obj['categories']],
-                   entry_dates=[EntryDate.from_obj(entry_date) for entry_date in obj['entry_dates']],
-                   documents=[Document.from_obj(document) for document in obj['documents']])
+        return cls(
+            competition=competition,
+            services=[Service.from_obj(service) for service in obj["services"]],
+            categories=[CompetitionCategory.from_obj(category) for category in obj["categories"]],
+            entry_dates=[EntryDate.from_obj(entry_date) for entry_date in obj["entry_dates"]],
+            documents=[Document.from_obj(document) for document in obj["documents"]],
+        )
 
 
 @dataclass

@@ -9,11 +9,23 @@ from ..communicator.api import API
 from ..communicator.objects import *
 from ..databasor.session import Session
 
-DATE_FORMAT_WITH_DAY = '%A, %d.%m.%Y'
+DATE_FORMAT_WITH_DAY = "%A, %d.%m.%Y"
 DATE_FORMAT = "%d.%m.%Y"
-MONTHS = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
-MONTHS_FULL = ["Január", "Február", "Marec", "Apríl", "Máj", "Jún",
-               "Júl", "August", "September", "Október", "November", "December"]
+MONTHS = ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
+MONTHS_FULL = [
+    "Január",
+    "Február",
+    "Marec",
+    "Apríl",
+    "Máj",
+    "Jún",
+    "Júl",
+    "August",
+    "September",
+    "Október",
+    "November",
+    "December",
+]
 RACES_TABLE_HEADERS = ["Číslo", "Dátum", "Názov", "Miesto", "Organizátor"]
 RACER_TABLE_HEADERS = ["Číslo", "Meno a priezvisko", "Klubové ID", "Poznámka"]
 
@@ -51,23 +63,25 @@ def decode_competition_id(competition_id: int) -> (int, int):
 
 def get_clubs(api: API) -> Mapping[int, Club]:
     response_obj = api.clubs()
-    return {int(obj['id']): Club.from_obj(obj) for obj in response_obj}
+    return {int(obj["id"]): Club.from_obj(obj) for obj in response_obj}
 
 
 def get_races_in_month(api: API, month: int) -> Sequence[Competition]:
     now = datetime.now()
     date_from = now.replace(year=now.year + 1 if month < now.month else now.year, month=month, day=1)
     date_to = date_from.replace(day=calendar.monthrange(date_from.year, month)[1])
-    response_obj = api.competitions(date_from=date_from.strftime('%Y-%m-%d'),
-                                    date_to=date_to.strftime('%Y-%m-%d'))
+    response_obj = api.competitions(date_from=date_from.strftime("%Y-%m-%d"), date_to=date_to.strftime("%Y-%m-%d"))
     result = [Competition.from_obj(obj) for obj in response_obj]
     return result
 
 
 def get_active_races() -> Sequence[models.Competition]:
     with Session.begin() as session:
-        stmt = select(models.Competition).where(models.Competition.date > datetime.now()).where(
-            models.Competition.is_active == 1)
+        stmt = (
+            select(models.Competition)
+            .where(models.Competition.date > datetime.now())
+            .where(models.Competition.is_active == 1)
+        )
         competition_schema = schemas.CompetitionSchema()
         return [competition_schema.load(obj, session=session) for obj in pehapezor.exec_select(stmt)]
 
@@ -77,7 +91,7 @@ def check_category_exists(category_id: int) -> bool:
     return bool(pehapezor.exec_select(stmt))
 
 
-def add_categories_for_race(race_id: int, categories: Mapping[int: Category], race_details: CompetitionDetails):
+def add_categories_for_race(race_id: int, categories: Mapping[int:Category], race_details: CompetitionDetails):
     for race_category in race_details.categories:
         # multiply the id by 1_000_000 to avoid collision with existing data in the database
         # because the column does not have a UNIQUE constraint set on it (which it should have)
@@ -86,9 +100,9 @@ def add_categories_for_race(race_id: int, categories: Mapping[int: Category], ra
         if not check_category_exists(category_id):
             stmt = insert(models.Category).values(category_id=category_id, name=category_name)
             pehapezor.exec_query(stmt)
-        stmt = insert(models.CompetitionCategory).values(competition_id=race_id,
-                                                         category_id=category_id,
-                                                         api_category_id=race_category.id)
+        stmt = insert(models.CompetitionCategory).values(
+            competition_id=race_id, category_id=category_id, api_category_id=race_category.id
+        )
         pehapezor.exec_query(stmt)
 
 
@@ -102,7 +116,12 @@ def add_race(race: Competition, event: Event):
     if check_race_exists(race_id):
         print("Tieto preteky už existujú:", event.date.strftime(DATE_FORMAT_WITH_DAY), event.title_sk, race.place)
         return
-    stmt = insert(models.Competition).values(competition_id=race_id, name=event.title_sk,
-                                             date=event.date, is_active=1, comment="",
-                                             signup_deadline=event.date - timedelta(days=3))
+    stmt = insert(models.Competition).values(
+        competition_id=race_id,
+        name=event.title_sk,
+        date=event.date,
+        is_active=1,
+        comment="",
+        signup_deadline=event.date - timedelta(days=3),
+    )
     pehapezor.exec_query(stmt)

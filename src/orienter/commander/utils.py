@@ -72,29 +72,37 @@ def get_active_races() -> Sequence[models.Competition]:
         return [competition_schema.load(obj, session=session) for obj in pehapezor.exec_select(stmt)]
 
 
-def add_race(api: API, race: Competition, event: Event):
-    competition_id = encode_competition_id(int(race.id), int(event.id))
-    stmt = select(models.Competition).where(models.Competition.competition_id == competition_id)
-    existing = pehapezor.exec_select(stmt)
-    if existing:
-        print("Tieto preteky už existujú:", event.date.strftime(DATE_FORMAT_WITH_DAY), event.title_sk, race.place)
-        return
-    three_days = timedelta(days=3)
-    stmt = insert(models.Competition).values(competition_id=competition_id, name=event.title_sk,
-                                             date=event.date, is_active=1, comment="",
-                                             signup_deadline=event.date - three_days)
-    pehapezor.exec_query(stmt)
-    race_details = api.competition_details(race.id)
-    categories = api.get_category_list()
+def check_category_exists(category_id: int) -> bool:
+    stmt = select(models.Category).where(models.Category.category_id == category_id).limit(1)
+    return bool(pehapezor.exec_select(stmt))
+
+
+def add_categories_for_race(race_id: int, categories: Mapping[int: Category], race_details: CompetitionDetails):
     for race_category in race_details.categories:
+        # multiply the id by 1_000_000 to avoid collision with existing data in the database
+        # because the column does not have a UNIQUE constraint set on it (which it should have)
         category_id = int(race_category.category_id) * 1_000_000
         category_name = categories[race_category.category_id].name
-        stmt = select(models.Category).where(models.Category.category_id == category_id)
-        existing = pehapezor.exec_select(stmt)
-        if not existing:
+        if not check_category_exists(category_id):
             stmt = insert(models.Category).values(category_id=category_id, name=category_name)
             pehapezor.exec_query(stmt)
-        stmt = insert(models.CompetitionCategory).values(competition_id=competition_id,
+        stmt = insert(models.CompetitionCategory).values(competition_id=race_id,
                                                          category_id=category_id,
                                                          api_category_id=race_category.id)
         pehapezor.exec_query(stmt)
+
+
+def check_race_exists(race_id: int) -> bool:
+    stmt = select(models.Competition).where(models.Competition.competition_id == race_id).limit(1)
+    return bool(pehapezor.exec_select(stmt))
+
+
+def add_race(race: Competition, event: Event):
+    race_id = encode_competition_id(int(race.id), int(event.id))
+    if check_race_exists(race_id):
+        print("Tieto preteky už existujú:", event.date.strftime(DATE_FORMAT_WITH_DAY), event.title_sk, race.place)
+        return
+    stmt = insert(models.Competition).values(competition_id=race_id, name=event.title_sk,
+                                             date=event.date, is_active=1, comment="",
+                                             signup_deadline=event.date - timedelta(days=3))
+    pehapezor.exec_query(stmt)

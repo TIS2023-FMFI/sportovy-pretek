@@ -8,7 +8,7 @@ from pathlib import Path
 from simple_term_menu import TerminalMenu
 from sqlalchemy import select
 
-from .utils import MONTHS_FULL, DATE_FORMAT_WITH_DAY, get_active_races, add_race
+from .utils import MONTHS_FULL, DATE_FORMAT_WITH_DAY, get_active_races, add_race, add_categories_for_race
 from .utils import get_races_in_month, get_clubs, decode_competition_id
 from ..communicator.api import API
 from ..configurator.config import configuration
@@ -70,7 +70,10 @@ class Menu:
         for selected_race in selected_races:
             race = races[races_list[selected_race][0]]
             event = race.events[races_list[selected_race][1]]
-            add_race(api, race, event)
+            add_race(race, event)
+            race_details = api.competition_details(race.id)
+            categories = api.get_category_list()
+            add_categories_for_race(race.id, categories, race_details)
             print("Preteky sa úspešne uložili: ", event.date.strftime(DATE_FORMAT_WITH_DAY), event.title_sk, race.place)
 
     @staticmethod
@@ -144,8 +147,8 @@ class Menu:
                     "comment": selected_racer['poznamka'],
                     "categories": [
                         {
-                            "competition_event_id": event_id,
-                            "competition_category_id": result['api_comp_cat_id']
+                            "competition_event_id": str(event_id),
+                            "competition_category_id": str(result['api_comp_cat_id'])
                         }
                     ] if result else []
                 }

@@ -138,7 +138,7 @@ class API:
         self._handle_response(response)
         return response.json()
 
-    def get_category_list(self) -> Mapping:
+    def get_category_list(self) -> Mapping[int: Category]:
         """
         Returns the list of data from the selected directory.
         """

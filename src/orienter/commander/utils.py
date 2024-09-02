@@ -91,7 +91,7 @@ def check_category_exists(category_id: int) -> bool:
     return bool(pehapezor.exec_select(stmt))
 
 
-def add_categories_for_race(race_id: int, categories: Mapping[int:Category], race_details: CompetitionDetails):
+def add_categories_for_race(race_id: int, categories: Mapping[int, Category], race_details: CompetitionDetails):
     for race_category in race_details.categories:
         # multiply the id by 1_000_000 to avoid collision with existing data in the database
         # because the column does not have a UNIQUE constraint set on it (which it should have)
